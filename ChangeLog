@@ -1,0 +1,9 @@
+
+2009-04-18 (dazjorz)
+ * Initial import from Likeback backend on the kmess.org webserver.
+ * Added license notes and some more info to all files
+ * Removed $debug option from db_query and added global LIKEBACK_DEBUG
+ constant
+ * Made db.php die() if the database type was unknown
+ * Added placeholder handling in db_query in preparation for *many* SQL
+ injection bug fixes

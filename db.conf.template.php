@@ -29,4 +29,7 @@
 
   // Name of the email
   $likebackMailSubject = "LikeBack";
+
+  // Whether debugging is enabled in the likeback interface
+  define( "LIKEBACK_DEBUG", 0 );
 ?>

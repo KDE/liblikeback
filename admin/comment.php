@@ -1,6 +1,6 @@
 <?php
 /***************************************************************************
-                          comment.php - description
+                          comment.php - Show and modify a Likeback comment
                              -------------------
     begin                : unknown
     imported into SVN    : Sat, 18 Apr 2009

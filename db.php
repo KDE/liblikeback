@@ -18,32 +18,57 @@
  *                                                                         *
  ***************************************************************************/
 
-  require_once("db.conf.php");
+require_once("db.conf.php");
+
+switch ($dbType) {
+  case "mysql":
+    @mysql_connect($dbServer, $dbUser, $dbPass) or die('Database server connection failed.');
+    @mysql_select_db($dbBase)                   or die('Database connection failed.');
+    break;
+  default:
+    die("Unknown database type $dbType.");
+}
+
+// Security if there is an hole in the remaining code:
+unset($dbServer);
+unset($dbBase);
+unset($dbUser);
+unset($dbPass);
+
+function db_query( $query, $args = array() )
+{
+  global $dbType;
+
+  // Fill in the placeholders
+  while( ($pos = strpos( $query, "?" ) ) !== false )
+  {
+    $before  = substr( $query, 0, $pos );
+    $value   = array_shift( $args );
+    if( $value === NULL )
+    {
+      $value = "";
+    }
+    $after   = substr( $query, $pos + 1 );
+
+    switch ($dbType) {
+      default:
+      case "mysql":
+        $value = mysql_real_escape_string( $value );
+        break;
+    }
+
+    $query   = $before . $value . $after;
+  }
+
+  if ( LIKEBACK_DEBUG )
+    echo "<!-- Executing SQL Query:\n" . htmlentities($query) . "\n-->";
 
   switch ($dbType) {
     default:
     case "mysql":
-      @mysql_connect($dbServer, $dbUser, $dbPass) or die('Database server connection failed.');
-      @mysql_select_db($dbBase)                   or die('Database connection failed.');
-      break;
+      return mysql_query($query);
   }
-  // Security if there is an hole in the remaining code:
-  unset($dbServer);
-  unset($dbBase);
-  unset($dbUser);
-  unset($dbPass);
-
-  function db_query($query, $debug = false)
-  {
-    global $dbType;
-    if ($debug)
-      echo $query;
-    switch ($dbType) {
-      default:
-      case "mysql":
-        return mysql_query($query);
-    }
-  }
+}
 
   function db_fetch_object($result)
   {
