@@ -18,44 +18,52 @@
  *                                                                         *
  ***************************************************************************/
 
-  require_once("db.conf.php");
   require_once("db.php");
-  require_once("fix_magic_quotes.php");
   require_once("locales_string.php");
 
   include_once('/usr/share/php/smarty/libs/Smarty.class.php');  
   header("Content-Type: text/xml");
+  echo '<' . '?xml version="1.0" encoding="UTF-8"?' . ">\n";
 
-  $likeBackReplyError = "<LikeBackReply>\n" .
-                        "	<Result type=\"error\" code=\"100\" message=\"Data were sent in invalid format. Perhaps your version of the application is too old.\" />\n" .
-                        "</LikeBackReply>\n";
+  define( 'RESULT_SUCCESS',             '000' );
+  define( 'ERROR_MISSING_ARGUMENTS',    '100' );
+  define( 'ERROR_MISSING_PROTOCOL',     '101' );
+  define( 'ERROR_UNSUPPORTED_PROTOCOL', '102' );
+  define( 'ERROR_UNKNOWN_REPORTTYPE',   '103' );
+
+  // check protocol first
+  if( !isset( $_POST['protocol'] ) )
+    die('<LikeBackReply><Result type="error" code="' . ERROR_MISSING_PROTOCOL . '" message="Missing \'protocol\' parameter."/></LikeBackReply>');
+  else if( $_POST['protocol'] != "1.0" )
+    die('<LikeBackReply><Result type="error" code="' . ERROR_UNSUPPORTED_PROTOCOL . '" message="Incorrect protocol number for this server."/></LikeBackReply>');
 
   if ( !isset($_POST['version'])  ||
-       !isset($_POST['protocol']) ||
-       !isset($_POST['locale'])   ||
-       !isset($_POST['window'])   ||
-       !isset($_POST['context'])  ||
        !isset($_POST['type'])     ||
-       !isset($_POST['email'])    ||
        !isset($_POST['comment'])     )
-    die($likeBackReplyError);
+    die('<LikeBackReply><Result type="error" code="' . ERROR_MISSING_ARGUMENTS . '" message="Missing required parameters. Please give at least version, type and comment."/></LikeBackReply>');
 
-  $protocol = (isset($_POST['protocol']) ? $_POST['protocol'] : "0.0");
-  $version  = $_POST['version'];
-  $locale   = (isset($_POST['locale']) ? $_POST['locale'] : "");
-  $window   = $_POST['window'];
-  $context  = $_POST['context'];
-  $type     = $_POST['type'];
-  $comment  = $_POST['comment'];
-  $email    = (isset($_POST['email']) ? $_POST['email'] : "");
+  $quotes = get_magic_quotes_gpc();
+  foreach( array('protocol', 'version', 'locale', 'window', 'context', 'type', 'comment', 'email') as $var )
+  {
+    if( ! isset( $_POST[$var] ) )
+    {}
+    else if( $quotes )
+      $$var = stripslashes( $_POST[$var] );
+    else
+      $$var = $_POST[$var];
+  }
+  $locale  = isset ($locale ) ? $locale  : "";
+  $window  = isset ($window ) ? $window  : "";
+  $context = isset ($context) ? $context : "";
+  $email   = isset ($email  ) ? $email   : "";
 
-  /// FIXME: Check version, window and context??
+  // TODO: Check version (newest?), window and context?
 
   if ( $type != "Like"    &&
        $type != "Dislike" &&
        $type != "Bug"     &&
        $type != "Feature"    )
-    die($likeBackReplyError);
+    die('<LikeBackReply><Result type="error" code="' . ERROR_UNKNOWN_REPORTTYPE . '" message="Invalid type, must be one of Like, Dislike, Bug or Feature."/></LikeBackReply>');
 
   /// From http://fr.php.net/manual/fr/function.date.php
   /// @Param $int_date Current date in UNIX timestamp
@@ -123,5 +131,5 @@
 
 ?>
 <LikeBackReply>
-	<Result type="ok" code="000" message="Comment registered. We will take it in account to design the next version of this application." />
+  <Result type="ok" code="<?=RESULT_SUCCESS?>" message="Comment registered. We will take it in account to design the next version of this application." />
 </LikeBackReply>

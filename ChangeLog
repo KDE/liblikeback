@@ -13,6 +13,10 @@
  * Made send.php use the new escaping mechanism too.
  * Made send.php use the Smarty templating system too, and added a comment
  e-mail template.
+ * Added some more descriptive error codes to send.php.
+ * Made the locale, window, context and email arguments optional.
+ * Added LIKEBACK_PRODUCTION configuration option to not emit warnings, and
+ enabled full error reporting if it's disabled.
 
 2009-04-18 (dazjorz)
  * Initial import from Likeback backend on the kmess.org webserver.

@@ -33,6 +33,9 @@
   // Whether debugging is enabled in the likeback interface
   define( "LIKEBACK_DEBUG", 0 );
 
+  // If this is enabled, no warning messages will be emitted.
+  define( "LIKEBACK_PRODUCTION", 0 );
+
   // The name of this project
   define( "LIKEBACK_PROJECT", "Example project" );
 

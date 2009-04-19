@@ -20,6 +20,11 @@
 
 require_once("db.conf.php");
 
+if( ! LIKEBACK_PRODUCTION )
+{
+  error_reporting( E_ALL & E_STRICT );
+}
+
 switch ($dbType) {
   case "mysql":
     @mysql_connect($dbServer, $dbUser, $dbPass) or die('Database server connection failed.');
@@ -48,7 +53,8 @@ function db_query( $query, $args = array() )
     $value   = array_shift( $args );
     if( $value === NULL )
     {
-      echo "<!-- CODE WARNING: db_query: no values left in args array! -->";
+      if( ! LIKEBACK_PRODUCTION )
+        echo "<!-- CODE WARNING: db_query: no values left in args array! -->";
       $value = "";
     }
     $after   = substr( $query, $pos + 1 );
@@ -64,7 +70,7 @@ function db_query( $query, $args = array() )
     $lastpos = strlen($before) + strlen($value) + 2;
   }
 
-  if( count($args) )
+  if( count($args) && ! LIKEBACK_PRODUCTION )
     echo "<!-- CODE WARNING: db_query: values left in args array! -->";
 
   if ( LIKEBACK_DEBUG )
