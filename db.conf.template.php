@@ -32,4 +32,9 @@
 
   // Whether debugging is enabled in the likeback interface
   define( "LIKEBACK_DEBUG", 0 );
-?>
+
+  // The name of this project
+  define( "LIKEBACK_PROJECT", "Example project" );
+
+  // Don't change this:
+  define( "LIKEBACK_VERSION", "svn" );

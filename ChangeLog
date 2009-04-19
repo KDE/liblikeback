@@ -1,4 +1,16 @@
 
+2009-04-19 (dazjorz)
+ * Implemented templates support using Smarty in comments.php. More to come.
+ * Made *some queries* in comments.php, header.php SQL injection-safe.
+ * Fixed an isset/empty issue when adding new LikeBack comment remarks.
+ * Modified the e-mail sent to the user (see the Smarty template).
+ * Added output buffering in header.php so header() calls work correctly.
+ * Added LIKEBACK_PROJECT and LIKEBACK_VERSION to the configuration.
+ * Fixed placeholder handling when the replaced string contains a question
+ mark, and added warnings if the args string has a wrong number of elements.
+ * Added argument === false check in db_fetch_object so failed queries work
+ correctly.
+
 2009-04-18 (dazjorz)
  * Initial import from Likeback backend on the kmess.org webserver.
  * Added license notes and some more info to all files

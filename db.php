@@ -35,17 +35,20 @@ unset($dbBase);
 unset($dbUser);
 unset($dbPass);
 
+// Returns false if the query failed!
 function db_query( $query, $args = array() )
 {
   global $dbType;
 
   // Fill in the placeholders
-  while( ($pos = strpos( $query, "?" ) ) !== false )
+  $lastpos = 0;
+  while( ($pos = strpos( $query, "?", $lastpos ) ) !== false )
   {
     $before  = substr( $query, 0, $pos );
     $value   = array_shift( $args );
     if( $value === NULL )
     {
+      echo "<!-- CODE WARNING: db_query: no values left in args array! -->";
       $value = "";
     }
     $after   = substr( $query, $pos + 1 );
@@ -57,11 +60,15 @@ function db_query( $query, $args = array() )
         break;
     }
 
-    $query   = $before . $value . $after;
+    $query   = $before . '"' . $value . '"' . $after;
+    $lastpos = strlen($before) + strlen($value) + 2;
   }
 
+  if( count($args) )
+    echo "<!-- CODE WARNING: db_query: values left in args array! -->";
+
   if ( LIKEBACK_DEBUG )
-    echo "<!-- Executing SQL Query:\n" . htmlentities($query) . "\n-->";
+    echo "<!-- Executing SQL Query:\n" . str_replace( ">", "&gt;", $query) . "\n-->";
 
   switch ($dbType) {
     default:
@@ -70,15 +77,21 @@ function db_query( $query, $args = array() )
   }
 }
 
-  function db_fetch_object($result)
+function db_fetch_object($result)
+{
+  global $dbType;
+
+  if( $result === false )
   {
-    global $dbType;
-    switch ($dbType) {
-      default:
-      case "mysql":
-        return mysql_fetch_object($result);
-    }
+    return false;
   }
+
+  switch ($dbType) {
+    default:
+    case "mysql":
+      return mysql_fetch_object($result);
+  }
+}
 
   function db_count_results($result)
   {

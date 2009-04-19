@@ -18,6 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
+  ob_start();
+
   session_start();
   require_once("../db.conf.php");
   require_once("../db.php");
@@ -35,11 +37,11 @@
 
   // TODO: Store in session
   $userName = addslashes($_SERVER['PHP_AUTH_USER']);
-  $data = db_query("SELECT * FROM LikeBackDevelopers WHERE login='$userName' LIMIT 1");
+  $data = db_query("SELECT * FROM LikeBackDevelopers WHERE login=? LIMIT 1", array( $userName ) );
   $developer = db_fetch_object($data);
   if (!$developer) {
-    db_query("INSERT INTO LikeBackDevelopers(login, types, locales) VALUES('$userName', 'Like;Dislike;Bug;Feature', '+*')");
-    $data = db_query("SELECT * FROM LikeBackDevelopers WHERE login='$userName' LIMIT 1");
+    db_query("INSERT INTO LikeBackDevelopers(login, types, locales) VALUES(?, 'Like;Dislike;Bug;Feature', '+*')", array( $userName ) );
+    $data = db_query("SELECT * FROM LikeBackDevelopers WHERE login=? LIMIT 1", array( $userName) );
     $developer = db_fetch_object($data);
   }
 

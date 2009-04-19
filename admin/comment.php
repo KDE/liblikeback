@@ -18,6 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 
+  // Include Smarty
+  include_once('/usr/share/php/smarty/libs/Smarty.class.php');
+
   if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: view.php?useSessionFilter=true");
     exit();
@@ -27,7 +30,7 @@
   include("header.php");
 
   $id = $_GET['id'];
-  $data = db_query("SELECT * FROM LikeBack WHERE id=$id LIMIT 1");
+  $data = db_query("SELECT * FROM LikeBack WHERE id=? LIMIT 1", array($id) );
   $comment = db_fetch_object($data);
 
   if (!$comment) {
@@ -60,41 +63,45 @@
 <?php
   $email = htmlentities($comment->email, ENT_QUOTES, "UTF-8");
 
-  if (isset($_POST['newRemark'])) {
+  if( !empty( $_POST['newRemark'] ) )
+  {
     // Send a mail to the original feedback poster:
     if (!empty($email) AND $_POST['mailUser'] == '1' ) {
-      $from    = $likebackMail;
-      $to      = $email;
-      $subject = $likebackMailSubject . " - Answer to your feedback";
-      $message = "Hi!\r\n" .
-                 "In response to your feedback,\r\n" .
-                 "\r\n" .
-                 preg_replace( "#\r?\n|<br */?>#i", "\r\n", $comment->comment ) .
-                 "\r\n" .
-                 "a developer wrote the following answer:\r\n" .
-                 "\r\n" .
-                 preg_replace( "#\r?\n|<br */?>#i", "\r\n", $_POST['newRemark'] ) .
-                 "\r\n" .
-                 "\r\n" .
-                 "If you need to further reply to this mail, please " .
-                 "use the original LikeBack form within the application. " .
-                 "Thank you for using LikeBack!\r\n";
-      $message = wordwrap($message, 70);
-      $headers = "From: $from\r\n" .
-                 "X-Mailer: PHP/" . phpversion();
+      $from          = $likebackMail;
+      $to            = $email;
+      $subject       = $likebackMailSubject . " - Answer to your feedback";
 
-  //echo "***** To: $to<br>\r\n***** Subject: $subject<br>\r\n***** Message: $message<br>\r\n***** Headers: $headers";
+      $rawComment    = str_replace( "\r", "", $comment->comment );
+      // Prepend every line with >
+      $rawComment    = "> " . str_replace( "\n", "\n> ", $rawComment );
+
+      $developerName = $developer->login;
+
+      $remark        = str_replace( "\r", "", $_POST['newRemark'] );
+      // Prepend every line with >
+      $remark        = "> " . str_replace( "\n", "\n> ", $remark );
+
+      $smarty = new Smarty;
+      $smarty->assign( 'comment', $rawComment );
+      $smarty->assign( 'developer', $developerName );
+      $smarty->assign( 'remark', $remark );
+      $smarty->assign( 'project', LIKEBACK_PROJECT );
+      $smarty->template_dir = 'templates';
+      $smarty->compile_dir  = '/tmp';
+
+      $message = $smarty->fetch( 'email/devremark.tpl' );
+      $message = wordwrap($message, 70);
+
+      $headers = "From: $from\r\n" .
+                 "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
       mail($to, $subject, $message, $headers);
 
       // Add a warning on the remark, to notify the developer that the message was also sent to the user
       $_POST['newRemark'] = "This remark has also been sent to the user:\r\n\r\n" . $_POST['newRemark'];
     }
 
-    db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, remark) " .
-             "VALUES('" . get_iso_8601_date(time()) . "', " .
-                    "'$developer->id', " .
-                    "'$id', " .
-                    "'" . addslashes($_POST['newRemark']) . "')");
+    db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, remark) VALUES(?, ?, ?, ?);",
+              array( get_iso_8601_date(time()), $developer->id, $id, $_POST['newRemark'] ) );
   }
 ?>
 
@@ -148,8 +155,8 @@
 <?php
   $data = db_query("SELECT   LikeBackRemarks.*, login " .
                    "FROM     LikeBackRemarks, LikeBackDevelopers " .
-                   "WHERE    LikeBackDevelopers.id=developer AND commentId=$id " .
-                   "ORDER BY dateTime DESC");
+                   "WHERE    LikeBackDevelopers.id=developer AND commentId=? " .
+                   "ORDER BY dateTime DESC", array($id));
 
   $numRemarks = db_count_results($data);
 ?>
