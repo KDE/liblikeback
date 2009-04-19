@@ -63,7 +63,7 @@
   if( !empty( $_POST['newRemark'] ) )
   {
     // Send a mail to the original feedback poster:
-    if (!empty($email) AND $_POST['mailUser'] == '1' ) {
+    if (!empty($email) and isset($_POST['mailUser']) and $_POST['mailUser'] == '1' ) {
       $from          = $likebackMail;
       $to            = $email;
       $subject       = $likebackMailSubject . " - Answer to your feedback";
@@ -71,12 +71,14 @@
       $rawComment    = str_replace( "\r", "", $comment->comment );
       // Prepend every line with >
       $rawComment    = "> " . str_replace( "\n", "\n> ", $rawComment );
+      $rawComment    = wordwrap( $rawComment, 60, "\n> " );
 
       $developerName = $developer->login;
 
       $remark        = str_replace( "\r", "", $_POST['newRemark'] );
       // Prepend every line with >
       $remark        = "> " . str_replace( "\n", "\n> ", $remark );
+      $remark        = wordwrap( $remark, 60, "\n> " );
 
       $smarty = getSmartyObject();
       $smarty->assign( 'comment', $rawComment );
@@ -86,7 +88,8 @@
       $message = wordwrap($message, 70);
 
       $headers = "From: $from\r\n" .
-                 "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
+        "Content-Type: text/plain; charset=\"UTF-8\"\r\n" .
+        "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
       mail($to, $subject, $message, $headers);
 
       // Add a warning on the remark, to notify the developer that the message was also sent to the user
@@ -121,6 +124,8 @@
     $comment->context = "None";
 
   $htmlComment = htmlentities( stripslashes( $comment->comment), ENT_QUOTES, "UTF-8" );
+  $htmlComment = str_replace( "\r", "", $htmlComment );
+  $htmlComment = str_replace( "\n", "<br/>", $htmlComment );
 
 ?>
   <div class="content">
@@ -150,9 +155,13 @@
 <?php
 
   while ($line = db_fetch_object($data)) {
+    $remark = htmlentities( stripslashes( $line->remark ), ENT_QUOTES, "UTF-8" );
+    $remark = str_replace( "\r", "", $remark );
+    $remark = str_replace( "\n", "<br/>", $remark );
+    
     echo "   <div class=\"remark $comment->type\">\n";
     echo "    <h3>On <strong>" . $line->dateTime . "</strong>, by <strong>" . htmlentities($line->login, ENT_QUOTES, "UTF-8") . "</strong></h3>\n";
-    echo "    <p>" . htmlentities(stripslashes($line->remark), ENT_QUOTES, "UTF-8") . "</h3>\n";
+    echo "    <p>" . $remark . "</p>\n";
     echo "   </div>\n";
   }
 ?>

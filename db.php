@@ -22,13 +22,15 @@ require_once("db.conf.php");
 
 if( ! LIKEBACK_PRODUCTION )
 {
-  error_reporting( E_ALL | E_STRICT );
+  error_reporting( E_ALL );
 }
 
 switch ($dbType) {
   case "mysql":
     @mysql_connect($dbServer, $dbUser, $dbPass) or die('Database server connection failed.');
     @mysql_select_db($dbBase)                   or die('Database connection failed.');
+    if( ! @mysql_query( "SET NAMES utf8" ) && ! LIKEBACK_PRODUCTION )
+      echo "Warning: Couldn't set MySQL character set to utf8.";
     break;
   default:
     die("Unknown database type $dbType.");

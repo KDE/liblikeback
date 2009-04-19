@@ -57,6 +57,8 @@
   $context = isset ($context) ? $context : "";
   $email   = isset ($email  ) ? $email   : "";
 
+  $comment = utf8_decode( $comment );
+
   // TODO: Check version (newest?), window and context?
 
   if ( $type != "Like"    &&
@@ -105,6 +107,7 @@
     $comment = str_replace( "\r", "", $comment );
     // Prepend every line with >
     $comment = "> " . str_replace( "\n", "\n> ", $comment );
+    $comment = wordwrap($comment, 60, "\n> ");
 
     $smarty = new Smarty;
     $smarty->assign( 'project',   LIKEBACK_PROJECT );
@@ -122,8 +125,9 @@
     $message = wordwrap($message, 70);
 
     $headers = "From: $from\r\n" .
-               "Reply-To: $replyTo\r\n" .
-               "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
+      "Reply-To: $replyTo\r\n" .
+      "Content-Type: text/plain; charset=\"UTF-8\"\r\n" .
+      "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
 
 //echo "***** To: $to<br>\r\n***** Subject: $subject<br>\r\n***** Message: $message<br>\r\n***** Headers: $headers";
     mail($to, $subject, $message, $headers);

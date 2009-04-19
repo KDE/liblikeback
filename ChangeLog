@@ -21,6 +21,12 @@
  * Removed e-mail links, developers should respond using the form.
  * Added functions for retrieving messages and icons belonging to statuses and
  types.
+ * Fixed charset encoding issues
+ * Fixed word wrapping in e-mails.
+ * Fixed some warnings
+ * Fixed comments and their remarks being displayed correctly when they had
+ newlines in them.
+ * Removed STRICT error reporting, it sucks.
 
 2009-04-18 (dazjorz)
  * Initial import from Likeback backend on the kmess.org webserver.
