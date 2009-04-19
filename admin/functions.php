@@ -191,8 +191,8 @@ function getSmartyObject ( $developer = NULL )
   $smarty->compile_dir  = '/tmp';
 
   $smarty->assign( 'project', LIKEBACK_PROJECT );
-  if( ! is_null ($developer) and isset ($developer->name) and !empty($developer->name) )
-    $smarty->assign( 'developer', $developer->name );
+  if( !is_null($developer) and !is_null($developer->login) and !empty($developer->login) )
+    $smarty->assign( 'developer', $developer->login );
 
   return $smarty;
 }

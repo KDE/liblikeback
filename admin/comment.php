@@ -73,8 +73,6 @@
       $rawComment    = "> " . str_replace( "\n", "\n> ", $rawComment );
       $rawComment    = wordwrap( $rawComment, 60, "\n> " );
 
-      $developerName = $developer->login;
-
       $remark        = str_replace( "\r", "", $_POST['newRemark'] );
       // Prepend every line with >
       $remark        = "> " . str_replace( "\n", "\n> ", $remark );
