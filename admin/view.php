@@ -324,12 +324,16 @@ $locale = "fr";
   $commentCount = 0;
   while ($line = db_fetch_object($data)) {
     $commentCount++;
+    
+    $id = $line->id;
+    $commentLink = "comment.php?id=$id&amp;page=$page";
+    
     if (empty($line->email))
       $emailCell = "";
     else {
       $email     = htmlentities($line->email,   ENT_QUOTES, "UTF-8");
       $emailCell = "<img src=\"icons/email.png\" width=\"16\" height=\"16\" title=\"$email\" />";
-      $emailCell = "<a href=\"mailto:$email?subject=Your%20{$line->type}%20Comment\">$emailCell</a>";
+      $emailCell = '<a href="'.$commentLink.'">'.$emailCell.'</a>';
     }
 
     $typeCell = iconForType($line->type);
@@ -352,21 +356,10 @@ $locale = "fr";
     }
     $windowCell = "<div title=\"$window\"><nobr>" . $windowCell . "</nobr></div>";
 
-    $id = $line->id;
-
-    if ($line->status == "New")
-      $statusCell = "<img src=\"icons/new.png\"       id=\"status_comment_$id\" width=\"16\" height=\"16\" title=\"New\" />";
-    else if ($line->status == "Confirmed")
-      $statusCell = "<img src=\"icons/confirmed.png\" id=\"status_comment_$id\" width=\"16\" height=\"16\" title=\"Confirmed\" />";
-    else if ($line->status == "Progress")
-      $statusCell = "<img src=\"icons/progress.png\"  id=\"status_comment_$id\" width=\"16\" height=\"16\" title=\"In progress\" />";
-    else if ($line->status == "Solved")
-      $statusCell = "<img src=\"icons/solved.png\"    id=\"status_comment_$id\" width=\"16\" height=\"16\" title=\"Solved\" />";
-    else
-      $statusCell = "<img src=\"icons/invalid.png\"   id=\"status_comment_$id\" width=\"16\" height=\"16\" title=\"Invalid\" />";
+    $statusCell = iconForStatus( $line->status, $id );
 
     $statusCell = "<a href=\"#\" onclick=\"return showStatusMenu(event)\">$statusCell</a>";
-    $remarkCount = "&nbsp; <a title=\"Remark count\" href=\"comment.php?id=$id&amp;page=$page\">$line->remarkCount<img src=\"icons/remarks.png\" width=\"16\" height=\"16\" /></span>";
+    $remarkCount = "&nbsp; <a title=\"Remark count\" href=\"$commentLink\">$line->remarkCount<img src=\"icons/remarks.png\" width=\"16\" height=\"16\" /></span>";
     if ($line->remarkCount == 0)
       $statusCell .= "<span class=\"noRemark\">$remarkCount</span>";
     else
@@ -377,10 +370,10 @@ $locale = "fr";
     if( ! empty( $textFilter ) )
       $commentCell = str_replace($textFilter, "<span class=\"found\">$textFilter</span>", $commentCell);
 
-    $commentCell = "<a href=\"comment.php?id=$id&amp;page=$page\">$commentCell</a>";
+    $commentCell = "<a href=\"$commentLink\">$commentCell</a>";
 
     echo "     <tr class=\"$line->type $line->status\" id=\"comment_$line->id\">\n";
-    echo "      <td><a href=\"comment.php?id=$id&amp;page=$page\">#$id</a></td>\n";
+    echo "      <td><a href=\"$commentLink\">#$id</a></td>\n";
     echo "      <td>$typeCell<a href=\"comment_$line->id\"></a></td>\n";
     echo "      <td><nobr>$statusCell</nobr></td>\n";
     echo "      <td class=\"listed-comment\">$commentCell</td>\n";

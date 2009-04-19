@@ -17,6 +17,10 @@
  * Made the locale, window, context and email arguments optional.
  * Added LIKEBACK_PRODUCTION configuration option to not emit warnings, and
  enabled full error reporting if it's disabled.
+ * On comments page, added status message and type message next to the icons.
+ * Removed e-mail links, developers should respond using the form.
+ * Added functions for retrieving messages and icons belonging to statuses and
+ types.
 
 2009-04-18 (dazjorz)
  * Initial import from Likeback backend on the kmess.org webserver.

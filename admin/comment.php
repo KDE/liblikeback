@@ -55,7 +55,7 @@
 
   <div class="subBar <?php echo $comment->type; ?>">
    <a href="view.php?useSessionFilter=true&amp;page=<?php echo $_GET['page']; ?>#comment_<?php echo $id ?>"><img src="icons/gohome.png" width="32" height="32" alt=""></a> &nbsp; &nbsp;
-   <strong><?php echo iconForType($comment->type) . " #$comment->id"; ?></strong> &nbsp; &nbsp; <?php echo $comment->date . "\n"; ?>
+   <?=iconForType($comment->type)?> <?=messageForType( $comment->type )?> &nbsp; #<strong><?=$comment->id?></strong> &nbsp; &nbsp; <?=$comment->date?>
   </div>
 <?php
   $email = htmlentities($comment->email, ENT_QUOTES, "UTF-8");
@@ -101,34 +101,26 @@
 <?php
   if (!empty($email))
   {
-    $email = "<a href=\"mailto:$email?subject=Your%20$comment->type%20Comment\">$email</a>";
-    $disabled = " class='mailRemark'";
+    $email .= " <em>(please reply by using the form below)</em>";
+    $disabled = 'class="mailRemark"';
   }
   else
   {
     $email = "Anonymous";
-    $disabled = "disabled class=\"mailRemarkOff\" ";
+    $disabled = 'disabled class="mailRemarkOff"';
   }
-    $mailUserCheckBox = "<br><label $disabled name='mailUserBox'>" .
-                        "<input $disabled type='checkbox' name='mailUser' value='1'>" .
-                        "Also send this comment to the author</label><br>";
+  $mailUserCheckBox = "<br><label $disabled name='mailUserBox'>" .
+                      "<input $disabled type='checkbox' name='mailUser' value='1'>" .
+                      "Also send this comment to the author</label><br>";
 
+  $message = messageForStatus( $comment->status );
+  $icon    = iconForStatus(    $comment->status, $id );
+  $currentStatus = '<a href="#" onclick="return showStatusMenu(event)">' . $icon . '</a> ' . $message;
 
-    if ($comment->status == "New")
-      $currentStatus = "<img src=\"icons/new.png\"       id=\"status_comment_$id\" width=\"16\" height=\"16\" title=\"New\" />";
-    else if ($comment->status == "Confirmed")
-      $currentStatus = "<img src=\"icons/confirmed.png\" id=\"status_comment_$id\" width=\"16\" height=\"16\" title=\"Confirmed\" />";
-    else if ($comment->status == "Progress")
-      $currentStatus = "<img src=\"icons/progress.png\"  id=\"status_comment_$id\" width=\"16\" height=\"16\" title=\"In progress\" />";
-    else if ($comment->status == "Solved")
-      $currentStatus = "<img src=\"icons/solved.png\"    id=\"status_comment_$id\" width=\"16\" height=\"16\" title=\"Solved\" />";
-    else
-      $currentStatus = "<img src=\"icons/invalid.png\"   id=\"status_comment_$id\" width=\"16\" height=\"16\" title=\"Invalid\" />";
-    $currentStatus = "<a href=\"#\" onclick=\"return showStatusMenu(event)\">$currentStatus</a>";
+  if( empty( $comment->context ) )
+    $comment->context = "None";
 
-    if( empty( $comment->context ) )
-      $comment->context = "None";
-
+  $comment = htmlentities( stripslashes( $comment->comment), ENT_QUOTES, "UTF-8" );
 
 ?>
   <div class="content">
@@ -141,7 +133,7 @@
     <tr><th>E-Mail:</th>  <td><?php echo $email; ?></td></tr>
    </table>
    <div class="comment">
-   <?php echo htmlentities(stripslashes($comment->comment), ENT_QUOTES, "UTF-8"); ?>
+   <?=$comment?>
    </div>
 
 
@@ -159,7 +151,7 @@
 
   while ($line = db_fetch_object($data)) {
     echo "   <div class=\"remark $comment->type\">\n";
-    echo "    <h3>On <strong>$line->dateTime</strong>, by <strong>" . htmlentities($line->login, ENT_QUOTES, "UTF-8") . "</strong></h3>\n";
+    echo "    <h3>On <strong>" . $line->dateTime . "</strong>, by <strong>" . htmlentities($line->login, ENT_QUOTES, "UTF-8") . "</strong></h3>\n";
     echo "    <p>" . htmlentities(stripslashes($line->remark), ENT_QUOTES, "UTF-8") . "</h3>\n";
     echo "   </div>\n";
   }

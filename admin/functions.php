@@ -33,14 +33,39 @@ function get_iso_8601_date($int_date) {
 
 function iconForType($type)
 {
-  if ($type == "Like")
-    return '<img src="icons/like.png" width="16" height="16" alt="[Like]" title="Like" />';
-  else if ($type == "Dislike")
-    return '<img src="icons/dislike.png" width="16" height="16" alt="[Do not like]" title="Do not like" />';
-  else if ($type == "Bug")
-    return '<img src="icons/bug.png" width="16" height="16" alt="[Bug]" title="Bug" />';
-  else
-    return '<img src="icons/feature.png" width="16" height="16" alt="[Feature]" title="Feature" />';
+  switch( strToLower( $type ) )
+  {
+  case "like":
+  case "dislike":
+  case "feature":
+  case "bug":
+    return '<img src="icons/' . strToLower( $type ) . '.png" width="16" height="16" alt="[' . messageForType( $type ) . ']" title="' . messageForType( $type ).'" />';
+  default: return "";
+  }
+}
+
+function iconForStatus($status, $id)
+{
+  switch( strToLower( $status ) )
+  {
+  case "new":
+  case "confirmed":
+  case "progress":
+  case "solved":
+  case "invalid":
+    return '<img src="icons/' . strToLower( $status ) . '.png" id="status_comment_'
+      . $id . '" width="16" height="16" title="' . messageForStatus( $status ) . '" />';
+  default: return "";
+  }
+}
+
+function messageForType( $type )
+{
+  if( in_array( strToLower( $type ), array("like", "dislike", "feature", "bug") ) )
+  {
+    return ucfirst( strToLower( $type ) );
+  }
+  return "Unknown type";
 }
 
 function messageForStatus($status)
