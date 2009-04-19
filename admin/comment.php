@@ -97,9 +97,7 @@
     db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, remark) VALUES(?, ?, ?, ?);",
               array( get_iso_8601_date(time()), $developer->id, $id, $_POST['newRemark'] ) );
   }
-?>
 
-<?php
   if (!empty($email))
   {
     $email .= " <em>(please reply by using the form below)</em>";
@@ -140,32 +138,23 @@
                    "WHERE    LikeBackDevelopers.id=developer AND commentId=? " .
                    "ORDER BY dateTime ASC", array($id));
 
-  $numRemarks = db_count_results($data);
-?>
-
-   <h2><img src="icons/remarks.png" width="16" height="16" alt=""> <?php echo $numRemarks; ?> remarks</h2>
-<?php
+  $remarks = array();
 
   while ($line = db_fetch_object($data)) {
     $remark = htmlentities( stripslashes( $line->remark ), ENT_QUOTES, "UTF-8" );
     $remark = str_replace( "\r", "", $remark );
     $remark = str_replace( "\n", "<br/>", $remark );
-    
-    echo "   <div class=\"remark $comment->type\">\n";
-    echo "    <h3>On <strong>" . $line->dateTime . "</strong>, by <strong>" . htmlentities($line->login, ENT_QUOTES, "UTF-8") . "</strong></h3>\n";
-    echo "    <p>" . $remark . "</p>\n";
-    echo "   </div>\n";
-  }
-?>
+    $line->remark = $remark;
 
-   <div class="remark <?php echo $comment->type; ?>">
-    <form action="comment.php?id=<?php echo $id; ?>" method="post">
-    <h4>New remark:</h4>
-     <textarea name="newRemark" id="newRemark" style="width: 50%; height: 100px; vertical-align: middle"></textarea>
-     <?php echo $mailUserCheckBox; ?>
-     <input type="submit" value="Add New Remark" style="vertical-align: middle">
-    </form>
-   </div>
+    array_push( $remarks, $line );
+  }
+
+  $smarty->assign( 'commenttype', $comment->type );
+  $smarty->assign( 'commentid', $id );
+  $smarty->assign( 'remarks', $remarks );
+  $smarty->assign( 'checkBoxHtml', $mailUserCheckBox );
+  $smarty->display( 'html/remarks.tpl' );
+?>
    <script type="text/javascript">
      document.getElementById("newRemark").focus();
    </script>

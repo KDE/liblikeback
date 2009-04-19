@@ -1,4 +1,9 @@
 
+2009-04-20 (dazjorz)
+ * Exported comment view to a Smarty template.
+ * Templatized (that word was just made up by Valerio) the remarks display and
+ the newremarks form.
+
 2009-04-19 (dazjorz)
  * Implemented templates support using Smarty in comments.php. More to come.
  * Made *some queries* in comments.php, header.php SQL injection-safe.
