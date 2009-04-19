@@ -27,6 +27,7 @@
  * Fixed comments and their remarks being displayed correctly when they had
  newlines in them.
  * Removed STRICT error reporting, it sucks.
+ * Switched the order of remarks (now the newest is at the bottom).
 
 2009-04-18 (dazjorz)
  * Initial import from Likeback backend on the kmess.org webserver.

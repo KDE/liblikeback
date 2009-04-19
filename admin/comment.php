@@ -80,7 +80,7 @@
       $remark        = "> " . str_replace( "\n", "\n> ", $remark );
       $remark        = wordwrap( $remark, 60, "\n> " );
 
-      $smarty = getSmartyObject();
+      $smarty = getSmartyObject( $developer );
       $smarty->assign( 'comment', $rawComment );
       $smarty->assign( 'remark', $remark );
 
@@ -146,7 +146,7 @@
   $data = db_query("SELECT   LikeBackRemarks.*, login " .
                    "FROM     LikeBackRemarks, LikeBackDevelopers " .
                    "WHERE    LikeBackDevelopers.id=developer AND commentId=? " .
-                   "ORDER BY dateTime DESC", array($id));
+                   "ORDER BY dateTime ASC", array($id));
 
   $numRemarks = db_count_results($data);
 ?>
