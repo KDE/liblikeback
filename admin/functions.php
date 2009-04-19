@@ -183,7 +183,7 @@ function pageBrowser( $url, $currentPage, $numItems, $itemsPerPage )
   );
 }
 
-function getSmartyObject ( $developer = NULL )
+function getSmartyObject ( $developer )
 {
   $smarty = new Smarty;
 
@@ -191,8 +191,8 @@ function getSmartyObject ( $developer = NULL )
   $smarty->compile_dir  = '/tmp';
 
   $smarty->assign( 'project', LIKEBACK_PROJECT );
-  if( !is_null($developer) and !is_null($developer->login) and !empty($developer->login) )
-    $smarty->assign( 'developer', $developer->login );
+  if( !is_null($developer) )
+    $smarty->assign( 'developer', $developer );
 
   return $smarty;
 }

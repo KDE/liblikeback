@@ -289,8 +289,9 @@ $locale = "fr";
   $numResults = $numResults->count;
 
   // Show the pager
+  $page = (isset($_GET['page']) ? $_GET['page'] : "");
   $pageInfo = pageBrowser( 'view.php?useSessionFilter=true',
-                           $_GET['page'],
+                           $page,
                            $numResults,
                            50 );
   $page = $pageInfo['page_current'];

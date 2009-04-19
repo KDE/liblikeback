@@ -123,7 +123,7 @@
   $htmlComment = str_replace( "\r", "", $htmlComment );
   $htmlComment = str_replace( "\n", "<br/>", $htmlComment );
 
-  $smarty = getSmartyObject();
+  $smarty = getSmartyObject( $developer );
   $smarty->assign( 'version', htmlentities($comment->version, ENT_QUOTES, "UTF-8" ) );
   $smarty->assign( 'locale',  htmlentities($comment->locale,  ENT_QUOTES, "UTF-8" ) );
   $smarty->assign( 'window',  htmlentities($comment->window,  ENT_QUOTES, "UTF-8" ) );

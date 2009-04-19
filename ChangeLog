@@ -3,6 +3,13 @@
  * Exported comment view to a Smarty template.
  * Templatized (that word was just made up by Valerio) the remarks display and
  the newremarks form.
+ * Templatized the options page.
+ * Fixed comment.php not setting developer correctly.
+ * Added install.php checking if a LikeBack table exists and dieing if there
+ is one, for safety.
+ * Made getSmartyObject() put all of $developer in Smarty, instead of just the
+ login name, and made the $developer argument compulsatory.
+ * Fixed warning in view.php.
 
 2009-04-19 (dazjorz)
  * Implemented templates support using Smarty in comments.php. More to come.

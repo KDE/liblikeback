@@ -4,7 +4,7 @@ A developer responded on your recent LikeBack feedback message. This is the mess
 
 {$comment}
 
-A developer, {$developer}, wrote this message to you:
+A developer, {$developer->login}, wrote this message to you:
 
 {$remark}
 

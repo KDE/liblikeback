@@ -18,8 +18,11 @@
  *                                                                         *
  ***************************************************************************/
 
-  require_once("../db.conf.php");
-  require_once("../db.php");
+require_once("../db.php");
+
+$tables = db_query("SHOW TABLES LIKE 'LikeBack'");
+if( db_count_results( $tables ) > 0 )
+  die("LikeBack seems to be already set up, not continuing... To reinstall, remove your LikeBack tables.");
 
   db_query("DROP TABLE IF EXISTS LikeBack");
   db_query("
