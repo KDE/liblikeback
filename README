@@ -1,7 +1,19 @@
 
 This is the server backend of KMess Likeback. It is released under the GNU General Public License 2.0.
-This file will be updated with instructions on installing it.
-Likeback was originally included in BasKet Note Pads. It was ported to KDE4 by Valerio Pilo.
+
+Likeback was originally included in BasKet Note Pads. It was ported to KDE4 by Valerio Pilo. This folder
+contains only the backend of Likeback, heavily modified by Sjors Gielen.
 
 Dependencies:
 * Smarty - The template parsing library
+* PHP 5 (5.2.0 will do)
+
+Installation:
+* Install the Smarty library.
+* Put the Likeback directory in a publicly accessible location.
+* Restrict access to admin/ by HTTP authentication.
+* Copy db.conf.template.php to db.conf.php and modify it to your liking.
+* Run admin/install.php.
+* Test your installation.
+
+Please report any bugs to sjors@kmess.org.
