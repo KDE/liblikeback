@@ -23,6 +23,9 @@
   require_once("fix_magic_quotes.php");
   require_once("locales_string.php");
 
+  include_once('/usr/share/php/smarty/libs/Smarty.class.php');  
+  header("Content-Type: text/xml");
+
   $likeBackReplyError = "<LikeBackReply>\n" .
                         "	<Result type=\"error\" code=\"100\" message=\"Data were sent in invalid format. Perhaps your version of the application is too old.\" />\n" .
                         "</LikeBackReply>\n";
@@ -65,56 +68,59 @@
   }
 
   db_query("INSERT INTO LikeBack(date, version, locale, window, context, type, status, comment, email) " .
-           "VALUES('" . get_iso_8601_date(time()) . "', " .
-                  "'" . addslashes($version)      . "', " .
-                  "'" . addslashes($locale)       . "', " .
-                  "'" . addslashes($window)       . "', " .
-                  "'" . addslashes($context)      . "', " .
-                  "'" . addslashes($type)         . "', " .
-                  "'New', " .
-                  "'" . addslashes($comment)      . "', " .
-                  "'" . addslashes($email)        . "')");
+                         "VALUES(?,    ?,       ?,      ?,      ?,       ?,    ?,      ?,       ?);",
+                  array( get_iso_8601_date(time()), $version, $locale, $window, $context,
+                    $type, 'New', $comment, $email) );
   $id = db_insert_id();
 
-  $sendMailTo = "";
+  $sendMailTo = array();
   $data = db_query("SELECT * FROM LikeBackDevelopers WHERE email!=''");
   while ($line = db_fetch_object($data)) {
     if (matchType($line->types, $type) && matchLocale($line->locales, $locale))
-      $sendMailTo .= (empty($sendMailTo) ? "" : ", ") . $line->email;
+      array_push( $sendMailTo, $line->email );
   }
 
-  $serverPort = ":" . $_SERVER['SERVER_PORT'];
-  if ($serverPort == ":80")
-    $serverPort = "";
-  $path = $_SERVER['SCRIPT_NAME'];
-  $path = substr($path, 0, strrpos($path, "/") + 1);
-  $likeBackViewAddress = "http://" . $_SERVER['HTTP_HOST'] . $serverPort . $path . "admin/view.php";
+  $sendMailTo = join( ", ", $sendMailTo );
 
   if (!empty($sendMailTo)) {
     $from    = $likebackMail;
     $replyTo = (empty($email) ? $sendMailTo : $email);
     $to      = $sendMailTo;
     $subject = "[LikeBack: $type] #$id ($version - $locale)";
-    $message = "$likeBackViewAddress\r\n" .
-               "\r\n" .
-//               "Id:      #$____id____\r\n" .
-               "Version: $version\r\n" .
-               "Locale:  $locale\r\n" .
-               "Window:  $window\r\n" .
-               "Context: $context\r\n" .
-               "Type:    $type\r\n" .
-               "Comment:\r\n" .
-               $comment;
+
+    $path    = dirname( $_SERVER['SCRIPT_NAME'] );
+    $serverPort = ":" . $_SERVER['SERVER_PORT'];
+    if ($serverPort == ":80")
+      $serverPort = "";
+    $url     = "http://" . $_SERVER['HTTP_HOST'] . $serverPort . $path . "admin/comment.php?id=" . $id;
+    
+    $comment = str_replace( "\r", "", $comment );
+    // Prepend every line with >
+    $comment = "> " . str_replace( "\n", "\n> ", $comment );
+
+    $smarty = new Smarty;
+    $smarty->assign( 'project',   LIKEBACK_PROJECT );
+    $smarty->assign( 'version',   $version );
+    $smarty->assign( 'locale',    $locale );
+    $smarty->assign( 'window',    $window );
+    $smarty->assign( 'context',   $context );
+    $smarty->assign( 'type',      $type );
+    $smarty->assign( 'comment',   $comment );
+    $smarty->assign( 'url',       $url );
+    $smarty->template_dir = 'admin/templates';
+    $smarty->compile_dir  = '/tmp';
+
+    $message = $smarty->fetch( 'email/comment.tpl' );
     $message = wordwrap($message, 70);
+
     $headers = "From: $from\r\n" .
                "Reply-To: $replyTo\r\n" .
-               "X-Mailer: PHP/" . phpversion();
+               "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
 
 //echo "***** To: $to<br>\r\n***** Subject: $subject<br>\r\n***** Message: $message<br>\r\n***** Headers: $headers";
     mail($to, $subject, $message, $headers);
   }
 
-  header("Content-type: text/xml");
 ?>
 <LikeBackReply>
 	<Result type="ok" code="000" message="Comment registered. We will take it in account to design the next version of this application." />
