@@ -88,7 +88,7 @@
     $to      = $sendMailTo;
     $subject = "[LikeBack: $type] #$id ($version - $locale)";
 
-    $path    = dirname( $_SERVER['SCRIPT_NAME'] );
+    $path    = dirname( $_SERVER['SCRIPT_NAME'] ) . "/";
     $serverPort = ":" . $_SERVER['SERVER_PORT'];
     if ($serverPort == ":80")
       $serverPort = "";
