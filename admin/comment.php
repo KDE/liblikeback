@@ -125,22 +125,16 @@
   $htmlComment = str_replace( "\r", "", $htmlComment );
   $htmlComment = str_replace( "\n", "<br/>", $htmlComment );
 
-?>
-  <div class="content">
-   <table class="summary">
-    <tr><th>Version:</th> <td><?php echo htmlentities($comment->version, ENT_QUOTES, "UTF-8"); ?></td></tr>
-    <tr><th>Locale:</th>  <td><?php echo htmlentities($comment->locale,  ENT_QUOTES, "UTF-8"); ?></td></tr>
-    <tr><th>Window:</th>  <td><?php echo htmlentities($comment->window,  ENT_QUOTES, "UTF-8"); ?></td></tr>
-    <tr><th>Context:</th> <td><?php echo htmlentities($comment->context, ENT_QUOTES, "UTF-8"); ?></td></tr>
-    <tr><th>Status:</th>  <td><?php echo $currentStatus; ?></td></tr>
-    <tr><th>E-Mail:</th>  <td><?php echo $email; ?></td></tr>
-   </table>
-   <div class="comment">
-   <?=$htmlComment?>
-   </div>
+  $smarty = getSmartyObject();
+  $smarty->assign( 'version', htmlentities($comment->version, ENT_QUOTES, "UTF-8" ) );
+  $smarty->assign( 'locale',  htmlentities($comment->locale,  ENT_QUOTES, "UTF-8" ) );
+  $smarty->assign( 'window',  htmlentities($comment->window,  ENT_QUOTES, "UTF-8" ) );
+  $smarty->assign( 'context', htmlentities($comment->context, ENT_QUOTES, "UTF-8" ) );
+  $smarty->assign( 'status',  $currentStatus );
+  $smarty->assign( 'email',   $email );
+  $smarty->assign( 'comment', $htmlComment );
+  $smarty->display( 'html/comment.tpl' );
 
-
-<?php
   $data = db_query("SELECT   LikeBackRemarks.*, login " .
                    "FROM     LikeBackRemarks, LikeBackDevelopers " .
                    "WHERE    LikeBackDevelopers.id=developer AND commentId=? " .
