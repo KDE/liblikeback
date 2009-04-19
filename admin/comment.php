@@ -120,7 +120,7 @@
   if( empty( $comment->context ) )
     $comment->context = "None";
 
-  $comment = htmlentities( stripslashes( $comment->comment), ENT_QUOTES, "UTF-8" );
+  $htmlComment = htmlentities( stripslashes( $comment->comment), ENT_QUOTES, "UTF-8" );
 
 ?>
   <div class="content">
@@ -133,7 +133,7 @@
     <tr><th>E-Mail:</th>  <td><?php echo $email; ?></td></tr>
    </table>
    <div class="comment">
-   <?=$comment?>
+   <?=$htmlComment?>
    </div>
 
 
