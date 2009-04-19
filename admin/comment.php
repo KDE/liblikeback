@@ -18,9 +18,6 @@
  *                                                                         *
  ***************************************************************************/
 
-  // Include Smarty
-  include_once('/usr/share/php/smarty/libs/Smarty.class.php');
-
   if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: view.php?useSessionFilter=true");
     exit();
@@ -81,13 +78,9 @@
       // Prepend every line with >
       $remark        = "> " . str_replace( "\n", "\n> ", $remark );
 
-      $smarty = new Smarty;
+      $smarty = getSmartyObject();
       $smarty->assign( 'comment', $rawComment );
-      $smarty->assign( 'developer', $developerName );
       $smarty->assign( 'remark', $remark );
-      $smarty->assign( 'project', LIKEBACK_PROJECT );
-      $smarty->template_dir = 'templates';
-      $smarty->compile_dir  = '/tmp';
 
       $message = $smarty->fetch( 'email/devremark.tpl' );
       $message = wordwrap($message, 70);
