@@ -26,7 +26,7 @@
   require_once("functions.php");
 
   // TODO: Store in session
-  $userName = addslashes($_SERVER['PHP_AUTH_USER']);
+  $userName = $_SERVER['PHP_AUTH_USER'];
   $data = db_query("SELECT * FROM LikeBackDevelopers WHERE login=? LIMIT 1", array( $userName ) );
   $developer = db_fetch_object($data);
   if (!$developer) {

@@ -13,6 +13,13 @@
  * (Awfully) templatized the filtering options in view.php, and moved them from the
  header bar to above the items.
  * Moved the AJAX stuff in view.php to ajax.php.
+ * Made options.php the file to save options, not view.php.
+ * Added stub sendMailTo function to functions.php to easily fix it later if
+ it's needed.
+ * Fixed the viewfilters.tpl file: it didn't have a <form> tag, it does now.
+ * Fixed view.php: it had a <form> tag (see above) and a non-closed header p
+ tag.
+ * Fixed a double escape in header.php.
 
 2009-04-19 (dazjorz)
  * Implemented templates support using Smarty in comments.php. More to come.

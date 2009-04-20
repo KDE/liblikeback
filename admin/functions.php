@@ -196,3 +196,15 @@ function getSmartyObject ( $developer )
 
   return $smarty;
 }
+
+// make this right for the 1.2 release
+function sendMailTo ($type, $locale)
+{
+  $sendMailTo = "";
+  $data = db_query("SELECT * FROM LikeBackDevelopers WHERE email!=''");
+  while ($line = db_fetch_object($data)) {
+    if (matchType($line->types, $type) && matchLocale($line->locales, $locale))
+      $sendMailTo .= (empty($sendMailTo) ? "" : "; ") . $line->email;
+  }
+  return $sendMailTo;
+}

@@ -1,5 +1,6 @@
     <fieldset>
-      <legend>Filtering options</legend>
+     <legend>Filtering options</legend>
+     <form action="view.php" method="post">
       <strong>Version:</strong> {$versionString}<br/>
       <strong>Locale:</strong> {$localeString}<br/>
       <strong>Status:</strong>
@@ -19,6 +20,6 @@
         <input type="text" name="text" id="text" size="10" {$textValue}>
         <br/>
       <input type="submit" name="filtering" value="Filter"> &nbsp; &nbsp; <a href="view.php">Reset</a>
-      </form>
+     </form>
     </fieldset>
 

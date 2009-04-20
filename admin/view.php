@@ -18,54 +18,11 @@
  *                                                                         *
  ***************************************************************************/
 
-  $title = "Comment List";
-  include("header.php");
+$title = "Comment List";
+include("header.php");
 
+require_once("../locales_string.php");
 
-  require_once("../locales_string.php");
-$type="Like";
-$locale = "fr";
-  $sendMailTo = "";
-  $data = db_query("SELECT * FROM LikeBackDevelopers WHERE email!=''");
-  while ($line = db_fetch_object($data)) {
-    if (matchType($line->types, $type) && matchLocale($line->locales, $locale))
-      $sendMailTo .= (empty($sendMailTo) ? "" : "; ") . $line->email;
-  }
-
-
-
-  if (isset($_POST['saveOptions'])) {
-    $email = addslashes($_POST['email']);
-
-    $types = "";
-    if (isset($_POST['MatchLike']))
-      $types .= (empty($types) ? "" : ";") . "Like";
-    if (isset($_POST['MatchDislike']))
-      $types .= (empty($types) ? "" : ";") . "Dislike";
-    if (isset($_POST['MatchBug']))
-      $types .= (empty($types) ? "" : ";") . "Bug";
-    if (isset($_POST['MatchFeature']))
-      $types .= (empty($types) ? "" : ";") . "Feature";
-
-    $locales = "";
-    $localesData = db_query("SELECT locale FROM LikeBack GROUP BY locale ORDER BY locale ASC") or die(mysql_error());
-    while ($line = db_fetch_object($localesData)) {
-      $locale = htmlentities($line->locale);
-      if (isset($_POST["MatchLocale_$locale"]))
-        $locales .= (empty($locales) ? "" : ";") . "+$locale";
-      else
-        $locales .= (empty($locales) ? "" : ";") . "-$locale";
-    }
-    if (isset($_POST['MatchOtherLocales']))
-      $locales .= (empty($locales) ? "" : ";") . "+*";
-    else
-      $locales .= (empty($locales) ? "" : ";") . "-*";
-    $locales = addslashes($locales);
-
-    $login = htmlentities($developer->login, ENT_QUOTES, "UTF-8");
-
-    db_query("UPDATE LikeBackDevelopers SET email='$email', types='$types', locales='$locales' WHERE login='$login'");
-  }
 ?>
   <div id="statusMenu">
    <strong>Mark As:</strong>
@@ -81,8 +38,7 @@ $locale = "fr";
 -->
   </div>
 
-  <form action="view.php" method="post">
-   <p class="header">
+  <p class="header"></p>
 <?php
   if (isset($_GET['useSessionFilter']) && $_GET['useSessionFilter'] == "true")
     $_POST = $_SESSION['postedFilter'];
@@ -282,7 +238,7 @@ $locale = "fr";
                            50 );
   $page = $pageInfo['page_current'];
 
-  echo '<div id="navi">' . $pageInfo['navi'] . '</div>';
+  echo '<div id="navi">' . $pageInfo['navi'] . "</div>\n";
 
   $data = db_query("SELECT   LikeBack.*, COUNT(LikeBackRemarks.id) AS remarkCount " .
                    "FROM     LikeBack LEFT JOIN LikeBackRemarks ON LikeBack.id=commentId " .
