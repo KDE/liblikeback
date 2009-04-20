@@ -26,9 +26,9 @@
        <td style="vertical-align: top">
         <strong>Locale:</strong><br>
 {section name=i loop=$locales}
-{assign var=locale value=`$locales[i]->locale`}
+{assign var=locale value="`$locales[i]->locale`"|escape}
 {if matchLocale($developer->locales, $locale)}{assign var=checked value='checked="checked"'}{else}{assign var=checked value=''}{/if}
-        <input type="checkbox" name="MatchLocale_{$locale|escape}" id="MatchLocale_{$locale|escape}" {$checked}><label for="MatchLocale_{$locale|escape}">{$locale|escape}</label><br>
+        <input type="checkbox" name="MatchLocale_{$locale}" id="MatchLocale_{$locale}" {$checked}><label for="MatchLocale_{$locale}">{$locale}</label><br>
 {/section}
 {if matchLocale($developer->locales, "*")}{assign var=checked value='checked="checked"'}{else}{assign var=checked value=''}{/if}
         <input type="checkbox" name="MatchOtherLocales" id="MatchOtherLocales" {$checked}><label for="MatchOtherLocales">Others</label>

@@ -41,8 +41,8 @@ img       { padding: 1px; border: none; vertical-align: middle; }
 
 .found    { background-color: #FFFF7F; }
 
-.noRemark          { visibility: visible; }
-tr:hover .noRemark { visibility: visible; }
+/* .noRemark          { visibility: visible; }
+tr:hover .noRemark { visibility: visible; } */
 
 div.comment {
   margin: 1em 1em 3em 1em;

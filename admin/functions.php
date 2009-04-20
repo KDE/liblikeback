@@ -31,6 +31,13 @@ function get_iso_8601_date($int_date) {
   return $date_mod;
 }
 
+function smarty_iconForType( $params, &$smarty)
+{
+  if( !isset($params['type']) or empty($params['type']) )
+    return "";
+  return iconForType( $params['type'] );
+}
+
 function iconForType($type)
 {
   switch( strToLower( $type ) )
@@ -42,6 +49,14 @@ function iconForType($type)
     return '<img src="icons/' . strToLower( $type ) . '.png" width="16" height="16" alt="[' . messageForType( $type ) . ']" title="' . messageForType( $type ).'" />';
   default: return "";
   }
+}
+
+function smarty_iconForStatus( $params, &$smarty )
+{
+  if( !isset($params['id'])    or empty($params['id'])
+  or !isset($params['status']) or empty($params['status']) )
+    return "";
+  return iconForStatus( $params['status'], $params['id'] );
 }
 
 function iconForStatus($status, $id)
@@ -207,4 +222,34 @@ function sendMailTo ($type, $locale)
       $sendMailTo .= (empty($sendMailTo) ? "" : "; ") . $line->email;
   }
   return $sendMailTo;
+}
+
+// todo move this
+function statusMenu ()
+{
+  global $developer;
+
+  $smarty = getSmartyObject( $developer );
+  $smarty->display( 'html/statusmenu.tpl' );
+}
+
+// todo move this
+function lbHeader( $contents = "" )
+{
+  global $developer;
+
+  $smarty = getSmartyObject( $developer );
+  $smarty->assign( 'headerContents', $contents );
+  $smarty->display( 'html/lbheader.tpl' );
+}
+
+// todo move this
+function subBar( $type, $contents = "" )
+{
+  global $developer;
+  
+  $smarty = getSmartyObject( $developer );
+  $smarty->assign( 'commentType', $type );
+  $smarty->assign( 'contents', $contents );
+  $smarty->display( 'html/lbsubbar.tpl' );
 }

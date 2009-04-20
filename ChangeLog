@@ -20,6 +20,13 @@
  * Fixed view.php: it had a <form> tag (see above) and a non-closed header p
  tag.
  * Fixed a double escape in header.php.
+ * Removed warning in options.php.
+ * Templatized the bottom of all pages.
+ * Removed noRemark flag for comments without remarks, it did nothing.
+ * Templatized the status menu, the likeback header and the sub-bar.
+ * Fully templatized the comment table in view.php.
+ * Fixed bug in newremark.tpl where the page wouldn't be set over remark adds.
+ * Added smarty wrappers for iconForType and iconForStatus.
 
 --- LikeBack v1.1 released ---
 

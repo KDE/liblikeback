@@ -23,24 +23,12 @@ include("header.php");
 
 require_once("../locales_string.php");
 
-?>
-  <div id="statusMenu">
-   <strong>Mark As:</strong>
-   <a id="markAsNew"       href="#"><img src="icons/new.png"       width="16" height="16" alt="" />New</a>
-   <a id="markAsConfirmed" href="#"><img src="icons/confirmed.png" width="16" height="16" alt="" />Confirmed</a>
-   <a id="markAsProgress"  href="#"><img src="icons/progress.png"  width="16" height="16" alt="" />In progress</a>
-   <a id="markAsSolved"    href="#"><img src="icons/solved.png"    width="16" height="16" alt="" />Solved</a>
-   <a id="markAsInvalid"   href="#"><img src="icons/invalid.png"   width="16" height="16" alt="" />Invalid</a>
-<!--
-   <strong>Duplicate Of:</strong>
-   <a id="markAsDuplicate" href="#"><img src="icons/duplicate.png" width="16" height="16" alt="" />Choose...</a>
-   <div style="vertical-align: middle; padding: 2px"><img src="icons/id.png"     width="16" height="16" alt="" style="vertical-align: middle; padding: 1px 1px 3px 3px"/><input type="text" size="3"> <input type="submit" value="Ok"></div>
--->
-  </div>
+$placeholders = array();
 
-  <p class="header"></p>
-<?php
-  if (isset($_GET['useSessionFilter']) && $_GET['useSessionFilter'] == "true")
+echo statusMenu();
+echo lbHeader();
+
+  if (isset($_GET['useSessionFilter']) && $_GET['useSessionFilter'] == "true" && isset( $_SESSION['postedFilter'] ) )
     $_POST = $_SESSION['postedFilter'];
   $_SESSION['postedFilter'] = $_POST;
 
@@ -153,8 +141,11 @@ require_once("../locales_string.php");
   $textFilter = "";
   $textValue  = "";
   if (isset($_POST['text'])) {
-    $textFilter = htmlentities($_POST['text']);
-    $textValue  = " value=\"$textFilter\"";
+    if( get_magic_quotes_gpc() )
+      $textFilter = stripslashes( $_POST['text'] );
+    else
+      $textFilter = $_POST['text'];
+    $textValue  = ' value="'.htmlentities( $textFilter, ENT_QUOTES, 'UTF-8' ).'"';
   }
 
   $smarty = getSmartyObject( $developer );
@@ -221,12 +212,15 @@ require_once("../locales_string.php");
 
   // Filter text:
   if (!empty($textFilter))
-    $request .= " AND comment LIKE '%$textFilter%'";
+  {
+    $request .= " AND comment LIKE ?";
+    array_push( $placeholders, "%$textFilter%" );
+  }
 
   // Get the total number of results
   $data = db_query("SELECT   COUNT(*) AS count " .
                    "FROM     LikeBack " .
-                   "WHERE    1=1$request ");
+                   "WHERE    1=1$request ", $placeholders);
   $numResults = db_fetch_object($data);
   $numResults = $numResults->count;
 
@@ -245,99 +239,34 @@ require_once("../locales_string.php");
                    "WHERE    1=1$request ".
                    "GROUP BY LikeBack.id " .
                    "ORDER BY date DESC " .
-                   "LIMIT {$pageInfo['page_start']}, {$pageInfo['page_count']}" );
+                   "LIMIT {$pageInfo['page_start']}, {$pageInfo['page_count']}", $placeholders );
 
 
-  echo "   <table id=\"data\">\n";
-  echo "    <thead>\n";
-  echo "     <tr>\n";
-  echo "      <th>Id</th>\n";
-  echo "      <th>Type</th>\n";
-  echo "      <th>Status</th>\n";
-  echo "      <th>Comment</th>\n";
-  echo "      <th>Locale</th>\n";
-  echo "      <th>Date</th>\n";
-  echo "      <th>Version</th>\n";
-  echo "      <th>Window</th>\n";
-  echo "      <th>Context</th>\n";
-  echo "      <th>&nbsp;</th>\n";
-  echo "     </tr>\n";
-  echo "    </thead>\n";
-  echo "    <tbody>\n";
-  $commentCount = 0;
+  $comments = array();
   while ($line = db_fetch_object($data)) {
-    $commentCount++;
-    
-    $id = $line->id;
-    $commentLink = "comment.php?id=$id&amp;page=$page";
-    
-    if (empty($line->email))
-      $emailCell = "";
-    else {
-      $email     = htmlentities($line->email,   ENT_QUOTES, "UTF-8");
-      $emailCell = "<img src=\"icons/email.png\" width=\"16\" height=\"16\" title=\"$email\" />";
-      $emailCell = '<a href="'.$commentLink.'">'.$emailCell.'</a>';
-    }
+    $line->date = strtotime( $line->date );
 
-    $typeCell = iconForType($line->type);
+    $line->window   = preg_replace( "/->\s*$/", "", $line->window );
 
-    $date = split(" ", $line->date);
-    $dateCell = "<div title=\"$date[0], at $date[1]\"><nobr>$date[0]</nobr></div>";
+    $lastSeparation = strrpos( $line->window, '->' );
+    if ($lastSeparation !== false)
+      $line->window = '... ' . trim( substr( $line->window, $lastSeparation + 2 ) );
 
-    $window = htmlentities($line->window,  ENT_QUOTES, "UTF-8");
-    $lastSeparation = strrpos( $window, '-&gt;' );
-    if ($lastSeparation === false)
-      $windowCell = $window;
-    else {
-      $lastWindow = trim( substr($window, $lastSeparation + 1) );
-      $windowCell = '...' . $lastWindow;
-    }
-    // Crop the name of the window to a sane width before creating the column
-    if( strlen( $windowCell ) > 20 )
-    {
-      $windowCell = substr( $windowCell, 0, 20 ) . '...';
-    }
-    $windowCell = "<div title=\"$window\"><nobr>" . $windowCell . "</nobr></div>";
-
-    $statusCell = iconForStatus( $line->status, $id );
-
-    $statusCell = "<a href=\"#\" onclick=\"return showStatusMenu(event)\">$statusCell</a>";
-    $remarkCount = "&nbsp; <a title=\"Remark count\" href=\"$commentLink\">$line->remarkCount<img src=\"icons/remarks.png\" width=\"16\" height=\"16\" /></span>";
-    if ($line->remarkCount == 0)
-      $statusCell .= "<span class=\"noRemark\">$remarkCount</span>";
-    else
-      $statusCell .= $remarkCount;
-
-    $commentCell = preg_replace( "#(\r?\n)+#", "<br>", htmlentities(stripslashes($line->comment), ENT_COMPAT, "UTF-8"));
-
-    if( ! empty( $textFilter ) )
-      $commentCell = str_replace($textFilter, "<span class=\"found\">$textFilter</span>", $commentCell);
-
-    $commentCell = "<a href=\"$commentLink\">$commentCell</a>";
-
-    echo "     <tr class=\"$line->type $line->status\" id=\"comment_$line->id\">\n";
-    echo "      <td><a href=\"$commentLink\">#$id</a></td>\n";
-    echo "      <td>$typeCell<a href=\"comment_$line->id\"></a></td>\n";
-    echo "      <td><nobr>$statusCell</nobr></td>\n";
-    echo "      <td class=\"listed-comment\">$commentCell</td>\n";
-    echo "      <td>" . htmlentities($line->locale,  ENT_QUOTES, "UTF-8") . "</td>\n";
-    echo "      <td>$dateCell</td>\n";
-    echo "      <td class=\"listed-minor\">" . htmlentities($line->version, ENT_QUOTES, "UTF-8") . "</td>\n";
-    echo "      <td class=\"listed-minor\">$windowCell</td>\n";
-    echo "      <td class=\"listed-minor\">" . htmlentities($line->context, ENT_QUOTES, "UTF-8") . "</td>\n";
-    echo "      <td style=\"text-align: center\">$emailCell</td>\n";
-    echo "     </tr>\n";
+    array_push( $comments, $line );
   }
-  echo "    </tbody>\n";
-  echo "   </table>\n";
+
+  $smarty->register_function( 'iconForType',   'smarty_iconForType'   );
+  $smarty->register_function( 'iconForStatus', 'smarty_iconForStatus' );
+  $smarty->assign( 'comments', $comments );
+  $smarty->assign( 'page',     $page );
+  $smarty->display( 'html/commenttable.tpl' );
 ?>
   <script type="text/javascript">
-    document.getElementById("commentCount").innerHTML = <?php echo $commentCount; ?>;
+    document.getElementById("commentCount").innerHTML = <?php echo count($comments); ?>;
     document.getElementById("loadingMessage").style.display = "none"; // Hide the span "Loading..."
     document.getElementById("countMessage").style.display = "inline"; // Shown the span "Number of displayed comments: X"
 
     var shownStatus = { <?php echo $statusJS; ?> };
   </script>
-  </div>
- </body>
-</html>
+<?php
+$smarty->display( 'html/bottom.tpl' );

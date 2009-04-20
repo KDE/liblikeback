@@ -18,6 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 
+// prevent warning
+$sessionStarted = 1;
+session_start();
+
 $title = "View Comment";
 include("../db.php");
 
@@ -98,6 +102,5 @@ $smarty->display( 'html/options.tpl' );
    <script type="text/javascript">
      document.getElementById("email").focus();
    </script>
-  </div>
- </body>
-</html>
+<?php
+$smarty->display( 'html/bottom.tpl' );

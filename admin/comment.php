@@ -35,29 +35,18 @@
     exit();
   }
 
-?>
-  <div id="statusMenu">
-   <strong>Mark As:</strong>
-   <a id="markAsNew"       href="#"><img src="icons/new.png"       width="16" height="16" alt="" />New</a>
-   <a id="markAsConfirmed" href="#"><img src="icons/confirmed.png" width="16" height="16" alt="" />Confirmed</a>
-   <a id="markAsProgress"  href="#"><img src="icons/progress.png"  width="16" height="16" alt="" />In progress</a>
-   <a id="markAsSolved"    href="#"><img src="icons/solved.png"    width="16" height="16" alt="" />Solved</a>
-   <a id="markAsInvalid"   href="#"><img src="icons/invalid.png"   width="16" height="16" alt="" />Invalid</a>
-<!--
-   <strong>Duplicate Of:</strong>
-   <a id="markAsDuplicate" href="#"><img src="icons/duplicate.png" width="16" height="16" alt="" />Choose...</a>
-   <div style="vertical-align: middle; padding: 2px"><img src="icons/id.png"     width="16" height="16" alt="" style="vertical-align: middle; padding: 1px 1px 3px 3px"/><input type="text" size="3"> <input type="submit" value="Ok"></div>
--->
-  </div>
+  echo statusMenu();
+  echo lbHeader();
 
-  <p class="header">
-  </p>
+  if( isset( $_GET['page'] ) )
+    $page = "&amp;page=" . htmlentities( stripslashes( $_GET['page'] ) );
+  else
+    $page = "";
 
-  <div class="subBar <?php echo $comment->type; ?>">
-   <a href="view.php?useSessionFilter=true&amp;page=<?php echo $_GET['page']; ?>#comment_<?php echo $id ?>"><img src="icons/gohome.png" width="32" height="32" alt=""></a> &nbsp; &nbsp;
-   <?=iconForType($comment->type)?> <?=messageForType( $comment->type )?> &nbsp; #<strong><?=$comment->id?></strong> &nbsp; &nbsp; <?=$comment->date?>
-  </div>
-<?php
+  $subBarContents = '<a href="view.php?useSessionFilter=true' . $page . '#comment_' . $comment->id . '"><img src="icons/gohome.png" width="32" height="32" alt="Go home"/></a>'."\n";
+  $subBarContents .= ' &nbsp; &nbsp;' . iconForType( $comment->type ) . ' ' . messageForType( $comment->type ) . ' &nbsp; #<strong>' . $comment->id . '</strong> &nbsp; &nbsp; ' . $comment->date;
+  echo subBar( $comment->type, $subBarContents );
+
   $email = htmlentities($comment->email, ENT_QUOTES, "UTF-8");
 
   if( !empty( $_POST['newRemark'] ) )
@@ -153,12 +142,11 @@
   $smarty->assign( 'commentid', $id );
   $smarty->assign( 'remarks', $remarks );
   $smarty->assign( 'checkBoxHtml', $mailUserCheckBox );
+  $smarty->assign( 'page', (isset($_GET['page']) ? $_GET['page'] : "") );
   $smarty->display( 'html/remarks.tpl' );
 ?>
    <script type="text/javascript">
      document.getElementById("newRemark").focus();
    </script>
-
-  </div>
- </body>
-</html>
+<?
+  $smarty->display( 'html/bottom.tpl' );
