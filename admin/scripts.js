@@ -93,7 +93,7 @@ function changeState(id, state)
 				document.getElementById("statusMenu").style.display = "none";
 			}
 		};
-		request.open("GET", "view.php?useSessionFilter=true&isAJAX=true&markAs=" + state + "&id=" + id, true);
+		request.open("GET", "ajax.php?useSessionFilter=true&isAJAX=true&markAs=" + state + "&id=" + id, true);
 		request.send(null/*"useSessionFilter=true&isAJAX=true&markAs=" + state + "&id=" + id*/);
 		followLink = false;
 	}

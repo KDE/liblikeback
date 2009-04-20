@@ -10,6 +10,9 @@
  * Made getSmartyObject() put all of $developer in Smarty, instead of just the
  login name, and made the $developer argument compulsatory.
  * Fixed warning in view.php.
+ * (Awfully) templatized the filtering options in view.php, and moved them from the
+ header bar to above the items.
+ * Moved the AJAX stuff in view.php to ajax.php.
 
 2009-04-19 (dazjorz)
  * Implemented templates support using Smarty in comments.php. More to come.

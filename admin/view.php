@@ -1,6 +1,6 @@
 <?php
 /***************************************************************************
-                          view.php - description
+                          view.php - View a (filtered) list of comments
                              -------------------
     begin                : unknown
     imported into SVN    : Sat, 18 Apr 2009
@@ -83,11 +83,6 @@ $locale = "fr";
 
   <form action="view.php" method="post">
    <p class="header">
-    <a href="options.php" class="link">E-Mail Options...</a>
-
-    <strong>Version:</strong>
-    <select name="version">
-     <option>(All)</option>
 <?php
   if (isset($_GET['useSessionFilter']) && $_GET['useSessionFilter'] == "true")
     $_POST = $_SESSION['postedFilter'];
@@ -102,16 +97,16 @@ $locale = "fr";
     //$id = (isset($id[1]) ? $id[1] : "ERROR");
     if (is_numeric($id)) {
       db_query("UPDATE LikeBack SET status='" . $_GET['markAs'] . "' WHERE id='$id'") or die(mysql_error());
-      if (isset($_GET['isAJAX']))
-        exit(); // The JavaScript will do the update. No reload wanted.
     }
   }
 
   // Figure out if we are filtering or if it is the first time:
   $filtering = isset($_POST['filtering']);
 
+  // Gather the text for the version filter
   $versionFilter = "";
   $versions = db_query("SELECT version FROM LikeBack GROUP BY version ORDER BY date DESC") or die(mysql_error());
+  $versionString = '<select name="version"><option>(All)</option>';
   while ($line = db_fetch_object($versions)) {
     $version = htmlentities($line->version);
     // Only if the posted version is a valid version:
@@ -120,16 +115,14 @@ $locale = "fr";
       $versionFilter = $version;
       $select = " selected=\"selected\"";
     }
-    echo "     <option value=\"version_$version\"$select>$version</option>\n";
+    $versionString .= "     <option value=\"version_$version\"$select>$version</option>\n";
   }
-?>
-    </select>
-    &nbsp; &nbsp;
+  $versionString .= '</select>';
 
-    <strong>Locale:</strong>
-<?php
+  // Gather the text for the locale filter
   $localesFilter = array();
   $locales = db_query("SELECT locale FROM LikeBack GROUP BY locale ORDER BY locale ASC") or die(mysql_error());
+  $localeString = "";
   while ($line = db_fetch_object($locales)) {
     $locale = htmlentities($line->locale);
     // Only if the posted locales are valid locales:
@@ -138,13 +131,10 @@ $locale = "fr";
       $localesFilter[] = $locale;
       $select = " checked=\"checked\"";
     }
-    echo "    <label for=\"locale_$locale\"><input type=\"checkbox\" id=\"locale_$locale\" name=\"locale_$locale\"$select>$locale</label>\n";
+    $localeString .= "    <label for=\"locale_$locale\"><input type=\"checkbox\" id=\"locale_$locale\" name=\"locale_$locale\"$select>$locale</label>\n";
   }
-?>
-    <br>
 
-    <strong>Status:</strong>
-<?php
+  // Gather the values for the status filters
   $statusFilter = array();
   $newSelect = "";
   if (!$filtering || isset($_POST['New'])) {
@@ -171,16 +161,8 @@ $locale = "fr";
     $statusFilter[] = "Invalid";
     $invalidSelect = " checked=\"checked\"";
   }
-?>
-    <label for="New"><input type="checkbox" id="New" name="New"<?php echo $newSelect; ?>>New</label>
-    <label for="Confirmed"><input type="checkbox" id="Confirmed" name="Confirmed"<?php echo $confirmedSelect; ?>>Confirmed</label>
-    <label for="Progress"><input type="checkbox" id="Progress" name="Progress"<?php echo $progressSelect; ?>>In progress</label>
-    <label for="Solved"><input type="checkbox" id="Solved" name="Solved"<?php echo $solvedSelect; ?>>Solved</label>
-    <label for="Invalid"><input type="checkbox" id="Invalid" name="Invalid"<?php echo $invalidSelect; ?>>Invalid</label>
-    <br>
 
-    <strong>Type:</strong>
-<?php
+  // Gather the values for the types filters
   $typesFilter = array();
   $likeSelect = "";
   if (!$filtering || isset($_POST['Like'])) {
@@ -203,29 +185,6 @@ $locale = "fr";
     $featureSelect = " checked=\"checked\"";
   }
 ?>
-    <label for="Like"><input type="checkbox" id="Like" name="Like"<?php echo $likeSelect; ?>>Like</label>
-    <label for="Dislike"><input type="checkbox" id="Dislike" name="Dislike"<?php echo $dislikeSelect; ?>>Do not like</label>
-    <label for="Bug"><input type="checkbox" id="Bug" name="Bug"<?php echo $bugSelect; ?>>Bug</label>
-    <label for="Feature"><input type="checkbox" id="Feature" name="Feature"<?php echo $featureSelect; ?>>Feature</label>
-    &nbsp; &nbsp;
-
-<?php
-  $textFilter = "";
-  $textValue  = "";
-  if (isset($_POST['text'])) {
-    $textFilter = htmlentities($_POST['text']);
-    $textValue  = " value=\"$textFilter\"";
-  }
-?>
-    <strong>Text:</strong>
-    <input type="text" name="text" id="text" size="10"<?php echo $textValue; ?>>
-    &nbsp; &nbsp;
-
-    <input type="submit" name="filtering" value="Filter">
-    &nbsp; &nbsp;
-    <a href="view.php">Reset</a>
-   </p>
-  </form>
 
   <div class="subBar Options">
    <span id="loadingMessage">Loading...</span>
@@ -233,7 +192,34 @@ $locale = "fr";
   </div>
 
   <div class="content">
+    <a href="options.php" class="link">E-Mail Options...</a> <em>This should move somewhere else for the 1.2 release</em><br/><br/>
 <?php
+  $textFilter = "";
+  $textValue  = "";
+  if (isset($_POST['text'])) {
+    $textFilter = htmlentities($_POST['text']);
+    $textValue  = " value=\"$textFilter\"";
+  }
+
+  $smarty = getSmartyObject( $developer );
+  $smarty->assign( 'versionString', $versionString );
+  $smarty->assign( 'localeString', $localeString );
+
+  $smarty->assign( 'newSelect', $newSelect );
+  $smarty->assign( 'confirmedSelect', $confirmedSelect );
+  $smarty->assign( 'progressSelect', $progressSelect );
+  $smarty->assign( 'solvedSelect', $solvedSelect );
+  $smarty->assign( 'invalidSelect', $invalidSelect );
+
+  $smarty->assign( 'likeSelect', $likeSelect );
+  $smarty->assign( 'dislikeSelect', $dislikeSelect );
+  $smarty->assign( 'featureSelect', $featureSelect );
+  $smarty->assign( 'bugSelect', $bugSelect );
+  
+  $smarty->assign( 'textValue', $textValue );
+  
+  $smarty->display( 'html/viewfilters.tpl' );
+
   $request = "";
 
   // Filter version:
