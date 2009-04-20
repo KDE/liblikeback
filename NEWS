@@ -1,0 +1,20 @@
+
+Changes between LikeBack 1.2 and 1.1:
+--------------------------------------
+- Exported many more HTML pages to Smarty templates.
+- Fixed install.php to check if it should really install (is there not already a LikeBack table?)
+- Streamlined Smarty initialization.
+- Moved code around to make it more logical: Ajax code in ajax.php and option saving code in options.php, not view.php.
+- Many bugfixes, including PHP notices, SQL injections and double escapes.
+
+
+
+Changes between LikeBack 1.1 and 1.0:
+--------------------------------------
+- Added LIKEBACK_DEBUG, LIKEBACK_PROJECT, LIKEBACK_VERSION and LIKEBACK_PRODUCTION configuration options.
+- Added correct SQL placeholder handling in db.php, and made some queries SQL injection safe.
+- Added Smarty templates support.
+- Templatized the e-mails sent by LikeBack and improved the layout of those e-mails.
+- Added the messages next to the status and type icons.
+- Removed e-mail address links, developers should respond using LikeBack itself.
+- Many bugfixes, including character set encoding issues and PHP notices.
