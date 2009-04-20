@@ -21,6 +21,8 @@
  tag.
  * Fixed a double escape in header.php.
 
+--- LikeBack v1.1 released ---
+
 2009-04-19 (dazjorz)
  * Implemented templates support using Smarty in comments.php. More to come.
  * Made *some queries* in comments.php, header.php SQL injection-safe.
