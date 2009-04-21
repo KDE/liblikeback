@@ -155,7 +155,7 @@ echo subBar( 'Options', $subBarContents );
 
   $data = db_query("SELECT   LikeBack.*, COUNT(LikeBackRemarks.id) AS remarkCount " .
                    "FROM     LikeBack LEFT JOIN LikeBackRemarks ON LikeBack.id=commentId " .
-                   "WHERE    ".$conditional." "
+                   "WHERE    ".$conditional." ".
                    "GROUP BY LikeBack.id " .
                    "ORDER BY date DESC " .
                    "LIMIT    ".$pageInfo['page_start'].", ".$pageInfo['page_count'], $placeholders );
