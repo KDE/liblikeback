@@ -1,4 +1,17 @@
 
+2009-04-22 (dazjorz)
+ * Added functions.inc.php with validStatuses(), validTypes() and
+ maybeStrip().
+ * Started using these three functions throughout the code.
+ * Added two (production-safe) warnings to functions.php (yes, the other
+ functions file).
+ * Added db_fetchAll() function to fetch all objects returned by a query, and 
+ used it in view.php.
+ * Added db_buildQuery_checkArray() function to build the conditional part of
+ a query based on an element name and an array of possible values.
+ * Revised the way view.php creates a conditional query using
+ db_buildQuery_checkArray().
+
 2009-04-21 (dazjorz)
  * Correctly templatized version, locale, status and type choosing in viewfilters.tpl.
  * Removed old piece of code from view.php (ajax-related, so it's in ajax.php

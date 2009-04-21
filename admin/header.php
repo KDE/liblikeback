@@ -25,6 +25,7 @@
   require_once("../db.php");
   require_once("../fix_magic_quotes.php");
   require_once("functions.php");
+  require_once("../functions.inc.php");
 
   // TODO: Store in session
   $userName = $_SERVER['PHP_AUTH_USER'];

@@ -1,8 +1,8 @@
 <?php
 /***************************************************************************
-                          ajax.php - The server-side handler for AJAX comment changes
+                    functions.inc.php - General functions
                              -------------------
-    begin                : 20 april 2009
+    begin                : 21 Apr 2009
     copyright            : (C) 2009 by the KMess team
     email                : likeback@kmess.org
  ***************************************************************************/
@@ -16,16 +16,22 @@
  *                                                                         *
  ***************************************************************************/
 
-include("../db.php");
+// Returns an array() of valid statuses in LikeBack.
+function validStatuses()
+{
+  return array( "New", "Confirmed", "Progress", "Solved", "Invalid" );
+}
 
-// Verify incoming data
-if( !isset( $_GET['markAs'] ) || !isset( $_GET['id'] ) )
-  exit();
+// Returns an array() of valid types in LikeBack
+function validTypes()
+{
+  return array( "Like", "Dislike", "Bug", "Feature" );
+}
 
-$mark = $_GET['markAs'];
-if( !in_array( $mark, validStatuses() ) )
-  exit;
-
-db_query("UPDATE LikeBack SET status=? WHERE id=?", array( $_GET['markAs'], $_GET['id'] ) )
-  or die(mysql_error());
-
+// Strip a variable of slashes if magic_quotes_gpc is enabled.
+function maybeStrip( $variable )
+{
+  if( get_magic_quotes_gpc() )
+    return stripslashes( $variable );
+  return $variable;
+}

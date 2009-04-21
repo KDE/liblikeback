@@ -23,8 +23,6 @@ include("header.php");
 
 require_once("../locales_string.php");
 
-$placeholders = array();
-
 echo statusMenu();
 echo lbHeader();
 $subBarContents = '<span id="loadingMessage">Loading...</span><span id="countMessage">Number of displayed comments: <strong id="commentCount">Unknown</strong></span>';
@@ -48,28 +46,21 @@ echo subBar( 'Options', $subBarContents );
   $versionFilter = (isset($_POST["version"]) ? substr( $_POST["version"], 8) : ""); // TODO remove substr() for 1.2
   if( $versionFilter == "*" )
     $versionFilter = "";
-  $versionQuery = db_query("SELECT version FROM LikeBack WHERE version!='' GROUP BY version ORDER BY date DESC") or die(mysql_error());
-  $versions = array();
-  while ($line = db_fetch_object($versionQuery)) {
-    array_push( $versions, $line );
-  }
+  $versions = db_fetchAll("SELECT version FROM LikeBack WHERE version!='' GROUP BY version ORDER BY date DESC") or die(mysql_error());
 
   // Gather the locales and locale filter
   $localesFilter = array();
-  $localeQuery = db_query("SELECT locale FROM LikeBack WHERE locale!='' GROUP BY locale ORDER BY locale ASC") or die(mysql_error());
-  $locales = array();
-  while ($line = db_fetch_object($localeQuery)) {
-    array_push( $locales, $line );
-
-    if (!$filtering || isset($_POST["locale_".$line->locale])) {
-      $localesFilter[] = $line->locale;
+  $locales = db_fetchAll("SELECT locale FROM LikeBack WHERE locale!='' GROUP BY locale ORDER BY locale ASC") or die(mysql_error());
+  foreach( $locales as $locale ) {
+    if (!$filtering || isset($_POST["locale_".$locale->locale])) {
+      $localesFilter[] = $locale->locale;
     }
   }
 
   // Gather the values for the status filters
   $statusFilter = array();
   $newSelect = "";
-  $validStatuses = array( "New", "Confirmed", "Progress", "Solved", "Invalid" );
+  $validStatuses = validStatuses();
   $dontFilterByDefaultStatuses = array( "Solved", "Invalid" );
   foreach( $validStatuses as $status )
   {
@@ -79,7 +70,7 @@ echo subBar( 'Options', $subBarContents );
   }
 
   // Gather the values for the types filters
-  $validTypes = array( "Like", "Dislike", "Bug", "Feature" );
+  $validTypes = validTypes();
   $typesFilter = array();
   $likeSelect = "";
   foreach( $validTypes as $type ) {
@@ -90,10 +81,7 @@ echo subBar( 'Options', $subBarContents );
   $textFilter = "";
   $textValue  = "";
   if (isset($_POST['text'])) {
-    if( get_magic_quotes_gpc() )
-      $textFilter = stripslashes( $_POST['text'] );
-    else
-      $textFilter = $_POST['text'];
+    $textFilter = maybeStrip( $_POST['text'] );
     $textValue  = ' value="'.htmlentities( $textFilter, ENT_QUOTES, 'UTF-8' ).'"';
   }
 
@@ -108,60 +96,50 @@ echo subBar( 'Options', $subBarContents );
   
   $smarty->display( 'html/viewfilters.tpl' );
 
-  $request = "";
+  $conditional = '1+1';
+  $placeholders = array();
 
   // Filter version:
-  if (!empty($versionFilter))
-    $request .= " AND version='$versionFilter'";
+  if (!empty($versionFilter)) {
+    $conditional .= ' AND version=?';
+    array_push( $placeholders, $versionFilter );
+  }
 
   // Filter locales:
-  $localesRequest = "";
-  foreach ($localesFilter as $locale) {
-    if (empty($localesRequest))
-      $localesRequest = "locale='$locale'";
-    else
-      $localesRequest .= " OR locale='$locale'";
-  }
-  if (!empty($localesRequest))
-    $request .= " AND ($localesRequest)";
+  $buildQuery    = db_buildQuery_checkArray( 'locale', $localesFilter );
+  $conditional  .= ' AND ' . array_shift( $buildQuery );
+  $placeholders  = array_merge( $placeholders, $buildQuery );
 
   // Filter types:
-  $typesRequest = "";
-  foreach ($typesFilter as $type) {
-    if (empty($typesRequest))
-      $typesRequest = "type='$type'";
-    else
-      $typesRequest .= " OR type='$type'";
-  }
-  if (!empty($typesRequest))
-    $request .= " AND ($typesRequest)";
+  $buildQuery    = db_buildQuery_checkArray( 'type', $typesFilter );
+  $conditional  .= ' AND ' . array_shift( $buildQuery );
+  $placeholders  = array_merge( $placeholders, $buildQuery );
 
   // Filter status:
-  $statusRequest = "";
+  $buildQuery    = db_buildQuery_checkArray( 'status', $statusFilter );
+  $conditional  .= ' AND ' . array_shift( $buildQuery );
+  $placeholders  = array_merge( $placeholders, $buildQuery );
+
   $statusJS = "";
   foreach ($statusFilter as $status) {
-    if (empty($statusRequest)) {
-      $statusRequest = "status='$status'";
+    if (empty($statusJS)) {
       $statusJS      = "$status: true";
     } else {
-      $statusRequest .= " OR status='$status'";
       $statusJS      .= ", $status: true";
     }
   }
-  if (!empty($statusRequest))
-    $request .= " AND ($statusRequest)";
 
   // Filter text:
   if (!empty($textFilter))
   {
-    $request .= " AND comment LIKE ?";
-    array_push( $placeholders, "%$textFilter%" );
+    $conditional .= " AND comment LIKE ?";
+    $placeholders[] = "%$textFilter%";
   }
 
   // Get the total number of results
   $data = db_query("SELECT   COUNT(*) AS count " .
                    "FROM     LikeBack " .
-                   "WHERE    1=1$request ", $placeholders);
+                   "WHERE    ".$conditional, $placeholders);
   $numResults = db_fetch_object($data);
   $numResults = $numResults->count;
 
@@ -177,10 +155,10 @@ echo subBar( 'Options', $subBarContents );
 
   $data = db_query("SELECT   LikeBack.*, COUNT(LikeBackRemarks.id) AS remarkCount " .
                    "FROM     LikeBack LEFT JOIN LikeBackRemarks ON LikeBack.id=commentId " .
-                   "WHERE    1=1$request ".
+                   "WHERE    ".$conditional." "
                    "GROUP BY LikeBack.id " .
                    "ORDER BY date DESC " .
-                   "LIMIT {$pageInfo['page_start']}, {$pageInfo['page_count']}", $placeholders );
+                   "LIMIT    ".$pageInfo['page_start'].", ".$pageInfo['page_count'], $placeholders );
 
 
   $comments = array();
@@ -193,7 +171,7 @@ echo subBar( 'Options', $subBarContents );
     if ($lastSeparation !== false)
       $line->window = '... ' . trim( substr( $line->window, $lastSeparation + 2 ) );
 
-    array_push( $comments, $line );
+    $comments[]     = $line;
   }
 
   $smarty->register_function( 'iconForType',   'smarty_iconForType'   );

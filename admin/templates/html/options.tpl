@@ -38,3 +38,8 @@
     </div>
     <p style="text-align: center"><input type="submit" name="saveOptions" value="Ok"></p>
    </form>
+
+   <script type="text/javascript">
+     document.getElementById("email").focus();
+   </script>
+

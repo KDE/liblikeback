@@ -76,10 +76,12 @@ function iconForStatus($status, $id)
 
 function messageForType( $type )
 {
-  if( in_array( strToLower( $type ), array("like", "dislike", "feature", "bug") ) )
+  if( in_array( $type, validTypes() ) )
   {
     return ucfirst( strToLower( $type ) );
   }
+  if( ! LIKEBACK_PRODUCTION )
+    echo "<!-- Warning: messageForType( $type ) == unknown type! -->";
   return "Unknown type";
 }
 
@@ -92,7 +94,10 @@ function messageForStatus($status)
   case "progress": return "In progress";
   case "solved": return "Solved";
   case "invalid": return "Invalid";
-  default: return "Unknown status";
+  default: 
+    if( ! LIKEBACK_PRODUCTION )
+      echo "<!-- Warning: messageForStatus( $status ) == unknown status! -->";
+    return "Unknown status";
   }
 }
 

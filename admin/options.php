@@ -97,10 +97,4 @@ while ($line = db_fetch_object($localesquery)) {
 $smarty->assign( 'locales', $locales );
 
 $smarty->display( 'html/options.tpl' );
-
-?>
-   <script type="text/javascript">
-     document.getElementById("email").focus();
-   </script>
-<?php
 $smarty->display( 'html/bottom.tpl' );

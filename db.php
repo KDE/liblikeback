@@ -101,6 +101,44 @@ function db_fetch_object($result)
   }
 }
 
+function db_fetchAll( $query, $args = array() )
+{
+  $result = db_query( $query, $args );
+
+  if( ! $result )
+    return false;
+
+  $objects = array();
+  while( $object = db_fetch_object( $result ) )
+  {
+    array_push( $objects, $object );
+  }
+
+  return $objects;
+}
+
+// Returns an array containing the query and the placeholders.
+// If $array is empty, will create a query that always matches.
+function db_buildQuery_checkArray( $element, $array )
+{
+  $placeholders = array();
+  $query = "";
+
+  if( count($array) == 0 )
+    return array( '(1=1)' );
+
+  foreach ($array as $item) {
+    if( ! empty($query) )
+      $query .= ' OR ';
+
+    $query         .= '`'.$element.'`=?';
+    $placeholders[] = $item;
+  }
+
+  array_unshift( $placeholders, '(' . $query . ')' );
+  return $placeholders;
+}
+
   function db_count_results($result)
   {
     global $dbType;
