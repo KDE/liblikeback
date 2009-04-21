@@ -60,6 +60,13 @@
   $comment = utf8_decode( $comment );
 
   // TODO: Check version (newest?), window and context?
+  // TODO: Hack version up into normal and extended version
+  // i.e.             normal         extended
+  // 2.0              2.0
+  // 2.0beta1         2.0beta1
+  // 2.0alpha2-svn
+  //   (4306 >= ...)  2.0alpha2-svn  4306 >= 20090316
+  // (makes version filtering a lot easier)
 
   if ( $type != "Like"    &&
        $type != "Dislike" &&

@@ -1,4 +1,9 @@
 
+2009-04-21 (dazjorz)
+ * Correctly templatized version, locale, status and type choosing in viewfilters.tpl.
+ * Removed old piece of code from view.php (ajax-related, so it's in ajax.php
+ now)
+
 2009-04-20 (dazjorz)
  * Exported comment view to a Smarty template.
  * Templatized (that word was just made up by Valerio) the remarks display and

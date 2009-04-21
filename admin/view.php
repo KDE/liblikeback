@@ -27,117 +27,66 @@ $placeholders = array();
 
 echo statusMenu();
 echo lbHeader();
+$subBarContents = '<span id="loadingMessage">Loading...</span><span id="countMessage">Number of displayed comments: <strong id="commentCount">Unknown</strong></span>';
+echo subBar( 'Options', $subBarContents );
+
+?>
+
+  <div class="content">
+    <a href="options.php" class="link">E-Mail Options...</a> <em>This should move somewhere else for the 1.2 release</em><br/><br/>
+
+<?php
 
   if (isset($_GET['useSessionFilter']) && $_GET['useSessionFilter'] == "true" && isset( $_SESSION['postedFilter'] ) )
     $_POST = $_SESSION['postedFilter'];
   $_SESSION['postedFilter'] = $_POST;
 
-  // Change the status of a comment:
-  $existingStatus = array("New" => true, "Confirmed" => true, "Progress" => true, "Solved" => true, "Invalid" => true);
-  if (isset($_GET['markAs']) && isset($existingStatus[$_GET['markAs']]) && isset($_GET['id'])) {
-    $id = $_GET['id'];
-    // Before, id was "comment_###":
-    //$id = split("_", $_GET['id']);
-    //$id = (isset($id[1]) ? $id[1] : "ERROR");
-    if (is_numeric($id)) {
-      db_query("UPDATE LikeBack SET status='" . $_GET['markAs'] . "' WHERE id='$id'") or die(mysql_error());
-    }
-  }
-
   // Figure out if we are filtering or if it is the first time:
   $filtering = isset($_POST['filtering']);
 
-  // Gather the text for the version filter
-  $versionFilter = "";
-  $versions = db_query("SELECT version FROM LikeBack GROUP BY version ORDER BY date DESC") or die(mysql_error());
-  $versionString = '<select name="version"><option>(All)</option>';
-  while ($line = db_fetch_object($versions)) {
-    $version = htmlentities($line->version);
-    // Only if the posted version is a valid version:
-    $select = "";
-    if (isset($_POST["version"]) && $_POST["version"] == "version_$version") {
-      $versionFilter = $version;
-      $select = " selected=\"selected\"";
-    }
-    $versionString .= "     <option value=\"version_$version\"$select>$version</option>\n";
+  // Gather the versions and version filter
+  $versionFilter = (isset($_POST["version"]) ? substr( $_POST["version"], 8) : ""); // TODO remove substr() for 1.2
+  if( $versionFilter == "*" )
+    $versionFilter = "";
+  $versionQuery = db_query("SELECT version FROM LikeBack WHERE version!='' GROUP BY version ORDER BY date DESC") or die(mysql_error());
+  $versions = array();
+  while ($line = db_fetch_object($versionQuery)) {
+    array_push( $versions, $line );
   }
-  $versionString .= '</select>';
 
-  // Gather the text for the locale filter
+  // Gather the locales and locale filter
   $localesFilter = array();
-  $locales = db_query("SELECT locale FROM LikeBack GROUP BY locale ORDER BY locale ASC") or die(mysql_error());
-  $localeString = "";
-  while ($line = db_fetch_object($locales)) {
-    $locale = htmlentities($line->locale);
-    // Only if the posted locales are valid locales:
-    $select = "";
-    if (!$filtering || isset($_POST["locale_$locale"])) {
-      $localesFilter[] = $locale;
-      $select = " checked=\"checked\"";
+  $localeQuery = db_query("SELECT locale FROM LikeBack WHERE locale!='' GROUP BY locale ORDER BY locale ASC") or die(mysql_error());
+  $locales = array();
+  while ($line = db_fetch_object($localeQuery)) {
+    array_push( $locales, $line );
+
+    if (!$filtering || isset($_POST["locale_".$line->locale])) {
+      $localesFilter[] = $line->locale;
     }
-    $localeString .= "    <label for=\"locale_$locale\"><input type=\"checkbox\" id=\"locale_$locale\" name=\"locale_$locale\"$select>$locale</label>\n";
   }
 
   // Gather the values for the status filters
   $statusFilter = array();
   $newSelect = "";
-  if (!$filtering || isset($_POST['New'])) {
-    $statusFilter[] = "New";
-    $newSelect = " checked=\"checked\"";
-  }
-  $confirmedSelect = "";
-  if (!$filtering || isset($_POST['Confirmed'])) {
-    $statusFilter[] = "Confirmed";
-    $confirmedSelect = " checked=\"checked\"";
-  }
-  $progressSelect = "";
-  if (!$filtering || isset($_POST['Progress'])) {
-    $statusFilter[] = "Progress";
-    $progressSelect = " checked=\"checked\"";
-  }
-  $solvedSelect = "";
-  if (isset($_POST['Solved'])) { // Not shown by default, because it is of no importance anymore
-    $statusFilter[] = "Solved";
-    $solvedSelect = " checked=\"checked\"";
-  }
-  $invalidSelect = "";
-  if (isset($_POST['Invalid'])) { // Not shown by default, because it is of no importance anymore
-    $statusFilter[] = "Invalid";
-    $invalidSelect = " checked=\"checked\"";
+  $validStatuses = array( "New", "Confirmed", "Progress", "Solved", "Invalid" );
+  $dontFilterByDefaultStatuses = array( "Solved", "Invalid" );
+  foreach( $validStatuses as $status )
+  {
+    if( (!$filtering && !in_array( $status, $dontFilterByDefaultStatuses) ) || isset( $_POST[$status] ) ) {
+      $statusFilter[] = $status;
+    }
   }
 
   // Gather the values for the types filters
+  $validTypes = array( "Like", "Dislike", "Bug", "Feature" );
   $typesFilter = array();
   $likeSelect = "";
-  if (!$filtering || isset($_POST['Like'])) {
-    $typesFilter[] = "Like";
-    $likeSelect = " checked=\"checked\"";
+  foreach( $validTypes as $type ) {
+    if( !$filtering || isset( $_POST[$type] ) )
+      $typesFilter[] = $type;
   }
-  $dislikeSelect = "";
-  if (!$filtering || isset($_POST['Dislike'])) {
-    $typesFilter[] = "Dislike";
-    $dislikeSelect = " checked=\"checked\"";
-  }
-  $bugSelect = "";
-  if (!$filtering || isset($_POST['Bug'])) {
-    $typesFilter[] = "Bug";
-    $bugSelect = " checked=\"checked\"";
-  }
-  $featureSelect = "";
-  if (!$filtering || isset($_POST['Feature'])) {
-    $typesFilter[] = "Feature";
-    $featureSelect = " checked=\"checked\"";
-  }
-?>
 
-  <div class="subBar Options">
-   <span id="loadingMessage">Loading...</span>
-   <span id="countMessage">Number of displayed comments: <strong id="commentCount">Unknown</strong></span>
-  </div>
-
-  <div class="content">
-    <a href="options.php" class="link">E-Mail Options...</a> <em>This should move somewhere else for the 1.2 release</em><br/><br/>
-<?php
   $textFilter = "";
   $textValue  = "";
   if (isset($_POST['text'])) {
@@ -149,20 +98,12 @@ echo lbHeader();
   }
 
   $smarty = getSmartyObject( $developer );
-  $smarty->assign( 'versionString', $versionString );
-  $smarty->assign( 'localeString', $localeString );
-
-  $smarty->assign( 'newSelect', $newSelect );
-  $smarty->assign( 'confirmedSelect', $confirmedSelect );
-  $smarty->assign( 'progressSelect', $progressSelect );
-  $smarty->assign( 'solvedSelect', $solvedSelect );
-  $smarty->assign( 'invalidSelect', $invalidSelect );
-
-  $smarty->assign( 'likeSelect', $likeSelect );
-  $smarty->assign( 'dislikeSelect', $dislikeSelect );
-  $smarty->assign( 'featureSelect', $featureSelect );
-  $smarty->assign( 'bugSelect', $bugSelect );
-  
+  $smarty->assign( 'versions', $versions );
+  $smarty->assign( 'selectedVersion', $versionFilter );
+  $smarty->assign( 'locales', $locales );
+  $smarty->assign( 'localesFilter', $localesFilter );
+  $smarty->assign( 'statusFilter', $statusFilter );
+  $smarty->assign( 'typesFilter', $typesFilter );
   $smarty->assign( 'textValue', $textValue );
   
   $smarty->display( 'html/viewfilters.tpl' );
