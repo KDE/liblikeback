@@ -11,6 +11,13 @@
  a query based on an element name and an array of possible values.
  * Revised the way view.php creates a conditional query using
  db_buildQuery_checkArray().
+ * Implemented a version split in send.php: '2.0beta1-svn (4658 >= 20090421)'
+ is split up in fullVersion (that string) and version='2.0beta1-svn'.
+ * Made send.php use validTypes() too.
+ * Added upgrade script to upgrade the LikeBack table and all contents to the
+ version/fullVersion system, and modified install script to allow that from
+ the start.
+ * Fixed install.php to detect if installation already ran.
 
 2009-04-21 (dazjorz)
  * Correctly templatized version, locale, status and type choosing in viewfilters.tpl.

@@ -18,8 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 
-  require_once("db.php");
-  require_once("locales_string.php");
+require_once("db.php");
+require_once("locales_string.php");
+require_once("functions.inc.php");
 
   include_once('/usr/share/php/smarty/libs/Smarty.class.php');  
   header("Content-Type: text/xml");
@@ -60,18 +61,19 @@
   $comment = utf8_decode( $comment );
 
   // TODO: Check version (newest?), window and context?
-  // TODO: Hack version up into normal and extended version
-  // i.e.             normal         extended
-  // 2.0              2.0
-  // 2.0beta1         2.0beta1
-  // 2.0alpha2-svn
-  //   (4306 >= ...)  2.0alpha2-svn  4306 >= 20090316
-  // (makes version filtering a lot easier)
 
-  if ( $type != "Like"    &&
-       $type != "Dislike" &&
-       $type != "Bug"     &&
-       $type != "Feature"    )
+  // Hack up version into compact and full version
+  // makes 2.0alpha2-svn (4306 >= 20090205) into:
+  // version:     2.0alpha2-svn
+  // fullVersion: 2.0alpha2-svn (4306 >= 20090205)
+  $matches = array();
+  $fullVersion = trim( $version );
+  if( strPos( $fullVersion, "(" ) === FALSE )
+    $version   = $fullVersion;
+  else
+    $version   = trim( substr( $fullVersion, 0, strpos( $fullVersion, "(" ) ) );
+
+  if ( ! in_array( $type, validTypes() ) )
     die('<LikeBackReply><Result type="error" code="' . ERROR_UNKNOWN_REPORTTYPE . '" message="Invalid type, must be one of Like, Dislike, Bug or Feature."/></LikeBackReply>');
 
   /// From http://fr.php.net/manual/fr/function.date.php
@@ -84,9 +86,9 @@
     return $date_mod;
   }
 
-  db_query("INSERT INTO LikeBack(date, version, locale, window, context, type, status, comment, email) " .
-                         "VALUES(?,    ?,       ?,      ?,      ?,       ?,    ?,      ?,       ?);",
-                  array( get_iso_8601_date(time()), $version, $locale, $window, $context,
+  db_query("INSERT INTO LikeBack(date, fullVersion, version, locale, window, context, type, status, comment, email) " .
+                         "VALUES(?,    ?,           ?,       ?,      ?,      ?,       ?,    ?,      ?,       ?);",
+                  array( get_iso_8601_date(time()), $fullVersion, $version, $locale, $window, $context,
                     $type, 'New', $comment, $email) );
   $id = db_insert_id();
 
@@ -119,6 +121,7 @@
     $smarty = new Smarty;
     $smarty->assign( 'project',   LIKEBACK_PROJECT );
     $smarty->assign( 'version',   $version );
+    $smarty->assign( 'fullVersion', $fullVersion );
     $smarty->assign( 'locale',    $locale );
     $smarty->assign( 'window',    $window );
     $smarty->assign( 'context',   $context );

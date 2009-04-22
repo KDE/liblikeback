@@ -20,7 +20,7 @@
 
 require_once("../db.php");
 
-$tables = db_query("SHOW TABLES LIKE 'LikeBack'");
+$tables = db_query("SHOW TABLES LIKE `LikeBack`");
 if( db_count_results( $tables ) > 0 )
   die("LikeBack seems to be already set up, not continuing... To reinstall, remove your LikeBack tables.");
 
@@ -30,6 +30,7 @@ if( db_count_results( $tables ) > 0 )
       id      INT(4)        NOT NULL AUTO_INCREMENT PRIMARY KEY,
       date    DATETIME,
       version VARCHAR(255),
+      fullVersion VARCHAR(255),
       locale  VARCHAR(10),
       window  VARCHAR(255),
       context VARCHAR(255),

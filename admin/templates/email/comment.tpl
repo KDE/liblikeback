@@ -2,7 +2,7 @@ Hello {$project} developer(s),
 
 A user sent a new comment via LikeBack:
 
-> Version: {$version}
+> Version: {$fullVersion}
 > Locale:  {$locale}
 > Window:  {$window}
 > Context: {$context}
