@@ -21,8 +21,6 @@
 $title = "Comment List";
 include("header.php");
 
-require_once("../locales_string.php");
-
 echo statusMenu();
 echo lbHeader();
 $subBarContents = '<span id="loadingMessage">Loading...</span><span id="countMessage">Number of displayed comments: <strong id="commentCount">Unknown</strong></span>';
@@ -85,7 +83,7 @@ echo subBar( 'Options', $subBarContents );
     $textValue  = ' value="'.htmlentities( $textFilter, ENT_QUOTES, 'UTF-8' ).'"';
   }
 
-  $smarty = getSmartyObject( $developer );
+  $smarty = getSmartyObject();
   $smarty->assign( 'versions', $versions );
   $smarty->assign( 'selectedVersion', $versionFilter );
   $smarty->assign( 'locales', $locales );

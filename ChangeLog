@@ -18,6 +18,10 @@
  version/fullVersion system, and modified install script to allow that from
  the start.
  * Fixed install.php to detect if installation already ran.
+ * Moved locales_string.php to functions.inc.php.
+ * Added getDeveloper() function to db.php.
+ * Removed $developer argument to getSmartyObject, because it now calls
+ getDeveloper().
 
 2009-04-21 (dazjorz)
  * Correctly templatized version, locale, status and type choosing in viewfilters.tpl.

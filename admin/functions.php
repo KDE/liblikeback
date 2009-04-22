@@ -203,7 +203,7 @@ function pageBrowser( $url, $currentPage, $numItems, $itemsPerPage )
   );
 }
 
-function getSmartyObject ( $developer )
+function getSmartyObject ()
 {
   $smarty = new Smarty;
 
@@ -211,7 +211,9 @@ function getSmartyObject ( $developer )
   $smarty->compile_dir  = '/tmp';
 
   $smarty->assign( 'project', LIKEBACK_PROJECT );
-  if( !is_null($developer) )
+
+  $developer = getDeveloper();
+  if( isset($developer) && $developer )
     $smarty->assign( 'developer', $developer );
 
   return $smarty;
@@ -234,7 +236,7 @@ function statusMenu ()
 {
   global $developer;
 
-  $smarty = getSmartyObject( $developer );
+  $smarty = getSmartyObject();
   $smarty->display( 'html/statusmenu.tpl' );
 }
 
@@ -243,7 +245,7 @@ function lbHeader( $contents = "" )
 {
   global $developer;
 
-  $smarty = getSmartyObject( $developer );
+  $smarty = getSmartyObject();
   $smarty->assign( 'headerContents', $contents );
   $smarty->display( 'html/lbheader.tpl' );
 }
@@ -251,10 +253,43 @@ function lbHeader( $contents = "" )
 // todo move this
 function subBar( $type, $contents = "" )
 {
-  global $developer;
-  
-  $smarty = getSmartyObject( $developer );
+  $smarty = getSmartyObject();
   $smarty->assign( 'commentType', $type );
   $smarty->assign( 'contents', $contents );
   $smarty->display( 'html/lbsubbar.tpl' );
+}
+
+// Returns the current developer if someone is logged in
+function getDeveloper() {
+  global $developer;
+
+  $userName = $_SERVER['PHP_AUTH_USER'];
+
+  if( isset( $developer ) && $developer->login == $userName)
+    return $developer;
+
+  if( !isset( $userName ) || empty( $userName ) ) {
+    if( !LIKEBACK_PRODUCTION )
+      echo "<!-- Tried to fetch developer but nobody was logged in! -->";
+    return FALSE;
+  }
+
+  $data = db_query("SELECT * FROM LikeBackDevelopers WHERE login=? LIMIT 1", array( $userName ) );
+  if( !$data ) {
+    if( !LIKEBACK_PRODUCTION )
+      echo "<!-- Couldn't retrieve developer information from database: " . mysql_error() . " -->";
+    return FALSE;
+  }
+
+  $developer = db_fetch_object($data);
+  if( $developer )
+    return $developer;
+
+  if( !db_query("INSERT INTO LikeBackDevelopers(login, types, locales) VALUES(?, 'Like;Dislike;Bug;Feature', '+*')", array( $userName ) ) )
+  {
+    if( !LIKEBACK_PRODUCTION )
+      echo "<!-- Couldn't insert new developer $userName in database: " . mysql_error() . " -->";
+    return FALSE;
+  }
+  return getDeveloper();
 }

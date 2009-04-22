@@ -27,15 +27,7 @@
   require_once("functions.php");
   require_once("../functions.inc.php");
 
-  // TODO: Store in session
-  $userName = $_SERVER['PHP_AUTH_USER'];
-  $data = db_query("SELECT * FROM LikeBackDevelopers WHERE login=? LIMIT 1", array( $userName ) );
-  $developer = db_fetch_object($data);
-  if (!$developer) {
-    db_query("INSERT INTO LikeBackDevelopers(login, types, locales) VALUES(?, 'Like;Dislike;Bug;Feature', '+*')", array( $userName ) );
-    $data = db_query("SELECT * FROM LikeBackDevelopers WHERE login=? LIMIT 1", array( $userName) );
-    $developer = db_fetch_object($data);
-  }
+$developer = getDeveloper();
 
 ?>
 <html>

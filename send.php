@@ -19,7 +19,6 @@
  ***************************************************************************/
 
 require_once("db.php");
-require_once("locales_string.php");
 require_once("functions.inc.php");
 
   include_once('/usr/share/php/smarty/libs/Smarty.class.php');  

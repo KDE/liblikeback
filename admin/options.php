@@ -24,33 +24,19 @@ session_start();
 
 $title = "View Comment";
 include("../db.php");
+require_once("functions.php");
+require_once("../functions.inc.php");
 
-// Move before 1.2 release!
-$userName = $_SERVER['PHP_AUTH_USER'];
-$data = db_query("SELECT * FROM LikeBackDevelopers WHERE login=? LIMIT 1", array( $userName ) );
-$developer = db_fetch_object($data);
-if (!$developer) {
-  db_query("INSERT INTO LikeBackDevelopers(login, types, locales) VALUES(?, 'Like;Dislike;Bug;Feature', '+*')", array( $userName ) );
-  $data = db_query("SELECT * FROM LikeBackDevelopers WHERE login=? LIMIT 1", array( $userName) );
-  $developer = db_fetch_object($data);
-}
+$developer = getDeveloper();
 
 if (isset($_POST['saveOptions'])) {
-  if( get_magic_quotes_gpc() )
-    $email = stripslashes( $_POST['email'] );
-  else
-    $email = $_POST['email'];
+  $email = maybeStrip( $_POST['email'] );
 
   $types = array();
-  if (isset($_POST['MatchLike']))
-    array_push($types, "Like");
-  if (isset($_POST['MatchDislike']))
-    array_push($types, "Dislike");
-  if (isset($_POST['MatchBug']))
-    array_push($types, "Bug");
-  if (isset($_POST['MatchFeature']))
-    array_push($types, "Feature");
-
+  foreach( validTypes() as $type ) {
+    if( isset( $_POST['Match'.$type] ) )
+      array_push( $types, $type );
+  }
   $types = join( ";", $types );
 
   $locales = array();
@@ -72,9 +58,8 @@ if (isset($_POST['saveOptions'])) {
 }
 
 include("header.php");
-require_once("../locales_string.php");
 
-$smarty = getSmartyObject( $developer );
+$smarty = getSmartyObject();
 
 $likeChecked    = (matchType($developer->types, "Like")    ? 'checked="checked"' : "");
 $dislikeChecked = (matchType($developer->types, "Dislike") ? 'checked="checked"' : "");
