@@ -22,6 +22,10 @@
  * Added getDeveloper() function to db.php.
  * Removed $developer argument to getSmartyObject, because it now calls
  getDeveloper().
+ * Made send.php use functions.inc.php and getSmartyObject etc too.
+ * Added wrapQuote() Smarty modifier.
+ * Added $noDeveloper argument to getSmartyObject, to not call getDeveloper()
+ when called from send.php.
 
 2009-04-21 (dazjorz)
  * Correctly templatized version, locale, status and type choosing in viewfilters.tpl.

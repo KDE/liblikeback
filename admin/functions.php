@@ -203,18 +203,22 @@ function pageBrowser( $url, $currentPage, $numItems, $itemsPerPage )
   );
 }
 
-function getSmartyObject ()
+function getSmartyObject ( $noDeveloper = false )
 {
   $smarty = new Smarty;
 
   $smarty->template_dir = 'templates';
   $smarty->compile_dir  = '/tmp';
 
+  $smarty->register_modifier( 'wrapQuote', 'smarty_modifier_wrapQuote' );
+
   $smarty->assign( 'project', LIKEBACK_PROJECT );
 
-  $developer = getDeveloper();
-  if( isset($developer) && $developer )
-    $smarty->assign( 'developer', $developer );
+  if( !$noDeveloper ) {
+    $developer = getDeveloper();
+    if( isset($developer) && $developer )
+      $smarty->assign( 'developer', $developer );
+  }
 
   return $smarty;
 }
@@ -263,7 +267,8 @@ function subBar( $type, $contents = "" )
 function getDeveloper() {
   global $developer;
 
-  $userName = $_SERVER['PHP_AUTH_USER'];
+  if( isset( $_SERVER['PHP_AUTH_USER'] ) )
+    $userName = $_SERVER['PHP_AUTH_USER'];
 
   if( isset( $developer ) && $developer->login == $userName)
     return $developer;
@@ -292,4 +297,18 @@ function getDeveloper() {
     return FALSE;
   }
   return getDeveloper();
+}
+
+function smarty_modifier_wrapQuote ( $text, $length = 80, $prepend = '> ' )
+{
+  // Remove any \r
+  $text = str_replace( "\r", "", $text );
+
+  // Prepend every line with $prepend
+  $text = $prepend . str_replace( "\n", "\n".$prepend, $text );
+
+  // Word wrap it again
+  $text = wordwrap( $text, $length-strlen($prepend), "\n".$prepend );
+
+  return $text;
 }

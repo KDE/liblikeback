@@ -57,22 +57,12 @@
       $to            = $email;
       $subject       = $likebackMailSubject . " - Answer to your feedback";
 
-      $rawComment    = str_replace( "\r", "", $comment->comment );
-      // Prepend every line with >
-      $rawComment    = "> " . str_replace( "\n", "\n> ", $rawComment );
-      $rawComment    = wordwrap( $rawComment, 60, "\n> " );
-
-      $remark        = str_replace( "\r", "", $_POST['newRemark'] );
-      // Prepend every line with >
-      $remark        = "> " . str_replace( "\n", "\n> ", $remark );
-      $remark        = wordwrap( $remark, 60, "\n> " );
-
       $smarty = getSmartyObject();
       $smarty->assign( 'comment', $rawComment );
       $smarty->assign( 'remark', $remark );
 
       $message = $smarty->fetch( 'email/devremark.tpl' );
-      $message = wordwrap($message, 70);
+      $message = wordwrap($message, 80);
 
       $headers = "From: $from\r\n" .
         "Content-Type: text/plain; charset=\"UTF-8\"\r\n" .

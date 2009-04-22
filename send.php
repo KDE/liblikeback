@@ -20,8 +20,8 @@
 
 require_once("db.php");
 require_once("functions.inc.php");
+require_once("admin/functions.php");
 
-  include_once('/usr/share/php/smarty/libs/Smarty.class.php');  
   header("Content-Type: text/xml");
   echo '<' . '?xml version="1.0" encoding="UTF-8"?' . ">\n";
 
@@ -75,16 +75,6 @@ require_once("functions.inc.php");
   if ( ! in_array( $type, validTypes() ) )
     die('<LikeBackReply><Result type="error" code="' . ERROR_UNKNOWN_REPORTTYPE . '" message="Invalid type, must be one of Like, Dislike, Bug or Feature."/></LikeBackReply>');
 
-  /// From http://fr.php.net/manual/fr/function.date.php
-  /// @Param $int_date Current date in UNIX timestamp
-  function get_iso_8601_date($int_date) {
-    $date_mod      = date('Y-m-d\TH:i:s', $int_date);
-    $pre_timezone  = date('O', $int_date);
-    $time_zone     = substr($pre_timezone, 0, 3).":".substr($pre_timezone, 3, 2);
-    $date_mod     .= $time_zone;
-    return $date_mod;
-  }
-
   db_query("INSERT INTO LikeBack(date, fullVersion, version, locale, window, context, type, status, comment, email) " .
                          "VALUES(?,    ?,           ?,       ?,      ?,      ?,       ?,    ?,      ?,       ?);",
                   array( get_iso_8601_date(time()), $fullVersion, $version, $locale, $window, $context,
@@ -111,14 +101,11 @@ require_once("functions.inc.php");
     if ($serverPort == ":80")
       $serverPort = "";
     $url     = "http://" . $_SERVER['HTTP_HOST'] . $serverPort . $path . "admin/comment.php?id=" . $id;
-    
-    $comment = str_replace( "\r", "", $comment );
-    // Prepend every line with >
-    $comment = "> " . str_replace( "\n", "\n> ", $comment );
-    $comment = wordwrap($comment, 60, "\n> ");
 
-    $smarty = new Smarty;
-    $smarty->assign( 'project',   LIKEBACK_PROJECT );
+    $smarty = getSmartyObject( true );
+    $smarty->template_dir = 'admin/templates';
+    $smarty->compile_dir  = '/tmp';
+
     $smarty->assign( 'version',   $version );
     $smarty->assign( 'fullVersion', $fullVersion );
     $smarty->assign( 'locale',    $locale );
@@ -127,11 +114,9 @@ require_once("functions.inc.php");
     $smarty->assign( 'type',      $type );
     $smarty->assign( 'comment',   $comment );
     $smarty->assign( 'url',       $url );
-    $smarty->template_dir = 'admin/templates';
-    $smarty->compile_dir  = '/tmp';
 
     $message = $smarty->fetch( 'email/comment.tpl' );
-    $message = wordwrap($message, 70);
+    $message = wordwrap($message, 80);
 
     $headers = "From: $from\r\n" .
       "Reply-To: $replyTo\r\n" .

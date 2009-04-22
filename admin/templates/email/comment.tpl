@@ -8,7 +8,7 @@ A user sent a new comment via LikeBack:
 > Context: {$context}
 > Type:    {$type}
 > Comment:
-{$comment}
+{$comment|wrapQuote}
 
 To reply to this comment or to change its status, please use this link:
 {$url}
