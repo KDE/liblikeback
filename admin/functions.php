@@ -270,7 +270,7 @@ function getDeveloper() {
   if( isset( $_SERVER['PHP_AUTH_USER'] ) )
     $userName = $_SERVER['PHP_AUTH_USER'];
 
-  if( isset( $developer ) && $developer->login == $userName)
+  if( isset( $developer ) && $developer && $developer->login == $userName)
     return $developer;
 
   if( !isset( $userName ) || empty( $userName ) ) {

@@ -67,3 +67,16 @@ function matchType($typeList, $typeToTest)
   $typeList = ";$typeList;";
   return !( strstr($typeList, ";$typeToTest;") === false );
 }
+
+function getLikeBackUrl ()
+{
+  $path    = dirname( $_SERVER['SCRIPT_NAME'] );
+  if( preg_match( '_admin$_', $path ) )
+    $path  = dirname( $path );
+
+  $serverPort = ":" . $_SERVER['SERVER_PORT'];
+  if ($serverPort == ":80")
+    $serverPort = "";
+  $url     = "http://" . $_SERVER['HTTP_HOST'] . $serverPort . $path;
+  return $url;
+}

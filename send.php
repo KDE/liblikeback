@@ -96,11 +96,7 @@ require_once("admin/functions.php");
     $to      = $sendMailTo;
     $subject = "[LikeBack: $type] #$id ($version - $locale)";
 
-    $path    = dirname( $_SERVER['SCRIPT_NAME'] ) . "/";
-    $serverPort = ":" . $_SERVER['SERVER_PORT'];
-    if ($serverPort == ":80")
-      $serverPort = "";
-    $url     = "http://" . $_SERVER['HTTP_HOST'] . $serverPort . $path . "admin/comment.php?id=" . $id;
+    $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $id;
 
     $smarty = getSmartyObject( true );
     $smarty->template_dir = 'admin/templates';

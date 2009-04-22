@@ -9,7 +9,7 @@
       <th>Date</th>
       <th>Version</th>
       <th>Window</th>
-      <th>Context</th>
+      {* <th>Context</th> *}
       {* <th>&nbsp;</th> *}
      </tr>
     </thead>
@@ -33,13 +33,17 @@
       <td class="listed-comment"><a href="{$commentLink}">{$comment->comment|escape:'html':'utf-8'|nl2br}</a></td>
       <td>{$comment->locale|escape:'html':'utf-8'}</td>
       <td><div title="{$comment->date|date_format:"%d-%m-%Y"}, at {$comment->date|date_format:"%T"}"><nobr>{$comment->date|date_format:"%d %b %Y"}</nobr></div></td>
-      <td class="listed-minor">{$comment->fullVersion|escape:'html':'utf-8'}</td>
+      <td class="listed-minor">
+        <div title="{$comment->fullVersion|escape:'html':'utf-8'}"><nobr>
+          {$comment->version|escape:'html':'utf-8'}
+        </nobr></div>
+      </td>
       <td class="listed-minor">
         <div title="{$comment->window|escape:'html':'utf-8'}"><nobr>
           {$comment->window|truncate:20:'...':TRUE|escape:'html':'utf-8'}
         </nobr></div>
       </td>
-      <td class="listed-minor">{$line->context|escape:'html':'utf-8'}</td>
+      {* <td class="listed-minor">{$line->context|escape:'html':'utf-8'}</td> *}
       {* <td style="text-align: center">{$emailCell}</td> *}
      </tr>
 {/section}

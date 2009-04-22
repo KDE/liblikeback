@@ -1,4 +1,16 @@
 
+2009-04-23 (dazjorz)
+ * Added getLikeBackUrl() function to functions.inc.php to return the HTTP path
+ to this LikeBack instance.
+ * Added sendReminders script and template, which should be run by crontab
+ every week, to e-mail all developers of their remaining comments.
+ * Fixed warning in functions.php which appeared when an unknown developer
+ visited the site.
+ * Commented out Context tab in the commenttable.tpl since it's not needed
+ right now.
+ * Made version instead of fullVersion shown in commenttable, and fullVersion
+ when you hover it with the mouse.
+
 2009-04-22 (dazjorz)
  * Added functions.inc.php with validStatuses(), validTypes() and
  maybeStrip().
