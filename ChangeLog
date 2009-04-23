@@ -23,6 +23,8 @@
  * Workarounded a PHP bug in e-mail word wrapping when a line was exactly 80
  characters.
  * Some other interface changes.
+ * Made options.php use lbHeader() and subBar() correctly, so the likeback
+ logo shows there too.
 
 2009-04-22 (dazjorz)
  * Added functions.inc.php with validStatuses(), validTypes() and
