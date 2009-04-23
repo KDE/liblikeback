@@ -185,7 +185,7 @@ function pageBrowser( $url, $currentPage, $numItems, $itemsPerPage )
 
   // Lastly, make up the actual pages list and return it all to the caller.
 
-  $navi = '<h4>Showing items from ' . ($firstItem + 1) . ' to ' . $lastItem . '</h4>' .
+  $navi = '<h4>Showing items from ' . ($firstItem + 1) . ' to ' . $lastItem . ', out of '.$numItems.' items</h4>' .
           '<p>' .
           $firstPage . ' &mdash; ' .
           implode( ' &middot; ', $pagesList ) .
@@ -223,18 +223,6 @@ function getSmartyObject ( $noDeveloper = false )
   return $smarty;
 }
 
-// make this right for the 1.2 release
-function sendMailTo ($type, $locale)
-{
-  $sendMailTo = "";
-  $data = db_query("SELECT * FROM LikeBackDevelopers WHERE email!=''");
-  while ($line = db_fetch_object($data)) {
-    if (matchType($line->types, $type) && matchLocale($line->locales, $locale))
-      $sendMailTo .= (empty($sendMailTo) ? "" : "; ") . $line->email;
-  }
-  return $sendMailTo;
-}
-
 // todo move this
 function statusMenu ()
 {
@@ -251,6 +239,7 @@ function lbHeader( $contents = "" )
 
   $smarty = getSmartyObject();
   $smarty->assign( 'headerContents', $contents );
+  $smarty->assign( 'appLogo',        LIKEBACK_APP_LOGO );
   $smarty->display( 'html/lbheader.tpl' );
 }
 
@@ -299,16 +288,20 @@ function getDeveloper() {
   return getDeveloper();
 }
 
-function smarty_modifier_wrapQuote ( $text, $length = 80, $prepend = '> ' )
+// We're doing 75 because of an apparant bug in wordwrap(), 
+// during testing it wrapped lines of exactly 80 characters even if the
+// second parameter was 80; this was not reproducable so the fix for now is
+// to let wrapQuote wrap 75 characters.
+function smarty_modifier_wrapQuote ( $text, $length = 75, $prepend = '> ' )
 {
   // Remove any \r
   $text = str_replace( "\r", "", $text );
 
+  // Word wrap it
+  $text = wordwrap( $text, $length - strlen($prepend) );
+
   // Prepend every line with $prepend
   $text = $prepend . str_replace( "\n", "\n".$prepend, $text );
-
-  // Word wrap it again
-  $text = wordwrap( $text, $length-strlen($prepend), "\n".$prepend );
 
   return $text;
 }

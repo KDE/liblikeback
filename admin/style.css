@@ -64,15 +64,20 @@ div.comment {
 .mailRemark { vertical-align: middle; }
 .mailRemarkOff { vertical-align: middle; color:gray; font-style:italic;}
 
-.header   { text-align: center; background: #1C1C58 url('header.png') 0 50%; color: white; padding: 5px; border-bottom: 1px solid #121239; margin: 0; line-height: 26px; height: 80px; text-shadow: black 0 0 3px; }
-.content  { padding: 10px; }
+.header   { text-align: center; vertical-align: middle; background: #1C1C58 url('header.png') 0 50%; color: white; padding: 5px; border-bottom: 1px solid #121239; margin: 0; line-height: 26px; height: 80px; text-shadow: black 0 0 3px; }
+.header #applogo { float: left; } /* vertical align doesn't work?! */
+.header #lbinfo { float: right; background: white; border: 2px blue solid; color: black; padding: 2px; padding-left: 5px; padding-right: 5px; }
+.header #lblogo { float: right; margin-left: 10px; margin-top: 10px; }
 .header strong { color: #FFFFCD; }
 .header label:hover { text-decoration: underline; cursor: default; }
 .header a { color: white; }
 .header a.link { display: block; position: absolute; margin: 0; left: 5px; top: 5px; height: 80px; line-height: 80px; vertical-align: middle; }
+.content  { padding: 10px; }
 a         { text-decoration: none; font-weight: normal; }
 a:hover   { text-decoration: none; font-weight: normal; }
 a, a:visited { color: blue; }
+
+#data { width: 100%; }
 
 #statusMenu { position: absolute; display: none; border: 1px solid navy; background-color: #eeeee6; padding: 1px; }
 #statusMenu a { display: block; padding: 1px 3px; border: 1px solid #eeeee6; }

@@ -81,18 +81,14 @@ require_once("admin/functions.php");
                     $type, 'New', $comment, $email) );
   $id = db_insert_id();
 
-  $sendMailTo = array();
-  $data = db_query("SELECT * FROM LikeBackDevelopers WHERE email!=''");
-  while ($line = db_fetch_object($data)) {
-    if (matchType($line->types, $type) && matchLocale($line->locales, $locale))
-      array_push( $sendMailTo, $line->email );
-  }
-
+  $sendMailTo = sendMailTo( $type, $locale );
   $sendMailTo = join( ", ", $sendMailTo );
 
   if (!empty($sendMailTo)) {
-    $from    = $likebackMail;
-    $replyTo = (empty($email) ? $sendMailTo : $email);
+    $from    = empty($email) ? $likebackMail : $email;
+    // Don't send replies to the original poster
+    $sender  = $likebackMail;
+    $replyTo = $likebackMail; // (empty($email) ? $sendMailTo : $email);
     $to      = $sendMailTo;
     $subject = "[LikeBack: $type] #$id ($version - $locale)";
 
@@ -115,6 +111,7 @@ require_once("admin/functions.php");
     $message = wordwrap($message, 80);
 
     $headers = "From: $from\r\n" .
+      "Sender: $sender\r\n" .
       "Reply-To: $replyTo\r\n" .
       "Content-Type: text/plain; charset=\"UTF-8\"\r\n" .
       "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();

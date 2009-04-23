@@ -26,12 +26,7 @@ echo lbHeader();
 $subBarContents = '<span id="loadingMessage">Loading...</span><span id="countMessage">Number of displayed comments: <strong id="commentCount">Unknown</strong></span>';
 echo subBar( 'Options', $subBarContents );
 
-?>
-
-  <div class="content">
-    <a href="options.php" class="link">E-Mail Options...</a> <em>This should move somewhere else for the 1.2 release</em><br/><br/>
-
-<?php
+echo '<div class="content">';
 
   if (isset($_GET['useSessionFilter']) && $_GET['useSessionFilter'] == "true" && isset( $_SESSION['postedFilter'] ) )
     $_POST = $_SESSION['postedFilter'];

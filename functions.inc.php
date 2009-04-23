@@ -80,3 +80,17 @@ function getLikeBackUrl ()
   $url     = "http://" . $_SERVER['HTTP_HOST'] . $serverPort . $path;
   return $url;
 }
+
+// Returns an array() of developers interested in this $type, $locale
+function sendMailTo ($type, $locale)
+{
+  $sendMailTo = array();
+  $data = db_query("SELECT * FROM LikeBackDevelopers WHERE email!=''");
+  while ($line = db_fetch_object($data)) {
+    if (matchType($line->types, $type) && matchLocale($line->locales, $locale))
+      array_push( $sendMailTo, $line->email );
+  }
+  return $sendMailTo;
+}
+
+

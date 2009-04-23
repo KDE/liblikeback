@@ -10,6 +10,19 @@
  right now.
  * Made version instead of fullVersion shown in commenttable, and fullVersion
  when you hover it with the mouse.
+ * Moved and fixed sendMailTo() to functions.inc.php so send.php can use it too.
+ * Added application logo, preferences box and awful LikeBack logo to the top
+ bar.
+ * Made the table use the full width of the screen, even if that space isn't
+ needed.
+ * Fixed some bugs in comment.php which were caused by earlier changes.
+ * E-mails about an added comment are now sent From $useraddress, Sender
+ $likebackMail, replyTo $likebackMail.
+ * Made comment.php also send e-mails to every interested developer when a
+ remark is added.
+ * Workarounded a PHP bug in e-mail word wrapping when a line was exactly 80
+ characters.
+ * Some other interface changes.
 
 2009-04-22 (dazjorz)
  * Added functions.inc.php with validStatuses(), validTypes() and

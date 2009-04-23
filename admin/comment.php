@@ -51,15 +51,15 @@
 
   if( !empty( $_POST['newRemark'] ) )
   {
-    // Send a mail to the original feedback poster:
+    // Send a mail to the original feedback poster
     if (!empty($email) and isset($_POST['mailUser']) and $_POST['mailUser'] == '1' ) {
       $from          = $likebackMail;
       $to            = $email;
       $subject       = $likebackMailSubject . " - Answer to your feedback";
 
       $smarty = getSmartyObject();
-      $smarty->assign( 'comment', $rawComment );
-      $smarty->assign( 'remark', $remark );
+      $smarty->assign( 'comment', $comment );
+      $smarty->assign( 'remark', $_POST['newRemark'] );
 
       $message = $smarty->fetch( 'email/devremark.tpl' );
       $message = wordwrap($message, 80);
@@ -71,6 +71,34 @@
 
       // Add a warning on the remark, to notify the developer that the message was also sent to the user
       $_POST['newRemark'] = "This remark has also been sent to the user:\r\n\r\n" . $_POST['newRemark'];
+    }
+
+    // Send a mail to all developers interested in this bug
+    $sendMailTo = sendMailTo( $comment->type, $comment->locale );
+    $sendMailTo = join( ", ", $sendMailTo );
+
+    if (!empty($sendMailTo)) {
+      $from    = $likebackMail;
+      $to      = $sendMailTo;
+      $subject = $likebackMailSubject . ' - New remark for '.$comment->status.' '.$comment->type.' #'.$comment->id
+        .' ('.$comment->version.' - '.$comment->locale.')';
+
+      $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $id;
+
+      $smarty  = getSmartyObject();
+
+      $smarty->assign( 'remark',  $_POST['newRemark'] );
+      $smarty->assign( 'comment', $comment );
+      $smarty->assign( 'url',     $url );
+
+      $message = $smarty->fetch( 'email/devremark_todev.tpl' );
+      $message = wordwrap($message, 80);
+
+      $headers = "From: $from\r\n" .
+        "Content-Type: text/plain; charset=\"UTF-8\"\r\n" .
+        "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
+
+      mail($to, $subject, $message, $headers);
     }
 
     db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, remark) VALUES(?, ?, ?, ?);",

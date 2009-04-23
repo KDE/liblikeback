@@ -1,8 +1,8 @@
 Hi!
 
-A developer responded on your recent LikeBack feedback message. This is the message you sent us:
+A developer responded on your LikeBack feedback message. This is the message you sent us:
 
-{$comment|wrapQuote}
+{$comment->comment|wrapQuote}
 
 A developer, {$developer->login}, wrote this message to you:
 

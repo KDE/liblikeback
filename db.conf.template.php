@@ -39,5 +39,8 @@
   // The name of this project
   define( "LIKEBACK_PROJECT", "Example project" );
 
+  // The logo URL for this project
+  define( "LIKEBACK_APP_LOGO", "http://example.org/icons/logo.png" );
+
   // Don't change this:
   define( "LIKEBACK_VERSION", "svn" );
