@@ -1,5 +1,6 @@
-body      { background: white; color: black; margin: 0; }
-th        { text-align: left; border-bottom: 1px solid navy; }
+body      { background: white; color: black; margin: 0; font-family: 'Tahoma', sans-serif; font-size: 9pt; }
+input     { vertical-align: middle; }
+th        { text-align: center; border-bottom: 1px solid navy; }
 img       { padding: 1px; border: none; vertical-align: middle; }
 
 .Like     { background-color: #DFFFDF; }
@@ -60,13 +61,15 @@ div.comment {
 .subBar.Options { border-bottom: 1px solid #DFDFFF; }
 
 .pre      { white-space: pre; }
+.nobr     { white-space: nowrap; }
 
 .mailRemark { vertical-align: middle; }
 .mailRemarkOff { vertical-align: middle; color:gray; font-style:italic;}
 
-.header   { text-align: center; vertical-align: middle; background: #1C1C58 url('header.png') 0 50%; color: white; padding: 5px; border-bottom: 1px solid #121239; margin: 0; line-height: 26px; height: 80px; text-shadow: black 0 0 3px; }
+.header   { text-align: center; vertical-align: middle; background: #1C1C58 url('header.png') 0 50%; color: white; padding: 5px; border-bottom: 1px solid #121239; margin: 0; line-height: 26px; height: 80px; }
 .header #applogo { float: left; } /* vertical align doesn't work?! */
-.header #lbinfo { float: right; background: white; border: 2px blue solid; color: black; padding: 2px; padding-left: 5px; padding-right: 5px; }
+.header #lbinfo { float: right; color: yellow; padding: 2px; padding-left: 5px; padding-right: 5px; }
+.header #lbinfo a { color: blue; }
 .header #lblogo { float: right; margin-left: 10px; margin-top: 10px; }
 .header strong { color: #FFFFCD; }
 .header label:hover { text-decoration: underline; cursor: default; }

@@ -1,5 +1,5 @@
 
-   <h2><img src="icons/remarks.png" width="16" height="16" alt=""> {$remarks|@count} remarks</h2>
+   <h2><img src="icons/remarks.png" width="16" height="16" alt="remarks"> {$remarks|@count} remarks</h2>
 
 {section name=i loop=$remarks}
    <div class="remark {$commenttype}">

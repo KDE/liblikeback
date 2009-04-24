@@ -23,19 +23,21 @@ require_once( "functions.php" );
 // Get all developers
 $developers = db_fetchAll( "SELECT id, login, email, types, locales FROM LikeBackDevelopers" );
 
-// Get the counts of unsolved comments
+// Prepare the queries
 $unsolved     = array_diff( validStatuses(), array( "Invalid", "Solved" ) );
-$statusCounts = array();
-$totalCount   = 0;
-foreach( $unsolved as $status ) {
-  $countData             = db_query( "SELECT COUNT(*) AS count FROM `LikeBack` WHERE `status`=?", array( $status ) );
-  $statusCounts[$status] = db_fetch_object( $countData )->count;
-  $totalCount           += $statusCounts[$status];
+$placeholders = db_buildQuery_checkArray( 'status', $unsolved );
+$conditional  = array_shift( $placeholders );
+
+// Get the counts of unsolved comments
+$statuses   = db_fetchAll( "SELECT status, COUNT(*) AS count FROM `LikeBack` WHERE $conditional GROUP BY status", $placeholders );
+$totalCount = 0;
+foreach( $statuses as $status )
+{
+  $statusCounts[$status->status] = $status->count;
+  $totalCount                   += $status->count;
 }
 
 // Get the FETCH_NUM latest unsolved comments
-$placeholders = db_buildQuery_checkArray( 'status', $unsolved );
-$conditional  = array_shift( $placeholders );
 $comments     = db_fetchAll( "SELECT    *"
                            ." FROM LikeBack"
                            ." WHERE $conditional"

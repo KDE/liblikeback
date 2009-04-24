@@ -1,4 +1,15 @@
 
+2009-04-24 (dazjorz)
+ * Made getting of status counts in sendReminders much quicker and easier
+ thanks to Jille Timmermans and Bart Schuurmans.
+ * Templatized the top of all LikeBack pages from header.php.
+ * Made 'view.php' pass the W3C validator test: gave all images valid alts,
+ changed nobr to a span with CSS styles, removed text-shadow, wrap all form
+ elements in a div, close all inputs correctly.
+ * Some interface changes: default font of the LikeBack interface, made table
+ headings go in the center by default, removed background and border of the
+ infobox and added awful temporary color.
+
 2009-04-23 (dazjorz)
  * Added getLikeBackUrl() function to functions.inc.php to return the HTTP path
  to this LikeBack instance.

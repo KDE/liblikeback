@@ -69,7 +69,7 @@ function iconForStatus($status, $id)
   case "solved":
   case "invalid":
     return '<img src="icons/' . strToLower( $status ) . '.png" id="status_comment_'
-      . $id . '" width="16" height="16" title="' . messageForStatus( $status ) . '" />';
+      . $id . '" width="16" height="16" alt="' . messageForStatus( $status ) . '" title="' . messageForStatus( $status ) . '" />';
   default: return "";
   }
 }

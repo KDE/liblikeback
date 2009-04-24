@@ -28,15 +28,6 @@
   require_once("../functions.inc.php");
 
 $developer = getDeveloper();
-
-?>
-<html>
- <head>
-  <title><?php echo $title; ?> - LikeBack</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <script type="text/javascript" src="xmlhttprequest.js"></script>
-  <script type="text/javascript" src="jsUtilities.js"></script>
-  <script type="text/javascript" src="scripts.js"></script>
- </head>
- <body onmousedown="hideStatusMenu(event)">
+$smarty    = getSmartyObject();
+$smarty->assign( 'pageTitle', $title );
+$smarty->display( 'html/header.tpl' );

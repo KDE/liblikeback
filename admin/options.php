@@ -61,7 +61,7 @@ include("header.php");
 
 echo lbHeader();
 $subBarContents = '<a href="view.php?useSessionFilter=true"><img src="icons/gohome.png" width="32" height="32" alt=""></a> &nbsp; &nbsp;
-   <strong><img src="icons/email.png" width="16" height="16" alt="" title="" /> E-Mail Options</strong> &nbsp; &nbsp; '.$developer->login;
+   <strong><img src="icons/email.png" width="16" height="16" alt="E-mail" /> E-Mail Options</strong> &nbsp; &nbsp; '.$developer->login;
 echo subBar( 'Options', $subBarContents );
 
 $smarty = getSmartyObject();
