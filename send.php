@@ -72,8 +72,10 @@ require_once("admin/functions.php");
   else
     $version   = trim( substr( $fullVersion, 0, strpos( $fullVersion, "(" ) ) );
 
-  if ( ! in_array( $type, validTypes() ) )
-    die('<LikeBackReply><Result type="error" code="' . ERROR_UNKNOWN_REPORTTYPE . '" message="Invalid type, must be one of Like, Dislike, Bug or Feature."/></LikeBackReply>');
+  if ( ! in_array( $type, validTypes() ) ) {
+    $options = join ( ", ", validTypes() );
+    die('<LikeBackReply><Result type="error" code="' . ERROR_UNKNOWN_REPORTTYPE . '" message="Invalid type, must be one of '.$options."/></LikeBackReply>');
+  }
 
   db_query("INSERT INTO LikeBack(date, fullVersion, version, locale, window, context, type, status, comment, email) " .
                          "VALUES(?,    ?,           ?,       ?,      ?,      ?,       ?,    ?,      ?,       ?);",

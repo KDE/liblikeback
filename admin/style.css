@@ -62,6 +62,7 @@ div.comment {
 
 .pre      { white-space: pre; }
 .nobr     { white-space: nowrap; }
+.noexpand { width: 1px; white-space: nowrap; }
 
 .mailRemark { vertical-align: middle; }
 .mailRemarkOff { vertical-align: middle; color:gray; font-style:italic;}

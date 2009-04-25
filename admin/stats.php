@@ -18,37 +18,20 @@
  *                                                                         *
  ***************************************************************************/
 
-  $title = "Stats";
-  include("header.php");
+$title = "Stats";
+include("header.php");
 
+echo '<div style="margin: 10px;">';
+// Get the counts of all comments
+$types      = db_fetchAll( "SELECT type, COUNT(*) AS count FROM `LikeBack` GROUP BY type" );
+$totalCount = 0;
+foreach( $types as $type )
+{
+  echo '<b>' . messageForType($type->type) . ':</b> ' . $type->count . " comments remaining<br/><br/>\n";
+  $totalCount += $type->count;
+}
 
-  echo "<b>Total:</b> ";
-  $data = db_query("SELECT COUNT(*) FROM LikeBack");
-  $line = mysql_fetch_array($data);
-  $count = $line[0];
-  echo "$count<br>\n";
+echo '<b>Total:</b> ' . $totalCount . " comments remaining\n";
+echo "</div>\n";
 
-  echo "<b>Like:</b> ";
-  $data = db_query("SELECT COUNT(*) FROM LikeBack WHERE type='Like'");
-  $line = mysql_fetch_array($data);
-  $count = $line[0];
-  echo "$count<br>\n";
-
-  echo "<b>Do not like:</b> ";
-  $data = db_query("SELECT COUNT(*) FROM LikeBack WHERE type='Dislike'");
-  $line = mysql_fetch_array($data);
-  $count = $line[0];
-  echo "$count<br>\n";
-
-  echo "<b>Bug:</b> ";
-  $data = db_query("SELECT COUNT(*) FROM LikeBack WHERE type='Bug'");
-  $line = mysql_fetch_array($data);
-  $count = $line[0];
-  echo "$count<br>\n";
-
-  echo "<b>Feature:</b> ";
-  $data = db_query("SELECT COUNT(*) FROM LikeBack WHERE type='Feature'");
-  $line = mysql_fetch_array($data);
-  $count = $line[0];
-  echo "$count<br>\n";
-?>
+$smarty->display( 'html/bottom.tpl' );

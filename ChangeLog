@@ -1,4 +1,11 @@
 
+2009-04-25 (dazjorz)
+ * Made send.php use validTypes() everywhere, so no hardcoded types.
+ * Optimized stats.php hugely (the same way as sendReminders).
+ * Made the table layout show correctly (comment table expanded, the rest
+ nonexpanded) even if comments are very short; and moved <td><span
+ class="nobr"> to be simply <td class="nobr">.
+
 2009-04-24 (dazjorz)
  * Made getting of status counts in sendReminders much quicker and easier
  thanks to Jille Timmermans and Bart Schuurmans.
