@@ -17,6 +17,7 @@
  ***************************************************************************/
 
 require_once("../db.php");
+require_once("../functions.inc.php");
 
 header("Content-Type: text/plain");
 
@@ -29,12 +30,13 @@ while( $row = mysql_fetch_assoc( $tables ) )
 }
 
 // Add a new row to the LikeBack table
-echo "Upgrading your database format...\n";
+echo "Upgrading your database format...";
 if( !db_query("ALTER TABLE `LikeBack` ADD `fullVersion` VARCHAR( 255 ) NULL AFTER `version`;") )
   die( "Upgrade failed while altering table LikeBack: " . mysql_error() );
+echo "Done.\n";
 
 // Convert all versions
-echo "Upgrading your database data...\n";
+echo "Upgrading your database data... ";
 $rows = db_query( "SELECT id, version FROM `LikeBack`" );
 $versions = array();
 $handled = 0;
@@ -68,3 +70,32 @@ while( $row = mysql_fetch_assoc( $rows ) )
 
 echo "Done. $handled entries converted. " . count($versions) . " versions detected:\n";
 echo join(" - ", $versions );
+
+echo "\n";
+
+// Run stripslashes on all remarks
+echo "Upgrading the format of all LikeBack remarks...";
+$remarks = db_fetchAll( "SELECT id, remark  FROM `LikeBackRemarks`" );
+$updated = 0;
+foreach( $remarks as $remark )
+{
+  $id    = $remark->id;
+  $text  = $remark->remark;
+  $strip = maybeStrip( $text );
+
+  if( $strip != $text ) {
+    ++$updated;
+    $query        = "UPDATE `LikeBackRemarks` SET `remark`=? WHERE `id`=?";
+    $placeholders = array( $strip, $id );
+    $result       = db_query( $query, $placeholders );
+    if( !$result ) {
+      echo "Failed to upgrade remark $id! Please edit the row yourself. This is the data you should fill in:";
+      echo "for ID      = $id\n";
+      echo "remark      = $strip\n";
+      echo "-----------------------------------------------------\n";
+      continue;
+    }
+  }
+}
+
+echo "Done. $updated entries converted.\n";

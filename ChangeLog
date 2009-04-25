@@ -5,6 +5,18 @@
  * Made the table layout show correctly (comment table expanded, the rest
  nonexpanded) even if comments are very short; and moved <td><span
  class="nobr"> to be simply <td class="nobr">.
+ * Fixed magic_quotes_gpc not being taken into effect correctly when adding a
+ new remark to the database.
+ * Added to upgrade11to12 a part that stripslashes all entries.
+ * Fixed reading id and page in comment.php to read from both POST and GET.
+ * Added changing comment statuses via the remark form, next to via
+ javascript/ajax.
+ * Used messageForTyp() and messageForStatus() in mail subjects from
+ comment.php.
+ * Added the mail user checkbox to a template instead of to the code itself.
+ * Removed the javascript focus.
+ * Fixed a bug in ajax.php (it would never really change the status because of
+ missing functions.)
 
 2009-04-24 (dazjorz)
  * Made getting of status counts in sendReminders much quicker and easier

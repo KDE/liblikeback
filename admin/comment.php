@@ -18,7 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 
-  if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+  if (!isset($_REQUEST['id']) || !is_numeric($_REQUEST['id'])) {
     header("Location: view.php?useSessionFilter=true");
     exit();
   }
@@ -26,7 +26,7 @@
   $title = "View Comment";
   include("header.php");
 
-  $id = $_GET['id'];
+  $id = $_REQUEST['id'];
   $data = db_query("SELECT * FROM LikeBack WHERE id=? LIMIT 1", array($id) );
   $comment = db_fetch_object($data);
 
@@ -38,8 +38,8 @@
   echo statusMenu();
   echo lbHeader();
 
-  if( isset( $_GET['page'] ) )
-    $page = "&amp;page=" . htmlentities( stripslashes( $_GET['page'] ) );
+  if( isset( $_REQUEST['page'] ) )
+    $page = "&amp;page=" . htmlentities( stripslashes( $_REQUEST['page'] ) );
   else
     $page = "";
 
@@ -49,8 +49,32 @@
 
   $email = htmlentities($comment->email, ENT_QUOTES, "UTF-8");
 
-  if( !empty( $_POST['newRemark'] ) )
+  if( isset( $_POST['newRemark'] ) )
   {
+    $information = "";
+    $newRemark = maybeStrip( $_POST['newRemark'] );
+
+    // Gather a changed status
+    if( isset( $_POST['newStatus'] ) && $_POST['newStatus'] != $comment->status ) {
+      $newStatus = $_POST['newStatus'];
+      if( !in_array( $newStatus, validStatuses() ) ) {
+        // todo nicer warning
+        echo "<h2>Warning: the status you chose is not in the list of valid statuses, not changing the status.";
+      }
+      else
+      {
+        if( !db_query("UPDATE LikeBack SET status=? WHERE id=?", array( $newStatus, $comment->id ) ) ) {
+          // todo nicer warning
+          echo "<h2>Warning: Couldn't set status for this bug to $newStatus: ".mysql_error()."</h2>";
+        }
+        else
+        {
+          $information = "The developer set the status for this comment to $newStatus.\r\n";
+          $comment->status = $newStatus;
+        }
+      }
+    }
+
     // Send a mail to the original feedback poster
     if (!empty($email) and isset($_POST['mailUser']) and $_POST['mailUser'] == '1' ) {
       $from          = $likebackMail;
@@ -59,7 +83,7 @@
 
       $smarty = getSmartyObject();
       $smarty->assign( 'comment', $comment );
-      $smarty->assign( 'remark', $_POST['newRemark'] );
+      $smarty->assign( 'remark',  $newRemark );
 
       $message = $smarty->fetch( 'email/devremark.tpl' );
       $message = wordwrap($message, 80);
@@ -70,8 +94,12 @@
       mail($to, $subject, $message, $headers);
 
       // Add a warning on the remark, to notify the developer that the message was also sent to the user
-      $_POST['newRemark'] = "This remark has also been sent to the user:\r\n\r\n" . $_POST['newRemark'];
+      // TODO: add this as a flag in the database
+      $information = "This remark has also been sent to the user.\r\n";
     }
+
+    if( !empty( $information ) )
+      $newRemark = $information . "\r\n" . $newRemark;
 
     // Send a mail to all developers interested in this bug
     $sendMailTo = sendMailTo( $comment->type, $comment->locale );
@@ -80,14 +108,14 @@
     if (!empty($sendMailTo)) {
       $from    = $likebackMail;
       $to      = $sendMailTo;
-      $subject = $likebackMailSubject . ' - New remark for '.$comment->status.' '.$comment->type.' #'.$comment->id
+      $subject = $likebackMailSubject . ' - New remark for '.messageForStatus($comment->status).
+        ' '.messageForType($comment->type).' #'.$comment->id
         .' ('.$comment->version.' - '.$comment->locale.')';
 
       $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $id;
 
       $smarty  = getSmartyObject();
-
-      $smarty->assign( 'remark',  $_POST['newRemark'] );
+      $smarty->assign( 'remark',  $newRemark );
       $smarty->assign( 'comment', $comment );
       $smarty->assign( 'url',     $url );
 
@@ -102,22 +130,17 @@
     }
 
     db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, remark) VALUES(?, ?, ?, ?);",
-              array( get_iso_8601_date(time()), $developer->id, $id, $_POST['newRemark'] ) );
+              array( get_iso_8601_date(time()), $developer->id, $id, $newRemark ) );
   }
 
   if (!empty($email))
   {
     $email .= " <em>(please reply by using the form below)</em>";
-    $disabled = 'class="mailRemark"';
   }
   else
   {
     $email = "Anonymous";
-    $disabled = 'disabled class="mailRemarkOff"';
   }
-  $mailUserCheckBox = "<br><label $disabled name='mailUserBox'>" .
-                      "<input $disabled type='checkbox' name='mailUser' value='1'>" .
-                      "Also send this comment to the author</label><br>";
 
   $message = messageForStatus( $comment->status );
   $icon    = iconForStatus(    $comment->status, $id );
@@ -148,23 +171,17 @@
   $remarks = array();
 
   while ($line = db_fetch_object($data)) {
-    $remark = htmlentities( stripslashes( $line->remark ), ENT_QUOTES, "UTF-8" );
-    $remark = str_replace( "\r", "", $remark );
-    $remark = str_replace( "\n", "<br/>", $remark );
-    $line->remark = $remark;
+    //$remark = htmlentities( stripslashes( $line->remark ), ENT_QUOTES, "UTF-8" );
+    //$remark = str_replace( "\r", "", $remark );
+    //$remark = str_replace( "\n", "<br/>", $remark );
+    //$line->remark = $remark;
 
     array_push( $remarks, $line );
   }
 
-  $smarty->assign( 'commenttype', $comment->type );
-  $smarty->assign( 'commentid', $id );
+  $smarty->assign( 'comment', $comment );
   $smarty->assign( 'remarks', $remarks );
-  $smarty->assign( 'checkBoxHtml', $mailUserCheckBox );
-  $smarty->assign( 'page', (isset($_GET['page']) ? $_GET['page'] : "") );
+  $smarty->assign( 'page', (isset($_REQUEST['page']) ? $_REQUEST['page'] : "") );
+  $smarty->assign( 'statuses', validStatuses() );
   $smarty->display( 'html/remarks.tpl' );
-?>
-   <script type="text/javascript">
-     document.getElementById("newRemark").focus();
-   </script>
-<?
   $smarty->display( 'html/bottom.tpl' );

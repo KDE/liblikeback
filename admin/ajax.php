@@ -17,6 +17,7 @@
  ***************************************************************************/
 
 include("../db.php");
+include("../functions.inc.php");
 
 // Verify incoming data
 if( !isset( $_GET['markAs'] ) || !isset( $_GET['id'] ) )
