@@ -5,7 +5,7 @@
         <select name="newStatus">
 {section name=i loop=$statuses}
 {if $statuses[i] == $comment->status}{assign var=selected value='selected=""'}{else}{assign var=selected value=''}{/if}
-          <option value="{$statuses[i]}" {$selected}>{$statuses[i]}</option>
+          <option value="{$statuses[i]}" {$selected}>{$statuses[i]|message:'status'}</option>
 {sectionelse}
           <option>Error: No known statuses</option>
 {/section}

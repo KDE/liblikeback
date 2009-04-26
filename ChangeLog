@@ -1,4 +1,17 @@
 
+2009-04-26 (dazjorz)
+ * When a developer changes status through newRemark, the e-mail now displays
+ the real message for that status (messageForStatus).
+ * The select box on the newRemark form now displays the real messages for
+ the statuses.
+ * Fixed checking if an e-mail should be sent to the user.
+ * Added the status change message to an e-mail to the reporter, if any.
+ * Fixed the information message when both the status was changed and an
+ e-mail to the reporter was sent.
+ * Moved Smarty function registering to functions.php, added 'message' Smarty
+ modifier.
+ * Changed LikeBack version setting to 1.2-svn.
+
 2009-04-25 (dazjorz)
  * Made send.php use validTypes() everywhere, so no hardcoded types.
  * Optimized stats.php hugely (the same way as sendReminders).

@@ -69,21 +69,24 @@
         }
         else
         {
-          $information = "The developer set the status for this comment to $newStatus.\r\n";
+          $information .= "The developer set the status for this comment to " . messageForStatus( $newStatus ) . "\r\n";
           $comment->status = $newStatus;
         }
       }
     }
 
     // Send a mail to the original feedback poster
-    if (!empty($email) and isset($_POST['mailUser']) and $_POST['mailUser'] == '1' ) {
+    if (!empty($email) and isset($_POST['mailUser']) and $_POST['mailUser'] == 'checked' ) {
       $from          = $likebackMail;
       $to            = $email;
       $subject       = $likebackMailSubject . " - Answer to your feedback";
 
       $smarty = getSmartyObject();
       $smarty->assign( 'comment', $comment );
-      $smarty->assign( 'remark',  $newRemark );
+      if( !empty( $information ) )
+        $smarty->assign( 'remark', $information."\r\n".$newRemark );
+      else
+        $smarty->assign( 'remark',  $newRemark );
 
       $message = $smarty->fetch( 'email/devremark.tpl' );
       $message = wordwrap($message, 80);
@@ -95,7 +98,7 @@
 
       // Add a warning on the remark, to notify the developer that the message was also sent to the user
       // TODO: add this as a flag in the database
-      $information = "This remark has also been sent to the user.\r\n";
+      $information .= "This remark has also been sent to the user.\r\n";
     }
 
     if( !empty( $information ) )

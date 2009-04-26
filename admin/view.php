@@ -167,8 +167,6 @@ echo '<div class="content">';
     $comments[]     = $line;
   }
 
-  $smarty->register_function( 'iconForType',   'smarty_iconForType'   );
-  $smarty->register_function( 'iconForStatus', 'smarty_iconForStatus' );
   $smarty->assign( 'comments', $comments );
   $smarty->assign( 'page',     $page );
   $smarty->display( 'html/commenttable.tpl' );

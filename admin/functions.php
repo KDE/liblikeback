@@ -209,8 +209,12 @@ function getSmartyObject ( $noDeveloper = false )
 
   $smarty->template_dir = 'templates';
   $smarty->compile_dir  = '/tmp';
+  
+  $smarty->register_function( 'iconForType',    'smarty_iconForType'   );
+  $smarty->register_function( 'iconForStatus',  'smarty_iconForStatus' );
 
   $smarty->register_modifier( 'wrapQuote', 'smarty_modifier_wrapQuote' );
+  $smarty->register_modifier( 'message',   'smarty_modifier_message' );
 
   $smarty->assign( 'project', LIKEBACK_PROJECT );
 
@@ -304,4 +308,30 @@ function smarty_modifier_wrapQuote ( $text, $length = 75, $prepend = '> ' )
   $text = $prepend . str_replace( "\n", "\n".$prepend, $text );
 
   return $text;
+}
+
+function smarty_modifier_message( $text, $forWhat, $iconOrMessage = "message" )
+{
+  if( $forWhat != "status" && $forWhat != "type" )
+    return "invalid forWhat to Smarty message modifier (must be status or type)";
+  
+  if( $iconOrMessage != "message" && $iconOrMessage != "icon" && $iconOrMessage != "both" )
+    return "invalid iconOrMessage to Smarty message modifier (must be message, icon or both)";
+
+  if( $forWhat == "status" )
+    if( $iconOrMessage == "message" ) {
+      return messageForStatus( $text );
+    } elseif( $iconOrMessage == "icon" ) {
+      return iconForStatus( $text );
+    } else {
+      return iconForStatus( $text ) . " " . messageForStatus( $text );
+    }
+  else
+    if( $iconOrMessage == "message" ) {
+      return messageForStatus( $text );
+    } elseif( $iconOrMessage == "icon" ) {
+      return iconForStatus( $text );
+    } else {
+      return iconForStatus( $text ) . " " . messageForStatus( $text );
+    }
 }
