@@ -1,3 +1,4 @@
+  <a name="newRemark"></a>
   <h2>Add a new remark:</h2>
    <div class="remark {$comment->type}">
     <form action="comment.php?id={$comment->id}" method="post">

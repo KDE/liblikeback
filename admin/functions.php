@@ -59,8 +59,12 @@ function smarty_iconForStatus( $params, &$smarty )
   return iconForStatus( $params['status'], $params['id'] );
 }
 
-function iconForStatus($status, $id)
+function iconForStatus($status, $id = -1)
 {
+  if( $id != -1 )
+    $id = 'id="status_comment_'.$id.'"';
+  else
+    $id = '';
   switch( strToLower( $status ) )
   {
   case "new":
@@ -68,8 +72,8 @@ function iconForStatus($status, $id)
   case "progress":
   case "solved":
   case "invalid":
-    return '<img src="icons/' . strToLower( $status ) . '.png" id="status_comment_'
-      . $id . '" width="16" height="16" alt="' . messageForStatus( $status ) . '" title="' . messageForStatus( $status ) . '" />';
+    return '<img src="icons/' . strToLower( $status ) . '.png" '. $id . ' width="16" height="16" alt="'
+      . messageForStatus( $status ) . '" title="' . messageForStatus( $status ) . '" />';
   default: return "";
   }
 }
@@ -225,15 +229,6 @@ function getSmartyObject ( $noDeveloper = false )
   }
 
   return $smarty;
-}
-
-// todo move this
-function statusMenu ()
-{
-  global $developer;
-
-  $smarty = getSmartyObject();
-  $smarty->display( 'html/statusmenu.tpl' );
 }
 
 // todo move this

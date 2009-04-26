@@ -1,12 +1,16 @@
   <div class="content">
    <table class="summary">
-    <tr><th>Version:</th> <td>{$version}</td></tr>
-    <tr><th>Locale:</th>  <td>{$locale}</td></tr>
-    <tr><th>Window:</th>  <td>{$window}</td></tr>
-    <tr><th>Context:</th> <td>{$context}</td></tr>
-    <tr><th>Status:</th>  <td>{$status}</td></tr>
-    <tr><th>E-mail:</th>  <td>{$email}</td></tr>
+    <tr><th>Version:</th> <td>{$comment->version|escape:'html':'utf-8'}</td></tr>
+    <tr><th>Locale:</th>  <td>{$comment->locale|escape:'html':'utf-8'}</td></tr>
+    <tr><th>Window:</th>  <td>{$comment->window|escape:'html':'utf-8'}</td></tr>
+    {* <tr><th>Context:</th> <td>{$comment->context|escape:'html':'utf-8'}</td></tr> *}
+    <tr><th>Status:</th>  <td><a href="#newRemark">{$comment->status|message:'status':'both'}</a></td></tr>
+{if $comment->email}
+    <tr><th>E-mail:</th>  <td>{$comment->email} (<em>Please reply by using the form below</em>)</td></tr>
+{else}
+    <tr><th>E-mail:</th>  <td>Anonymous</td></tr>
+{/if}
    </table>
    <div class="comment">
-   {$comment}
+   {$comment->comment|escape:'html':'utf-8'|nl2br}
    </div>

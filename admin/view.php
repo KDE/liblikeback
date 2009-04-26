@@ -21,7 +21,6 @@
 $title = "Comment List";
 include("header.php");
 
-echo statusMenu();
 echo lbHeader();
 $subBarContents = '<span id="loadingMessage">Loading...</span><span id="countMessage">Number of displayed comments: <strong id="commentCount">Unknown</strong></span>';
 echo subBar( 'Options', $subBarContents );

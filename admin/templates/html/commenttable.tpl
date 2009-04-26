@@ -22,7 +22,7 @@
       <td class="nobr"><a href="{$commentLink}">#{$comment->id}</a></td>
       <td class="nobr">{iconForType type=`$comment->type`}<a href="comment_{$id}"></a></td>
       <td class="nobr">
-        <a href="#" onclick="return showStatusMenu(event)">{iconForStatus id="$id" status=`$comment->status`}</a>
+        <a title="Comment status" href="{$commentLink}#newRemark">{iconForStatus id="$id" status=`$comment->status`}</a>
         <a title="Remark count" href="{$commentLink}">{$comment->remarkCount}<img src="icons/remarks.png" width="16" height="16" alt="remarks"/>
 {if ! empty( $comment->email ) }
           <img src="icons/email.png" width="16" height="16" title="E-mail address available" alt="E-mail address available"/>

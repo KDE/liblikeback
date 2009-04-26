@@ -11,6 +11,11 @@
  * Moved Smarty function registering to functions.php, added 'message' Smarty
  modifier.
  * Changed LikeBack version setting to 1.2-svn.
+ * Removed support for Javascript powered status changing, status changes
+ should be done via the newRemarks form now.
+ * More correctly templatized comment showing (html/comment.tpl).
+ * Made comment.php use fetchAll instead of query, fetch, etc.
+ * Added iconForStatus behaviour when no id is given.
 
 2009-04-25 (dazjorz)
  * Made send.php use validTypes() everywhere, so no hardcoded types.

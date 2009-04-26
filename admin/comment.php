@@ -26,8 +26,7 @@
   $title = "View Comment";
   include("header.php");
 
-  $id = $_REQUEST['id'];
-  $data = db_query("SELECT * FROM LikeBack WHERE id=? LIMIT 1", array($id) );
+  $data = db_query("SELECT * FROM LikeBack WHERE id=? LIMIT 1", array($_REQUEST['id']) );
   $comment = db_fetch_object($data);
 
   if (!$comment) {
@@ -35,19 +34,16 @@
     exit();
   }
 
-  echo statusMenu();
   echo lbHeader();
 
   if( isset( $_REQUEST['page'] ) )
-    $page = "&amp;page=" . htmlentities( stripslashes( $_REQUEST['page'] ) );
+    $page = "&amp;page=" . htmlentities( maybeStrip( $_REQUEST['page'] ) );
   else
     $page = "";
 
   $subBarContents = '<a href="view.php?useSessionFilter=true' . $page . '#comment_' . $comment->id . '"><img src="icons/gohome.png" width="32" height="32" alt="Go home"/></a>'."\n";
   $subBarContents .= ' &nbsp; &nbsp;' . iconForType( $comment->type ) . ' ' . messageForType( $comment->type ) . ' &nbsp; #<strong>' . $comment->id . '</strong> &nbsp; &nbsp; ' . $comment->date;
   echo subBar( $comment->type, $subBarContents );
-
-  $email = htmlentities($comment->email, ENT_QUOTES, "UTF-8");
 
   if( isset( $_POST['newRemark'] ) )
   {
@@ -76,9 +72,9 @@
     }
 
     // Send a mail to the original feedback poster
-    if (!empty($email) and isset($_POST['mailUser']) and $_POST['mailUser'] == 'checked' ) {
+    if (!empty($comment->email) and isset($_POST['mailUser']) and $_POST['mailUser'] == 'checked' ) {
       $from          = $likebackMail;
-      $to            = $email;
+      $to            = $comment->email;
       $subject       = $likebackMailSubject . " - Answer to your feedback";
 
       $smarty = getSmartyObject();
@@ -115,7 +111,7 @@
         ' '.messageForType($comment->type).' #'.$comment->id
         .' ('.$comment->version.' - '.$comment->locale.')';
 
-      $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $id;
+      $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $comment->id;
 
       $smarty  = getSmartyObject();
       $smarty->assign( 'remark',  $newRemark );
@@ -133,58 +129,22 @@
     }
 
     db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, remark) VALUES(?, ?, ?, ?);",
-              array( get_iso_8601_date(time()), $developer->id, $id, $newRemark ) );
+              array( get_iso_8601_date(time()), $developer->id, $comment->id, $newRemark ) );
   }
-
-  if (!empty($email))
-  {
-    $email .= " <em>(please reply by using the form below)</em>";
-  }
-  else
-  {
-    $email = "Anonymous";
-  }
-
-  $message = messageForStatus( $comment->status );
-  $icon    = iconForStatus(    $comment->status, $id );
-  $currentStatus = '<a href="#" onclick="return showStatusMenu(event)">' . $icon . '</a> ' . $message;
-
-  if( empty( $comment->context ) )
-    $comment->context = "None";
-
-  $htmlComment = htmlentities( stripslashes( $comment->comment), ENT_QUOTES, "UTF-8" );
-  $htmlComment = str_replace( "\r", "", $htmlComment );
-  $htmlComment = str_replace( "\n", "<br/>", $htmlComment );
 
   $smarty = getSmartyObject();
-  $smarty->assign( 'version', htmlentities($comment->version, ENT_QUOTES, "UTF-8" ) );
-  $smarty->assign( 'locale',  htmlentities($comment->locale,  ENT_QUOTES, "UTF-8" ) );
-  $smarty->assign( 'window',  htmlentities($comment->window,  ENT_QUOTES, "UTF-8" ) );
-  $smarty->assign( 'context', htmlentities($comment->context, ENT_QUOTES, "UTF-8" ) );
-  $smarty->assign( 'status',  $currentStatus );
-  $smarty->assign( 'email',   $email );
-  $smarty->assign( 'comment', $htmlComment );
+  $smarty->assign( 'comment', $comment );
   $smarty->display( 'html/comment.tpl' );
 
-  $data = db_query("SELECT   LikeBackRemarks.*, login " .
+  $remarks = db_fetchAll("SELECT   LikeBackRemarks.*, login " .
                    "FROM     LikeBackRemarks, LikeBackDevelopers " .
                    "WHERE    LikeBackDevelopers.id=developer AND commentId=? " .
-                   "ORDER BY dateTime ASC", array($id));
-
-  $remarks = array();
-
-  while ($line = db_fetch_object($data)) {
-    //$remark = htmlentities( stripslashes( $line->remark ), ENT_QUOTES, "UTF-8" );
-    //$remark = str_replace( "\r", "", $remark );
-    //$remark = str_replace( "\n", "<br/>", $remark );
-    //$line->remark = $remark;
-
-    array_push( $remarks, $line );
-  }
+                   "ORDER BY dateTime ASC", array($comment->id));
 
   $smarty->assign( 'comment', $comment );
   $smarty->assign( 'remarks', $remarks );
   $smarty->assign( 'page', (isset($_REQUEST['page']) ? $_REQUEST['page'] : "") );
   $smarty->assign( 'statuses', validStatuses() );
   $smarty->display( 'html/remarks.tpl' );
+
   $smarty->display( 'html/bottom.tpl' );
