@@ -1,6 +1,6 @@
   <div class="content">
    <table class="summary">
-    <tr><th>Version:</th> <td>{$comment->version|escape:'html':'utf-8'}</td></tr>
+    <tr><th>Version:</th> <td>{$comment->fullVersion|escape:'html':'utf-8'}</td></tr>
     <tr><th>Locale:</th>  <td>{$comment->locale|escape:'html':'utf-8'}</td></tr>
     <tr><th>Window:</th>  <td>{$comment->window|escape:'html':'utf-8'}</td></tr>
     {* <tr><th>Context:</th> <td>{$comment->context|escape:'html':'utf-8'}</td></tr> *}
