@@ -20,6 +20,7 @@
 
 require_once("db.php");
 require_once("functions.inc.php");
+$noadmin = 1;
 require_once("admin/functions.php");
 
   header("Content-Type: text/xml");
@@ -74,7 +75,7 @@ require_once("admin/functions.php");
 
   if ( ! in_array( $type, validTypes() ) ) {
     $options = join ( ", ", validTypes() );
-    die('<LikeBackReply><Result type="error" code="' . ERROR_UNKNOWN_REPORTTYPE . '" message="Invalid type, must be one of '.$options."/></LikeBackReply>');
+    die('<LikeBackReply><Result type="error" code="' . ERROR_UNKNOWN_REPORTTYPE . '" message="Invalid type, must be one of '.$options.'/></LikeBackReply>');
   }
 
   db_query("INSERT INTO LikeBack(date, fullVersion, version, locale, window, context, type, status, comment, email) " .
@@ -96,7 +97,7 @@ require_once("admin/functions.php");
 
     $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $id;
 
-    $smarty = getSmartyObject( true );
+    $smarty  = getSmartyObject( true );
     $smarty->template_dir = 'admin/templates';
     $smarty->compile_dir  = '/tmp';
 

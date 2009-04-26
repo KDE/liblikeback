@@ -14,10 +14,10 @@
      <textarea name="newRemark" id="newRemark" style="width: 50%; height: 100px; vertical-align: middle"></textarea><br/>
 {if $comment->email}
      <label class="mailRemark" name="mailUserBox">
-        <input class="mailRemark" type="checkbox" name="mailUser" value="checked"/>
+        <input class="mailRemark" type="checkbox" name="mailUser" checked="checked" value="checked" />
 {else}
      <label disabled="disabled" class="mailRemarkOff" name="mailUserBox">
-        <input disabled="disabled" class="mailRemarkOff" type="checkbox" name="mailUser" />
+        <input disabled="disabled" class="mailRemarkOff" type="checkbox" name="mailUser" value="checked" />
 {/if}
         Also send this comment to the author</label><br/>
      <input type="hidden" name="page" value="{$page}"/>

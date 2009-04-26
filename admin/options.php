@@ -59,12 +59,11 @@ if (isset($_POST['saveOptions'])) {
 
 include("header.php");
 
-echo lbHeader();
+$smarty->display( 'html/lbheader.tpl' );
+
 $subBarContents = '<a href="view.php?useSessionFilter=true"><img src="icons/gohome.png" width="32" height="32" alt=""></a> &nbsp; &nbsp;
    <strong><img src="icons/email.png" width="16" height="16" alt="E-mail" /> E-Mail Options</strong> &nbsp; &nbsp; '.$developer->login;
 echo subBar( 'Options', $subBarContents );
-
-$smarty = getSmartyObject();
 
 $likeChecked    = (matchType($developer->types, "Like")    ? 'checked="checked"' : "");
 $dislikeChecked = (matchType($developer->types, "Dislike") ? 'checked="checked"' : "");
@@ -76,14 +75,7 @@ $smarty->assign( 'dislikeChecked', $dislikeChecked );
 $smarty->assign( 'bugChecked',     $bugChecked     );
 $smarty->assign( 'featureChecked', $featureChecked );
 
-$localesquery = db_query("SELECT locale FROM LikeBack GROUP BY locale ORDER BY locale ASC") or die(mysql_error());
-$locales = array();
-while ($line = db_fetch_object($localesquery)) {
-  $locale = htmlentities($line->locale);
-  $checked = (matchLocale($developer->locales, $locale) ? " checked=\"checked\"" : "");
-
-  array_push( $locales, $line );
-}
+$locales = db_fetchAll("SELECT locale FROM LikeBack GROUP BY locale ORDER BY locale ASC") or die(mysql_error());
 $smarty->assign( 'locales', $locales );
 
 $smarty->display( 'html/options.tpl' );

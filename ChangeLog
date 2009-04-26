@@ -16,6 +16,32 @@
  * More correctly templatized comment showing (html/comment.tpl).
  * Made comment.php use fetchAll instead of query, fetch, etc.
  * Added iconForStatus behaviour when no id is given.
+ * Implemented an include hack and fixed syntax error in send.php so it works
+ again.
+ * Moved get_iso_8601_date to functions.inc.php, it's a standard non-admin
+ function.
+ * Added two new statuses: Thanks (about the same as Solved) and Wontfix
+ (about the same as Invalid).
+ * Added validDoneStatuses to functions.inc.php, returning all statuses that
+ indicate the comment is "done".
+ * Removed lbHeader() function, in preparation of making the Smarty templates
+ more logical.
+ * Removed getSmartyObject() calls from options.php, view.php and comment.php
+ now header.php creates a global object.
+ * Removed some useless code, and a HTML escape at the wrong place, from
+ options.php and replaced it with a nice fetchAll call.
+ * Added some comments to style.cpp and moved around some code to make it more
+ logical.
+ * Fixed error handling in comment.php and output if no remark was given etc.
+ * Added to comment.tpl that clicking a link will give the newRemark form
+ focus.
+ * De-hardcoded the statuses and types in viewfilters.tpl.
+ * Removed old statusmenu file.
+ * Fixed coloring and strike-through for "done" statuses.
+ * Made the "also send comment to user" checkbox checked by default if an
+ e-mail address is known.
+ * Fixed bug in Smarty 'message' modifier, now types work correctly too
+ * Removed the javascript from view.php, it's not needed anymore.
 
 2009-04-25 (dazjorz)
  * Made send.php use validTypes() everywhere, so no hardcoded types.

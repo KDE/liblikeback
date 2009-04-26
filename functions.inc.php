@@ -17,10 +17,26 @@
  *                                                                         *
  ***************************************************************************/
 
+// From http://fr.php.net/manual/fr/function.date.php
+// @Param $int_date Current date in UNIX timestamp
+function get_iso_8601_date($int_date) {
+  $date_mod      = date('Y-m-d\TH:i:s', $int_date);
+  $pre_timezone  = date('O', $int_date);
+  $time_zone     = substr($pre_timezone, 0, 3).":".substr($pre_timezone, 3, 2);
+  $date_mod     .= $time_zone;
+  return $date_mod;
+}
+
 // Returns an array() of valid statuses in LikeBack.
 function validStatuses()
 {
-  return array( "New", "Confirmed", "Progress", "Solved", "Invalid" );
+  return array( "New", "Confirmed", "Progress", "Thanks", "Solved", "Wontfix", "Invalid" );
+}
+
+// Returns an array() of "done" statuses in LikeBack.
+function validDoneStatuses()
+{
+  return array( "Thanks", "Solved", "Wontfix", "Invalid" );
 }
 
 // Returns an array() of valid types in LikeBack

@@ -1,20 +1,25 @@
+/* Base settings */
 body      { background: white; color: black; margin: 0; font-family: 'Tahoma', sans-serif; font-size: 9pt; }
 input     { vertical-align: middle; }
 th        { text-align: center; border-bottom: 1px solid navy; }
 img       { padding: 1px; border: none; vertical-align: middle; }
 
+/* Special settings for comment and page types */
 .Like     { background-color: #DFFFDF; }
 .Dislike  { background-color: #FFDFDF; }
 .Bug      { background-color: #C0C0C0; }
 .Feature  { background-color: #FFFFDF; }
-
 .Options  { background-color: #DFDFFF; }
 
-.listed-comment a, .listed-comment a:hover,
-.listed-comment a:active, .listed-comment a:visited    { color: black; }
-.listed-minor { font-size: smaller; }
+.subBar         { padding: 3px; background-image: url('subBar.png'); height: 34px; line-height: 34px; vertical-align: middle; }
+.subBar.Like    { border-bottom: 1px solid #DFFFDF; }
+.subBar.Dislike { border-bottom: 1px solid #FFDFDF; }
+.subBar.Bug     { border-bottom: 1px solid #C0C0C0; }
+.subBar.Feature { border-bottom: 1px solid #FFFFDF; }
 
+.subBar.Options { border-bottom: 1px solid #DFDFFF; }
 
+/* Comment list navigation */
 #navi {
   text-align: center;
   padding: 1em;
@@ -34,41 +39,45 @@ img       { padding: 1px; border: none; vertical-align: middle; }
 #navi span {
 }
 
-.New      {  }
-.New .listed-comment     { font-weight: bold; }
+/* Comment list base color and settings */
+.listed-minor {
+  font-size: smaller;
+}
+a.listed-comment, a.listed-comment:hover,
+a.listed-comment:active, a.listed-comment:visited {
+  color: black;
+}
+
+/* Comment list status color */
 .Progress { color: navy; }
-.Solved   { text-decoration: line-through; color: #444; }
-.Invalid  { text-decoration: line-through; color: #900; }
+.Solved,  .Thanks  { text-decoration: line-through; color: #444; }
+.Invalid, .Wontfix { text-decoration: line-through; color: #900; }
+a.Solved, a.Solved:visited,
+a.Thanks, a.Thanks:visited {
+  color: #444;
+}
+a.Invalid, a.Invalid:visited,
+a.Wontfix, a.Wontfix:visited {
+  color: #900;
+}
 
 .found    { background-color: #FFFF7F; }
-
-/* .noRemark          { visibility: visible; }
-tr:hover .noRemark { visibility: visible; } */
 
 div.comment {
   margin: 1em 1em 3em 1em;
   border-left: 2px dotted silver;
   padding: 1em 1em 1em 2em;
 }
-/*tr:hover td { background-color: navy; color: white; }*/
-
-.subBar         { padding: 3px; background-image: url('subBar.png'); height: 34px; line-height: 34px; vertical-align: middle; }
-.subBar.Like    { border-bottom: 1px solid #DFFFDF; }
-.subBar.Dislike { border-bottom: 1px solid #FFDFDF; }
-.subBar.Bug     { border-bottom: 1px solid #C0C0C0; }
-.subBar.Feature { border-bottom: 1px solid #FFFFDF; }
-
-.subBar.Options { border-bottom: 1px solid #DFDFFF; }
 
 .pre      { white-space: pre; }
-.nobr     { white-space: nowrap; }
+.nobr     { white-space: nowrap; color: inherit; text-decoration: inherit; }
 .noexpand { width: 1px; white-space: nowrap; }
 
 .mailRemark { vertical-align: middle; }
 .mailRemarkOff { vertical-align: middle; color:gray; font-style:italic;}
 
 .header   { text-align: center; vertical-align: middle; background: #1C1C58 url('header.png') 0 50%; color: white; padding: 5px; border-bottom: 1px solid #121239; margin: 0; line-height: 26px; height: 80px; }
-.header #applogo { float: left; } /* vertical align doesn't work?! */
+.header #applogo { float: left; } /* TODO: vertical align doesn't work?! */
 .header #lbinfo { float: right; color: yellow; padding: 2px; padding-left: 5px; padding-right: 5px; }
 .header #lbinfo a { color: blue; }
 .header #lblogo { float: right; margin-left: 10px; margin-top: 10px; }
@@ -77,9 +86,11 @@ div.comment {
 .header a { color: white; }
 .header a.link { display: block; position: absolute; margin: 0; left: 5px; top: 5px; height: 80px; line-height: 80px; vertical-align: middle; }
 .content  { padding: 10px; }
+.invisibleLink { text-decoration: none; font-weight: normal; color: black; }
 a         { text-decoration: none; font-weight: normal; }
 a:hover   { text-decoration: none; font-weight: normal; }
 a, a:visited { color: blue; }
+a.invisibleLink:visited { color: black; }
 
 #data { width: 100%; }
 

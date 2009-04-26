@@ -21,12 +21,6 @@
 $title = "Comment List";
 include("header.php");
 
-echo lbHeader();
-$subBarContents = '<span id="loadingMessage">Loading...</span><span id="countMessage">Number of displayed comments: <strong id="commentCount">Unknown</strong></span>';
-echo subBar( 'Options', $subBarContents );
-
-echo '<div class="content">';
-
   if (isset($_GET['useSessionFilter']) && $_GET['useSessionFilter'] == "true" && isset( $_SESSION['postedFilter'] ) )
     $_POST = $_SESSION['postedFilter'];
   $_SESSION['postedFilter'] = $_POST;
@@ -53,7 +47,7 @@ echo '<div class="content">';
   $statusFilter = array();
   $newSelect = "";
   $validStatuses = validStatuses();
-  $dontFilterByDefaultStatuses = array( "Solved", "Invalid" );
+  $dontFilterByDefaultStatuses = validDoneStatuses();
   foreach( $validStatuses as $status )
   {
     if( (!$filtering && !in_array( $status, $dontFilterByDefaultStatuses) ) || isset( $_POST[$status] ) ) {
@@ -77,7 +71,6 @@ echo '<div class="content">';
     $textValue  = ' value="'.htmlentities( $textFilter, ENT_QUOTES, 'UTF-8' ).'"';
   }
 
-  $smarty = getSmartyObject();
   $smarty->assign( 'versions', $versions );
   $smarty->assign( 'selectedVersion', $versionFilter );
   $smarty->assign( 'locales', $locales );
@@ -86,8 +79,6 @@ echo '<div class="content">';
   $smarty->assign( 'typesFilter', $typesFilter );
   $smarty->assign( 'textValue', $textValue );
   
-  $smarty->display( 'html/viewfilters.tpl' );
-
   $conditional = '1+1';
   $placeholders = array();
 
@@ -112,15 +103,6 @@ echo '<div class="content">';
   $conditional  .= ' AND ' . array_shift( $buildQuery );
   $placeholders  = array_merge( $placeholders, $buildQuery );
 
-  $statusJS = "";
-  foreach ($statusFilter as $status) {
-    if (empty($statusJS)) {
-      $statusJS      = "$status: true";
-    } else {
-      $statusJS      .= ", $status: true";
-    }
-  }
-
   // Filter text:
   if (!empty($textFilter))
   {
@@ -143,8 +125,6 @@ echo '<div class="content">';
                            50 );
   $page = $pageInfo['page_current'];
 
-  echo '<div id="navi">' . $pageInfo['navi'] . "</div>\n";
-
   $data = db_query("SELECT   LikeBack.*, COUNT(LikeBackRemarks.id) AS remarkCount " .
                    "FROM     LikeBack LEFT JOIN LikeBackRemarks ON LikeBack.id=commentId " .
                    "WHERE    ".$conditional." ".
@@ -166,16 +146,15 @@ echo '<div class="content">';
     $comments[]     = $line;
   }
 
-  $smarty->assign( 'comments', $comments );
-  $smarty->assign( 'page',     $page );
-  $smarty->display( 'html/commenttable.tpl' );
-?>
-  <script type="text/javascript">
-    document.getElementById("commentCount").innerHTML = <?php echo count($comments); ?>;
-    document.getElementById("loadingMessage").style.display = "none"; // Hide the span "Loading..."
-    document.getElementById("countMessage").style.display = "inline"; // Shown the span "Number of displayed comments: X"
+$smarty->display( 'html/lbheader.tpl' );
+$subBarContents = '<span id="countMessage">Number of displayed comments: <strong id="commentCount">' . count($comments). '</strong></span>';
+echo subBar( 'Options', $subBarContents );
 
-    var shownStatus = { <?php echo $statusJS; ?> };
-  </script>
-<?php
+echo '<div class="content">';
+$smarty->display( 'html/viewfilters.tpl' );
+
+echo '<div id="navi">' . $pageInfo['navi'] . "</div>\n";
+$smarty->assign( 'comments', $comments );
+$smarty->assign( 'page',     $page );
+$smarty->display( 'html/commenttable.tpl' );
 $smarty->display( 'html/bottom.tpl' );

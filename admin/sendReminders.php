@@ -24,7 +24,7 @@ require_once( "functions.php" );
 $developers = db_fetchAll( "SELECT id, login, email, types, locales FROM LikeBackDevelopers" );
 
 // Prepare the queries
-$unsolved     = array_diff( validStatuses(), array( "Invalid", "Solved" ) );
+$unsolved     = array_diff( validStatuses(), validDoneStatuses() );
 $placeholders = db_buildQuery_checkArray( 'status', $unsolved );
 $conditional  = array_shift( $placeholders );
 

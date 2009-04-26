@@ -18,18 +18,11 @@
  *                                                                         *
  ***************************************************************************/
 
+if( !isset($noadmin) or !$noadmin )
+  require_once("../functions.inc.php");
+
 // Include Smarty
 include_once('/usr/share/php/smarty/libs/Smarty.class.php');
-
-// From http://fr.php.net/manual/fr/function.date.php
-// @Param $int_date Current date in UNIX timestamp
-function get_iso_8601_date($int_date) {
-  $date_mod      = date('Y-m-d\TH:i:s', $int_date);
-  $pre_timezone  = date('O', $int_date);
-  $time_zone     = substr($pre_timezone, 0, 3).":".substr($pre_timezone, 3, 2);
-  $date_mod     .= $time_zone;
-  return $date_mod;
-}
 
 function smarty_iconForType( $params, &$smarty)
 {
@@ -65,17 +58,21 @@ function iconForStatus($status, $id = -1)
     $id = 'id="status_comment_'.$id.'"';
   else
     $id = '';
+
+  if( !in_array( $status, validStatuses() ) )
+    return "";
+
   switch( strToLower( $status ) )
   {
-  case "new":
-  case "confirmed":
-  case "progress":
-  case "solved":
-  case "invalid":
-    return '<img src="icons/' . strToLower( $status ) . '.png" '. $id . ' width="16" height="16" alt="'
-      . messageForStatus( $status ) . '" title="' . messageForStatus( $status ) . '" />';
-  default: return "";
+  case "thanks":
+    $status = "solved";
+    break;
+  case "wontfix":
+    $status = "invalid";
   }
+
+  return '<img src="icons/' . strToLower( $status ) . '.png" '. $id . ' width="16" height="16" alt="'
+    . messageForStatus( $status ) . '" title="' . messageForStatus( $status ) . '" />';
 }
 
 function messageForType( $type )
@@ -96,7 +93,9 @@ function messageForStatus($status)
   case "new": return "New";
   case "confirmed": return "Confirmed";
   case "progress": return "In progress";
+  case "thanks": return "Thanks";
   case "solved": return "Solved";
+  case "wontfix": return "Won't fix";
   case "invalid": return "Invalid";
   default: 
     if( ! LIKEBACK_PRODUCTION )
@@ -220,7 +219,10 @@ function getSmartyObject ( $noDeveloper = false )
   $smarty->register_modifier( 'wrapQuote', 'smarty_modifier_wrapQuote' );
   $smarty->register_modifier( 'message',   'smarty_modifier_message' );
 
-  $smarty->assign( 'project', LIKEBACK_PROJECT );
+  $smarty->assign( 'project',  LIKEBACK_PROJECT );
+  $smarty->assign( 'appLogo',  LIKEBACK_APP_LOGO );
+  $smarty->assign( 'statuses', validStatuses() );
+  $smarty->assign( 'types',    validTypes() );
 
   if( !$noDeveloper ) {
     $developer = getDeveloper();
@@ -229,17 +231,6 @@ function getSmartyObject ( $noDeveloper = false )
   }
 
   return $smarty;
-}
-
-// todo move this
-function lbHeader( $contents = "" )
-{
-  global $developer;
-
-  $smarty = getSmartyObject();
-  $smarty->assign( 'headerContents', $contents );
-  $smarty->assign( 'appLogo',        LIKEBACK_APP_LOGO );
-  $smarty->display( 'html/lbheader.tpl' );
 }
 
 // todo move this
@@ -323,10 +314,10 @@ function smarty_modifier_message( $text, $forWhat, $iconOrMessage = "message" )
     }
   else
     if( $iconOrMessage == "message" ) {
-      return messageForStatus( $text );
+      return messageForType( $text );
     } elseif( $iconOrMessage == "icon" ) {
-      return iconForStatus( $text );
+      return iconForType( $text );
     } else {
-      return iconForStatus( $text ) . " " . messageForStatus( $text );
+      return iconForType( $text ) . " " . messageForType( $text );
     }
 }

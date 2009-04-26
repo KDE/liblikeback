@@ -33,8 +33,9 @@
     header("Location: view.php?useSessionFilter=true");
     exit();
   }
-
-  echo lbHeader();
+  
+  $smarty->assign( 'comment', $comment );
+  $smarty->display( 'html/lbheader.tpl' );
 
   if( isset( $_REQUEST['page'] ) )
     $page = "&amp;page=" . htmlentities( maybeStrip( $_REQUEST['page'] ) );
@@ -47,42 +48,53 @@
 
   if( isset( $_POST['newRemark'] ) )
   {
-    $information = "";
+    $information = array();
     $newRemark = maybeStrip( $_POST['newRemark'] );
+    $continue = 1;
 
     // Gather a changed status
-    if( isset( $_POST['newStatus'] ) && $_POST['newStatus'] != $comment->status ) {
+    if( $continue && isset( $_POST['newStatus'] ) && $_POST['newStatus'] != $comment->status ) {
       $newStatus = $_POST['newStatus'];
       if( !in_array( $newStatus, validStatuses() ) ) {
         // todo nicer warning
         echo "<h2>Warning: the status you chose is not in the list of valid statuses, not changing the status.";
+        $continue = 0;
       }
       else
       {
         if( !db_query("UPDATE LikeBack SET status=? WHERE id=?", array( $newStatus, $comment->id ) ) ) {
           // todo nicer warning
           echo "<h2>Warning: Couldn't set status for this bug to $newStatus: ".mysql_error()."</h2>";
+          $continue = 0;
         }
         else
         {
-          $information .= "The developer set the status for this comment to " . messageForStatus( $newStatus ) . "\r\n";
+          $information[] = "The developer set the status for this comment to " . messageForStatus( $newStatus );
           $comment->status = $newStatus;
+          // also update the object in Smarty
+          $smarty->assign( 'comment', $comment );
         }
       }
     }
 
+    if( $continue && empty( $newRemark ) && count( $information ) == 0 )
+    {
+      echo "<h2>Warning: Nothing to change, skipping remark!</h2>";
+      $continue = 0;
+    }
+
     // Send a mail to the original feedback poster
-    if (!empty($comment->email) and isset($_POST['mailUser']) and $_POST['mailUser'] == 'checked' ) {
+    if ( $continue && !empty($comment->email) and isset($_POST['mailUser']) and $_POST['mailUser'] == 'checked' ) {
       $from          = $likebackMail;
       $to            = $comment->email;
       $subject       = $likebackMailSubject . " - Answer to your feedback";
 
-      $smarty = getSmartyObject();
-      $smarty->assign( 'comment', $comment );
-      if( !empty( $information ) )
-        $smarty->assign( 'remark', $information."\r\n".$newRemark );
+      if( empty( $newRemark ) )
+        $smarty->assign( 'remark', join("\r\n",$information) );
+      else if( count( $information ) > 0 )
+        $smarty->assign( 'remark', join("\r\n",$information)."\r\n\r\n".$newRemark );
       else
-        $smarty->assign( 'remark',  $newRemark );
+        $smarty->assign( 'remark', $newRemark );
 
       $message = $smarty->fetch( 'email/devremark.tpl' );
       $message = wordwrap($message, 80);
@@ -94,17 +106,25 @@
 
       // Add a warning on the remark, to notify the developer that the message was also sent to the user
       // TODO: add this as a flag in the database
-      $information .= "This remark has also been sent to the user.\r\n";
+      $information[] = "This remark has also been sent to the user.";
     }
 
-    if( !empty( $information ) )
-      $newRemark = $information . "\r\n" . $newRemark;
+    if( $continue && count( $information ) && !empty($newRemark) )
+      $newRemark = join("\r\n", $information) . "\r\n\r\n" . $newRemark;
+    else if( $continue && count( $information ) )
+      $newRemark = join("\r\n", $information );
+    else if( $continue )
+    {
+      echo "<h2>Warning: Nothing to change, skipping remark!</h2>";
+      $continue = 0;
+    }
+
 
     // Send a mail to all developers interested in this bug
     $sendMailTo = sendMailTo( $comment->type, $comment->locale );
     $sendMailTo = join( ", ", $sendMailTo );
 
-    if (!empty($sendMailTo)) {
+    if ( $continue && !empty($sendMailTo) ) {
       $from    = $likebackMail;
       $to      = $sendMailTo;
       $subject = $likebackMailSubject . ' - New remark for '.messageForStatus($comment->status).
@@ -113,11 +133,8 @@
 
       $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $comment->id;
 
-      $smarty  = getSmartyObject();
       $smarty->assign( 'remark',  $newRemark );
-      $smarty->assign( 'comment', $comment );
       $smarty->assign( 'url',     $url );
-
       $message = $smarty->fetch( 'email/devremark_todev.tpl' );
       $message = wordwrap($message, 80);
 
@@ -128,12 +145,11 @@
       mail($to, $subject, $message, $headers);
     }
 
-    db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, remark) VALUES(?, ?, ?, ?);",
-              array( get_iso_8601_date(time()), $developer->id, $comment->id, $newRemark ) );
+    if( $continue )
+      db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, remark) VALUES(?, ?, ?, ?);",
+        array( get_iso_8601_date(time()), $developer->id, $comment->id, $newRemark ) );
   }
 
-  $smarty = getSmartyObject();
-  $smarty->assign( 'comment', $comment );
   $smarty->display( 'html/comment.tpl' );
 
   $remarks = db_fetchAll("SELECT   LikeBackRemarks.*, login " .
@@ -141,10 +157,8 @@
                    "WHERE    LikeBackDevelopers.id=developer AND commentId=? " .
                    "ORDER BY dateTime ASC", array($comment->id));
 
-  $smarty->assign( 'comment', $comment );
   $smarty->assign( 'remarks', $remarks );
   $smarty->assign( 'page', (isset($_REQUEST['page']) ? $_REQUEST['page'] : "") );
-  $smarty->assign( 'statuses', validStatuses() );
   $smarty->display( 'html/remarks.tpl' );
 
   $smarty->display( 'html/bottom.tpl' );
