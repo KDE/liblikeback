@@ -23,7 +23,7 @@
         <input type="checkbox" name="MatchLocale_{$locale}" id="MatchLocale_{$locale}" {$checked}/><label for="MatchLocale_{$locale}">{$locale}</label><br/>
 {/section}
 {if matchLocale($developer->locales, "*")}{assign var=checked value='checked="checked"'}{else}{assign var=checked value=''}{/if}
-        <input type="checkbox" name="MatchOtherLocales" id="MatchOtherLocales" {$checked}/><label for="MatchOtherLocales">Others</label>
+        <input type="checkbox" name="MatchOtherLocales" id="MatchOtherLocales" {$checked}/><label for="MatchOtherLocales">All others</label>
        </td>
       </tr>
      </table>

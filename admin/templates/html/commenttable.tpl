@@ -50,6 +50,17 @@
       </td>
       {* <td class="listed-minor">{$line->context|escape:'html':'utf-8'}</td> *}
      </tr>
+{sectionelse}
+     <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="listed-comment" style="text-align: center; font-weight: bold;"><br/>No comments were found.</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+     </tr>
 {/section}
     </tbody>
    </table>

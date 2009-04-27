@@ -1,4 +1,18 @@
 
+2009-04-27 (dazjorz)
+ * Added a simple e-mail gateway application which doesn't really change
+ anything yet, just parses the e-mail.
+ * Fixed a bug in view.php and options.php where the scripts would die if
+ tables were empty.
+ * Added a sectionelse to viewfilters.tpl if there are no known locales.
+ * Added a sectionelse to commenttable.tpl to say "no comments could be
+ found".
+ * Made db.php output a warning if a query failed, if LIKEBACK_PRODUCTION
+ isn't enabled.
+
+2009-04-27 (valerio)
+ * Gave the header an overhaul.
+
 2009-04-26 (dazjorz)
  * When a developer changes status through newRemark, the e-mail now displays
  the real message for that status (messageForStatus).

@@ -32,11 +32,11 @@ include("header.php");
   $versionFilter = (isset($_POST["version"]) ? substr( $_POST["version"], 8) : ""); // TODO remove substr() for 1.2
   if( $versionFilter == "*" )
     $versionFilter = "";
-  $versions = db_fetchAll("SELECT version FROM LikeBack WHERE version!='' GROUP BY version ORDER BY date DESC") or die(mysql_error());
+  $versions = db_fetchAll("SELECT version FROM LikeBack WHERE version!='' GROUP BY version ORDER BY date DESC");
 
   // Gather the locales and locale filter
   $localesFilter = array();
-  $locales = db_fetchAll("SELECT locale FROM LikeBack WHERE locale!='' GROUP BY locale ORDER BY locale ASC") or die(mysql_error());
+  $locales = db_fetchAll("SELECT locale FROM LikeBack WHERE locale!='' GROUP BY locale ORDER BY locale ASC");
   foreach( $locales as $locale ) {
     if (!$filtering || isset($_POST["locale_".$locale->locale])) {
       $localesFilter[] = $locale->locale;

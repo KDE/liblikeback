@@ -75,7 +75,7 @@ $smarty->assign( 'dislikeChecked', $dislikeChecked );
 $smarty->assign( 'bugChecked',     $bugChecked     );
 $smarty->assign( 'featureChecked', $featureChecked );
 
-$locales = db_fetchAll("SELECT locale FROM LikeBack GROUP BY locale ORDER BY locale ASC") or die(mysql_error());
+$locales = db_fetchAll("SELECT locale FROM LikeBack GROUP BY locale ORDER BY locale ASC");
 $smarty->assign( 'locales', $locales );
 
 $smarty->display( 'html/options.tpl' );

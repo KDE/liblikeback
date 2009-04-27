@@ -81,8 +81,13 @@ function db_query( $query, $args = array() )
   switch ($dbType) {
     default:
     case "mysql":
-      return mysql_query($query);
+      $result = mysql_query($query);
   }
+
+  if( !$result && !LIKEBACK_PRODUCTION )
+    echo "<!-- MySQL error occured: " . mysql_error() . " -->";
+
+  return $result;
 }
 
 function db_fetch_object($result)

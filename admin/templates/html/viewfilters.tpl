@@ -18,6 +18,8 @@
 {assign var=arglocale value="locale_$locale"|escape:quotes:'UTF-8'}
 {if in_array( $locale, $localesFilter )}{assign var=checked value='checked="checked"'}{else}{assign var=checked value=""}{/if}
         <label for="{$arglocale}"><input type="checkbox" id="{$arglocale}" name="{$arglocale}" {$checked}/>{$locale|escape:html:'UTF-8'}</label>
+{sectionelse}
+        Warning: No locales found. Will search through all comments.
 {/section}
         <br/>
       <strong>Status:</strong>
