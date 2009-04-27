@@ -76,10 +76,11 @@ div.comment {
 .mailRemark { vertical-align: middle; }
 .mailRemarkOff { vertical-align: middle; color:gray; font-style:italic;}
 
-.header   { text-align: center; vertical-align: middle; background: #1C1C58 url('header.png') 0 50%; color: white; padding: 5px; border-bottom: 1px solid #121239; margin: 0; line-height: 26px; height: 80px; }
-.header #applogo { float: left; } /* TODO: vertical align doesn't work?! */
-.header #lbinfo { float: right; color: yellow; padding: 2px; padding-left: 5px; padding-right: 5px; }
-.header #lbinfo a { color: blue; }
+.header   { text-align: center; background: #1C1C58 url('header.png') 0 50%; color: white; padding: 5px; border-bottom: 1px solid #121239; margin: 0; line-height: 26px; height: 80px; }
+.header #applogo { float: left; height: 80px; }
+.header #lbinfo { padding: 2px 5px; }
+.header #lbinfo a,.header #lbinfo a:active, .header #lbinfo a:visited { color: #DDF; }
+.header #lbinfo a:hover { color: #BBF; }
 .header #lblogo { float: right; margin-left: 10px; margin-top: 10px; }
 .header strong { color: #FFFFCD; }
 .header label:hover { text-decoration: underline; cursor: default; }
