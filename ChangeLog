@@ -1,4 +1,16 @@
 
+2009-04-28 (dazjorz)
+ * Fixed stats.php to make a list of all types, sorted by the order as
+ returned by validTypes, without leaving types out.
+ * Added to stats.php to do the same with statuses.
+ * Added to stats.php to get the number of developers and developers with
+ e-mail address set.
+ * Added a nice Smarty template for stats.php so the page looks a lot better.
+ * Added stats.php to lbinfo in lbheader.tpl.
+ * Added a little notice on simply replying to devremark.tpl.
+ * Added LIKEBACK_VERSION (as lbversion) as an assigned variable to Smarty
+ * Added (unused) db_fetch_array and db_fetchAllArray to db.php
+
 2009-04-27 (dazjorz)
  * Added a simple e-mail gateway application which doesn't really change
  anything yet, just parses the e-mail.

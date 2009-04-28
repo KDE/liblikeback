@@ -106,6 +106,20 @@ function db_fetch_object($result)
   }
 }
 
+function db_fetch_array( $result )
+{
+  global $dbType;
+
+  if( $result === false )
+    return false;
+
+  switch($dbType) {
+    default:
+    case "mysql":
+      return mysql_fetch_array( $result );
+  }
+}
+
 function db_fetchAll( $query, $args = array() )
 {
   $result = db_query( $query, $args );
@@ -120,6 +134,20 @@ function db_fetchAll( $query, $args = array() )
   }
 
   return $objects;
+}
+
+function db_fetchAllArray( $query, $args = array() )
+{
+  $result = db_query( $query, $args );
+
+  if( !$result )
+    return false;
+
+  $arrays = array();
+  while( $array = db_fetch_array( $result ) )
+    array_push( $arrays, $array );
+
+  return $arrays;
 }
 
 // Returns an array containing the query and the placeholders.

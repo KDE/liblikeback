@@ -221,6 +221,7 @@ function getSmartyObject ( $noDeveloper = false )
 
   $smarty->assign( 'project',  LIKEBACK_PROJECT );
   $smarty->assign( 'appLogo',  LIKEBACK_APP_LOGO );
+  $smarty->assign( 'lbversion', LIKEBACK_VERSION );
   $smarty->assign( 'statuses', validStatuses() );
   $smarty->assign( 'types',    validTypes() );
 

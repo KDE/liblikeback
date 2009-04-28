@@ -8,7 +8,7 @@ A developer, {$developer->login}, wrote this message to you:
 
 {$remark|wrapQuote}
 
-If you need to reply to this message, please use the original LikeBack form within the application.
+To reply to this message, you can simply use the Reply function of your e-mail client. Alternatively, you can use the original LikeBack form within the application.
 
 Thank you for using LikeBack!
 The {$project} developers
