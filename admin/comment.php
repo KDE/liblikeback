@@ -44,7 +44,9 @@
 
   $subBarContents = '<a href="view.php?useSessionFilter=true' . $page . '#comment_' . $comment->id . '"><img src="icons/gohome.png" width="32" height="32" alt="Go home"/></a>'."\n";
   $subBarContents .= ' &nbsp; &nbsp;' . iconForType( $comment->type ) . ' ' . messageForType( $comment->type ) . ' &nbsp; #<strong>' . $comment->id . '</strong> &nbsp; &nbsp; ' . $comment->date;
-  echo subBar( $comment->type, $subBarContents );
+  $smarty->assign( 'subBarType',     $comment->type );
+  $smarty->assign( 'subBarContents', $subBarContents );
+  $smarty->display( 'html/lbsubbar.tpl' );
 
   if( isset( $_POST['newRemark'] ) )
   {

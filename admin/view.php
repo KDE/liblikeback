@@ -29,10 +29,17 @@ include("header.php");
   $filtering = isset($_POST['filtering']);
 
   // Gather the versions and version filter
-  $versionFilter = (isset($_POST["version"]) ? substr( maybeStrip( $_POST["version"] ), 8) : ""); // TODO remove substr() for 1.2
+  $versionFilter = (isset($_POST["version"]) ? maybeStrip( $_POST["version"] ) : "");
+
+  // remove version_
+  if( substr( $versionFilter, 0, 8 ) == "version_" )
+    $versionFilter = substr( $versionFilter, 8 );
+
   if( $versionFilter == "*" )
     $versionFilter = "";
+
   $versions = db_fetchAll("SELECT version FROM LikeBack WHERE version!='' GROUP BY version ORDER BY date DESC");
+
 
   // Gather the locales and locale filter
   $localesFilter = array();
@@ -148,7 +155,9 @@ include("header.php");
 
 $smarty->display( 'html/lbheader.tpl' );
 $subBarContents = '<span id="countMessage">Number of displayed comments: <strong id="commentCount">' . count($comments). '</strong></span>';
-echo subBar( 'Options', $subBarContents );
+$smarty->assign( 'subBarType',     'Options' );
+$smarty->assign( 'subBarContents', $subBarContents );
+$smarty->display( 'html/lbsubbar.tpl' );
 
 echo '<div class="content">';
 $smarty->display( 'html/viewfilters.tpl' );

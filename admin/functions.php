@@ -234,15 +234,6 @@ function getSmartyObject ( $noDeveloper = false )
   return $smarty;
 }
 
-// todo move this
-function subBar( $type, $contents = "" )
-{
-  $smarty = getSmartyObject();
-  $smarty->assign( 'commentType', $type );
-  $smarty->assign( 'contents', $contents );
-  $smarty->display( 'html/lbsubbar.tpl' );
-}
-
 // Returns the current developer if someone is logged in
 function getDeveloper() {
   global $developer;
