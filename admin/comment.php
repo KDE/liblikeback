@@ -26,7 +26,7 @@
   $title = "View Comment";
   include("header.php");
 
-  $data = db_query("SELECT * FROM LikeBack WHERE id=? LIMIT 1", array($_REQUEST['id']) );
+  $data = db_query("SELECT * FROM LikeBack WHERE id=? LIMIT 1", array( maybeStrip( $_REQUEST['id'] ) ) );
   $comment = db_fetch_object($data);
 
   if (!$comment) {
@@ -53,8 +53,8 @@
     $continue = 1;
 
     // Gather a changed status
-    if( $continue && isset( $_POST['newStatus'] ) && $_POST['newStatus'] != $comment->status ) {
-      $newStatus = $_POST['newStatus'];
+    if( $continue && isset( $_POST['newStatus'] ) && maybeStrip( $_POST['newStatus'] ) != $comment->status ) {
+      $newStatus = maybeStrip( $_POST['newStatus'] );
       if( !in_array( $newStatus, validStatuses() ) ) {
         // todo nicer warning
         echo "<h2>Warning: the status you chose is not in the list of valid statuses, not changing the status.";
@@ -158,7 +158,7 @@
                    "ORDER BY dateTime ASC", array($comment->id));
 
   $smarty->assign( 'remarks', $remarks );
-  $smarty->assign( 'page', (isset($_REQUEST['page']) ? $_REQUEST['page'] : "") );
+  $smarty->assign( 'page', (isset($_REQUEST['page']) ? maybeStrip($_REQUEST['page']) : "") );
   $smarty->display( 'html/remarks.tpl' );
 
   $smarty->display( 'html/bottom.tpl' );

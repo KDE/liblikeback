@@ -29,7 +29,7 @@ include("header.php");
   $filtering = isset($_POST['filtering']);
 
   // Gather the versions and version filter
-  $versionFilter = (isset($_POST["version"]) ? substr( $_POST["version"], 8) : ""); // TODO remove substr() for 1.2
+  $versionFilter = (isset($_POST["version"]) ? substr( maybeStrip( $_POST["version"] ), 8) : ""); // TODO remove substr() for 1.2
   if( $versionFilter == "*" )
     $versionFilter = "";
   $versions = db_fetchAll("SELECT version FROM LikeBack WHERE version!='' GROUP BY version ORDER BY date DESC");
@@ -118,7 +118,7 @@ include("header.php");
   $numResults = $numResults->count;
 
   // Show the pager
-  $page = (isset($_GET['page']) ? $_GET['page'] : "");
+  $page = (isset($_GET['page']) ? maybeStrip( $_GET['page'] ) : "");
   $pageInfo = pageBrowser( 'view.php?useSessionFilter=true',
                            $page,
                            $numResults,

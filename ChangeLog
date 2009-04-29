@@ -1,4 +1,13 @@
 
+2009-04-29 (dazjorz)
+ * Fixed remaining magic_quotes_gpc workarounds and removed
+ fix_magic_quotes.php inclusion.
+ * Made options.tpl display both the message and the icon using the 'message'
+ modifier.
+ * The locale cell is now further away from the type cell on the settings
+ page, "all other locales" is above all locales and there's a <hr/> dividing "all
+ others" and the list of locales.
+
 2009-04-28 (dazjorz)
  * Fixed stats.php to make a list of all types, sorted by the order as
  returned by validTypes, without leaving types out.

@@ -23,7 +23,6 @@
   if(!isset($sessionStarted))
     session_start();
   require_once("../db.php");
-  require_once("../fix_magic_quotes.php");
   require_once("functions.php");
   require_once("../functions.inc.php");
 
