@@ -1,4 +1,7 @@
 
+2009-05-04 (dazjorz)
+ * Added resetting all Smarty caches in the upgrade script.
+
 2009-04-29 (dazjorz)
  * Fixed remaining magic_quotes_gpc workarounds and removed
  fix_magic_quotes.php inclusion.

@@ -99,3 +99,10 @@ foreach( $remarks as $remark )
 }
 
 echo "Done. $updated entries converted.\n";
+
+echo "Resetting Smarty cache...";
+require_once "functions.php";
+$smarty = getSmartyObject();
+$smarty->clear_all_cache();
+echo "Done.\n";
+echo "Done with the upgrade, your LikeBack 1.2 installation is ready.\n";
