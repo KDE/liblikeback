@@ -1,11 +1,18 @@
 
 Changes between LikeBack 1.2 and 1.1:
 --------------------------------------
+- Added a script which is supposed to be run through cron, to send developers weekly reminders of unclosed comments.
+- Added an application logo, preferences and login username box and LikeBack logo to the top bar.
+- Added two new statuses: Thanks (about the same as Solved) and Wontfix (about the same as Invalid).
+- Added version split code in send.php, so SVN releases become a lot easier to manage in the comment list on view.php.
+- Added a real layout and useful information in stats.php and added a link in the header.
 - Exported many more HTML pages to Smarty templates.
+- E-mails sent by the application have more correct From, Sender and Reply-To headers.
 - Fixed install.php to check if it should really install (is there not already a LikeBack table?)
-- Streamlined Smarty initialization.
 - Moved code around to make it more logical: Ajax code in ajax.php and option saving code in options.php, not view.php.
-- Many bugfixes, including PHP notices, SQL injections and double escapes.
+- Streamlined Smarty initialization and added functions and modifiers for the templates to use.
+- When a developer adds a remark, not only the user optionally gets an e-mail of that, but also all other developers interested in that comment.
+- Many code and layout cleanups and bugfixes, including PHP notices, SQL injections, double escapes and XHTML errors.
 
 
 
