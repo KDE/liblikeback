@@ -46,4 +46,4 @@
   define( "LIKEBACK_URL", "http://example.org/likeback" );
 
   // Don't change this:
-  define( "LIKEBACK_VERSION", "1.2-svn" );
+  define( "LIKEBACK_VERSION", "1.3-svn" );
