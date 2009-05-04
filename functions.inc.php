@@ -86,15 +86,7 @@ function matchType($typeList, $typeToTest)
 
 function getLikeBackUrl ()
 {
-  $path    = dirname( $_SERVER['SCRIPT_NAME'] );
-  if( preg_match( '_admin$_', $path ) )
-    $path  = dirname( $path );
-
-  $serverPort = ":" . $_SERVER['SERVER_PORT'];
-  if ($serverPort == ":80")
-    $serverPort = "";
-  $url     = "http://" . $_SERVER['HTTP_HOST'] . $serverPort . $path;
-  return $url;
+  return LIKEBACK_URL;
 }
 
 // Returns an array() of developers interested in this $type, $locale

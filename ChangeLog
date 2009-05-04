@@ -1,6 +1,16 @@
 
+--- LikeBack v1.2 released ---
+
 2009-05-04 (dazjorz)
  * Added resetting all Smarty caches in the upgrade script.
+ * Fixed the sendReminders cron script to correctly find itself in the
+ LikeBack directory and load all other files, including Smarty templates.
+ * Fixed the sendReminders cron script if a developer didn't have his e-mail
+ address set.
+ * Added LIKEBACK_URL configuration option (the cron script couldn't figure it
+ out by itself, of course.)
+ * Commented out "you can turn this e-mail off" in reminders.tpl, because you
+ can't, yet.
 
 2009-04-29 (dazjorz)
  * Fixed remaining magic_quotes_gpc workarounds and removed

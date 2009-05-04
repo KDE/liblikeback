@@ -16,9 +16,17 @@
  *                                                                         *
  ***************************************************************************/
 
-require_once( "../db.php" );
-require_once( "../functions.inc.php" );
-require_once( "functions.php" );
+ini_set( 'track_errors', 'On' );
+$lbpath = dirname( dirname( $_SERVER['argv'][0] ) );
+if( !@chdir( $lbpath ) ) {
+  echo "Error: Could not change directory to LikeBack (I think LikeBack is at $lbpath): $php_errormsg\n";
+  exit( 1 );
+}
+
+$noadmin = 1;
+require_once( "db.php" );
+require_once( "functions.inc.php" );
+require_once( "admin/functions.php" );
 
 // Get all developers
 $developers = db_fetchAll( "SELECT id, login, email, types, locales FROM LikeBackDevelopers" );
@@ -45,6 +53,8 @@ $comments     = db_fetchAll( "SELECT    *"
                            ." LIMIT 1, 30", $placeholders );
 
 $smarty = getSmartyObject( true );
+$smarty->template_dir = 'admin/templates';
+$smarty->compile_dir  = '/tmp';
 
 header("Content-Type: text/plain");
 $developerMails = array();
@@ -52,6 +62,9 @@ foreach( $developers as $developer ) {
   $from    = $likebackMail;
   $to      = $developer->email;
   $subject = $likebackMailSubject . " - Weekly comment reminders";
+
+  if( empty( $to ) )
+    continue;
 
   $smarty->assign( 'developer',    $developer );
   $smarty->assign( 'statusCounts', $statusCounts );

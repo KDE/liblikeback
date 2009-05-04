@@ -3,8 +3,8 @@
  * numbers are the total number of reports with this status) *}
 Hello {$developer->login},
 
-This is your weekly LikeBack comment reminder! You can turn this e-mail off in
-your E-mail options.
+This is your weekly LikeBack comment reminder!{* You can turn this e-mail off in
+your E-mail options. *}
 
 A total of {$totalCount} comments is currently waiting for your attention:
 {foreach from=$statusCounts key=k item=v}
