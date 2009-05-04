@@ -11,6 +11,8 @@
  out by itself, of course.)
  * Commented out "you can turn this e-mail off" in reminders.tpl, because you
  can't, yet.
+ * Fixed "nothing to change" warning if the comment status wasn't changed and
+ the comment wasn't sent to the author.
 
 2009-04-29 (dazjorz)
  * Fixed remaining magic_quotes_gpc workarounds and removed
