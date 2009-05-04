@@ -115,7 +115,7 @@
       $newRemark = join("\r\n", $information) . "\r\n\r\n" . $newRemark;
     else if( $continue && count( $information ) )
       $newRemark = join("\r\n", $information );
-    else if( $continue && !empty($newRemark) )
+    else if( $continue && empty($newRemark) )
     {
       echo "<h2>Warning: Nothing to change, skipping remark!</h2>";
       $continue = 0;
