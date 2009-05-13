@@ -1,4 +1,18 @@
 
+2009-05-13 (dazjorz)
+ * Replaced statuses "Thanks", "Solved", "Wontfix" and "Invalid" with
+ "Closed".
+ * Added to install and upgrade script to create a LikeBackResolutions table
+ with Thanks, Solved, Wontfix and Invalid, and added a resolutions column to
+ the LikeBack table.
+ * Added to upgrade script to set status for all closed comments to Closed and
+ set the Resolutions column appropriately.
+ * Fixed bug in functions.php: for the 'closed' status (and the now invalid
+ 'thanks' and 'wontfix' statuses), the message is correctly set, instead of
+ set to the message belonging to the icon.
+ * Added optional $silent argument to db_query() to not output anything if the
+ query fails.
+
 --- LikeBack v1.2 released ---
 
 2009-05-04 (dazjorz)

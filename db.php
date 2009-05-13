@@ -43,7 +43,7 @@ unset($dbUser);
 unset($dbPass);
 
 // Returns false if the query failed!
-function db_query( $query, $args = array() )
+function db_query( $query, $args = array(), $silent = false )
 {
   global $dbType;
 
@@ -55,7 +55,7 @@ function db_query( $query, $args = array() )
     $value   = array_shift( $args );
     if( $value === NULL )
     {
-      if( ! LIKEBACK_PRODUCTION )
+      if( ! LIKEBACK_PRODUCTION && !$silent )
         echo "<!-- CODE WARNING: db_query: no values left in args array! -->";
       $value = "";
     }
@@ -72,10 +72,10 @@ function db_query( $query, $args = array() )
     $lastpos = strlen($before) + strlen($value) + 2;
   }
 
-  if( count($args) && ! LIKEBACK_PRODUCTION )
+  if( count($args) && ! LIKEBACK_PRODUCTION && !$silent )
     echo "<!-- CODE WARNING: db_query: values left in args array! -->";
 
-  if ( LIKEBACK_DEBUG )
+  if ( LIKEBACK_DEBUG && !$silent )
     echo "<!-- Executing SQL Query:\n" . str_replace( ">", "&gt;", $query) . "\n-->";
 
   switch ($dbType) {
@@ -84,7 +84,7 @@ function db_query( $query, $args = array() )
       $result = mysql_query($query);
   }
 
-  if( !$result && !LIKEBACK_PRODUCTION )
+  if( !$result && !LIKEBACK_PRODUCTION && !$silent )
     echo "<!-- MySQL error occured: " . mysql_error() . " -->";
 
   return $result;

@@ -62,6 +62,7 @@ function iconForStatus($status, $id = -1)
   if( !in_array( $status, validStatuses() ) )
     return "";
 
+  $ostatus = $status;
   switch( strToLower( $status ) )
   {
   case "thanks":
@@ -69,10 +70,14 @@ function iconForStatus($status, $id = -1)
     break;
   case "wontfix":
     $status = "invalid";
+    break;
+  case "closed":
+    $status = "solved";
+    break;
   }
 
   return '<img src="icons/' . strToLower( $status ) . '.png" '. $id . ' width="16" height="16" alt="'
-    . messageForStatus( $status ) . '" title="' . messageForStatus( $status ) . '" />';
+    . messageForStatus( $ostatus ) . '" title="' . messageForStatus( $ostatus ) . '" />';
 }
 
 function messageForType( $type )
@@ -97,6 +102,7 @@ function messageForStatus($status)
   case "solved": return "Solved";
   case "wontfix": return "Won't fix";
   case "invalid": return "Invalid";
+  case "closed": return "Closed";
   default: 
     if( ! LIKEBACK_PRODUCTION )
       echo "<!-- Warning: messageForStatus( $status ) == unknown status! -->";

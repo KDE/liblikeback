@@ -30,13 +30,13 @@ function get_iso_8601_date($int_date) {
 // Returns an array() of valid statuses in LikeBack.
 function validStatuses()
 {
-  return array( "New", "Confirmed", "Progress", "Thanks", "Solved", "Wontfix", "Invalid" );
+  return array( "New", "Confirmed", "Progress", "Closed" );
 }
 
 // Returns an array() of "done" statuses in LikeBack.
 function validDoneStatuses()
 {
-  return array( "Thanks", "Solved", "Wontfix", "Invalid" );
+  return array( "Closed" );
 }
 
 // Returns an array() of valid types in LikeBack

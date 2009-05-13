@@ -24,7 +24,6 @@ $tables = db_query("SHOW TABLES LIKE `LikeBack`");
 if( db_count_results( $tables ) > 0 )
   die("LikeBack seems to be already set up, not continuing... To reinstall, remove your LikeBack tables.");
 
-  db_query("DROP TABLE IF EXISTS LikeBack");
   db_query("
     CREATE TABLE LikeBack (
       id      INT(4)        NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -35,12 +34,13 @@ if( db_count_results( $tables ) > 0 )
       window  VARCHAR(255),
       context VARCHAR(255),
       status  VARCHAR(10),
+      `resolution` TINYINT UNSIGNED NOT NULL DEFAULT '0',
       type    VARCHAR(10),
       comment TEXT,
       email   VARCHAR(255)
     );"
   );
-  echo mysql_error() . "<br>";
+  echo mysql_error() . "<br/>";
 
   // KDE is translated in roughly 80 languages.
   // Each locale take maximum 7 charachers (eg. "+en_US;").
@@ -56,7 +56,7 @@ if( db_count_results( $tables ) > 0 )
       locales   TEXT
     );
   ");
-  echo mysql_error() . "<br>";
+  echo mysql_error() . "<br/>";
 
   db_query("
     CREATE TABLE LikeBackRemarks (
@@ -67,6 +67,18 @@ if( db_count_results( $tables ) > 0 )
       remark     TEXT     NOT NULL
     );
   ");
-  echo mysql_error() . "<br>";
+  echo mysql_error() . "<br/>";
+
+  db_query("
+    CREATE TABLE `LikeBackResolutions` (
+      `id`        TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      `printable` VARCHAR( 50 )    NOT NULL,
+    );
+  ");
+  echo mysql_error() . "<br/>";
+
+  db_query("INSERT INTO `LikeBackResolutions` ( `printable` )
+            VALUES ( 'Solved' ), ( 'Invalid' ), ( 'Won\'t fix' ), ( 'Thanks' )");
+  echo mysql_error() . "<br/>";
 ?>
 Installation done.
