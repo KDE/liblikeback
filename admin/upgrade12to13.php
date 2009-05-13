@@ -40,7 +40,7 @@ if( !db_query("CREATE TABLE `LikeBackResolutions` (
 
 // Insert some standard resolutions
 if( !db_query("INSERT INTO `LikeBackResolutions` ( `printable` )
-  VALUES ( 'Solved', 'solved.png' ), ( 'Invalid', 'invalid.png' ), ( 'Won\'t fix', 'invalid.png' ), ( 'Thanks', 'solved.png' )");
+  VALUES ( 'Solved', 'solved.png' ), ( 'Invalid', 'invalid.png' ), ( 'Won\'t fix', 'invalid.png' ), ( 'Thanks', 'solved.png' )") )
 {
   die( "Couldn't give LikeBackResolutions its initial content: " . mysql_error() );
 }

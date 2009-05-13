@@ -21,9 +21,15 @@
 {assign var='class' value="class=\"`$comment->status` `$comment->type`\""}
      <tr {$class} id="comment_{$id}">
       <td class="nobr"><a href="{$commentLink}" {$class}>#{$comment->id}</a></td>
-      <td class="nobr">{iconForType type=`$comment->type`}&nbsp;</td>
+      <td class="nobr">{$comment->type|message:'type':'icon'}&nbsp;</td>
       <td class="nobr">
-        <a title="Comment status" href="{$commentLink}#newRemark">{iconForStatus id="$id" status=`$comment->status`}</a>
+        <a title="Comment status" href="{$commentLink}#newRemark">
+{if strToLower($comment->status) == "closed" }
+          {$comment->resolution|message:'resolution':'icon'}
+{else}
+          {$comment->status|message:'status':'icon'}
+{/if}
+        </a>
         <a title="Remark count" href="{$commentLink}">{$comment->remarkCount}<img src="icons/remarks.png" width="16" height="16" alt="remarks"/>
 {if ! empty( $comment->email ) }
           <img src="icons/email.png" width="16" height="16" title="E-mail address available" alt="E-mail address available"/>

@@ -1,4 +1,13 @@
 
+2009-05-14 (dazjorz)
+ * Fixed syntax bug in upgrade12to13.php.
+ * Removed smarty_iconForType and smarty_iconForStatus in favor of the message
+ modifier.
+ * Removed 'id' argument to iconForStatus and iconForResolution, they were for
+ the Javascript code which has been removed.
+ * Fixed the commenttable to display the resolution icon if the status is
+ closed.
+
 2009-05-13 (dazjorz)
  * Replaced statuses "Thanks", "Solved", "Wontfix" and "Invalid" with
  "Closed".

@@ -24,13 +24,6 @@ if( !isset($noadmin) or !$noadmin )
 // Include Smarty
 include_once('/usr/share/php/smarty/libs/Smarty.class.php');
 
-function smarty_iconForType( $params, &$smarty)
-{
-  if( !isset($params['type']) or empty($params['type']) )
-    return "";
-  return iconForType( $params['type'] );
-}
-
 function iconForType($type)
 {
   switch( strToLower( $type ) )
@@ -44,21 +37,8 @@ function iconForType($type)
   }
 }
 
-function smarty_iconForStatus( $params, &$smarty )
+function iconForStatus($status)
 {
-  if( !isset($params['id'])    or empty($params['id'])
-  or !isset($params['status']) or empty($params['status']) )
-    return "";
-  return iconForStatus( $params['status'], $params['id'] );
-}
-
-function iconForStatus($status, $id = -1)
-{
-  if( $id != -1 )
-    $id = 'id="status_comment_'.$id.'"';
-  else
-    $id = '';
-
   if( !in_array( $status, validStatuses() ) )
     return "";
 
@@ -76,18 +56,13 @@ function iconForStatus($status, $id = -1)
     break;
   }
 
-  return '<img src="icons/' . strToLower( $status ) . '.png" '. $id . ' width="16" height="16" alt="'
+  return '<img src="icons/' . strToLower( $status ) . '.png" width="16" height="16" alt="'
     . messageForStatus( $ostatus ) . '" title="' . messageForStatus( $ostatus ) . '" />';
 }
 
 // $resolution is an int
-function iconForResolution( $resolution, $id = -1 )
+function iconForResolution( $resolution )
 {
-  if( $id != -1 )
-    $id = 'id="status_comment_'.htmlentities($id).'"';
-  else
-    $id = '';
-
   $q = db_query( "SELECT `icon` FROM `LikeBackResolutions` WHERE `id`=?", array( $resolution ) );
   if( !$q )
     return "";
@@ -95,7 +70,7 @@ function iconForResolution( $resolution, $id = -1 )
   if( !$object )
     return "";
 
-  return '<img src="icons/' . htmlentities( $object->icon ) . '" ' . $id . ' width="16" height="16" alt="'
+  return '<img src="icons/' . htmlentities( $object->icon ) . '" width="16" height="16" alt="'
     . messageForResolution( $resolution ) . '" title="' . messageForResolution( $resolution ) . '" />';
 }
 
@@ -251,9 +226,6 @@ function getSmartyObject ( $noDeveloper = false )
   $smarty->template_dir = 'templates';
   $smarty->compile_dir  = '/tmp';
   
-  $smarty->register_function( 'iconForType',    'smarty_iconForType'   );
-  $smarty->register_function( 'iconForStatus',  'smarty_iconForStatus' );
-
   $smarty->register_modifier( 'wrapQuote', 'smarty_modifier_wrapQuote' );
   $smarty->register_modifier( 'message',   'smarty_modifier_message' );
 
