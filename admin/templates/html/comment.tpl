@@ -5,7 +5,13 @@
     <tr><th>Locale:</th>  <td>{$comment->locale|escape:'html':'utf-8'}</td></tr>
     <tr><th>Window:</th>  <td>{$comment->window|escape:'html':'utf-8'}</td></tr>
     {* <tr><th>Context:</th> <td>{$comment->context|escape:'html':'utf-8'}</td></tr> *}
-    <tr><th>Status:</th>  <td><a {$newRemarkFocus}>{$comment->status|message:'status':'both'}</a></td></tr>
+    <tr><th>Status:</th>  <td><a {$newRemarkFocus}>
+{if strToLower($comment->status) == "closed"}
+      {$comment->resolution|message:'resolution':'both'}
+{else}
+      {$comment->status|message:'status':'both'}
+{/if}
+    </a></td></tr>
 {if $comment->email}
     <tr><th>E-mail:</th>  <td><a {$newRemarkFocus}>{$comment->email}</a> (<em>Please reply by using the form below</em>)</td></tr>
 {else}

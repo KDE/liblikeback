@@ -80,6 +80,26 @@ function iconForStatus($status, $id = -1)
     . messageForStatus( $ostatus ) . '" title="' . messageForStatus( $ostatus ) . '" />';
 }
 
+// $resolution is an int
+function iconForResolution( $resolution, $id = -1 )
+{
+  if( $id != -1 )
+    $id = 'id="status_comment_'.htmlentities($id).'"';
+  else
+    $id = '';
+
+  $q = db_query( "SELECT `icon` FROM `LikeBackResolutions` WHERE `id`=?", array( $resolution ) );
+  if( !$q )
+    return "";
+  $object = db_fetch_object( $q );
+  if( !$object )
+    return "";
+
+  return '<img src="icons/' . htmlentities( $object->icon ) . '" ' . $id . ' width="16" height="16" alt="'
+    . messageForResolution( $resolution ) . '" title="' . messageForResolution( $resolution ) . '" />';
+}
+
+
 function messageForType( $type )
 {
   if( in_array( $type, validTypes() ) )
@@ -108,6 +128,18 @@ function messageForStatus($status)
       echo "<!-- Warning: messageForStatus( $status ) == unknown status! -->";
     return "Unknown status";
   }
+}
+
+// $resolution is an int
+function messageForResolution( $resolution )
+{
+  $q = db_query( "SELECT `printable` FROM `LikeBackResolutions` WHERE `id`=?", array( $resolution ) );
+  if( !$q )
+    return "Unknown resolution";
+  $resolution = db_fetch_object( $q );
+  if( !$resolution )
+    return "Unknown resolution";
+  return $resolution->printable;
 }
 
 /**
@@ -230,6 +262,7 @@ function getSmartyObject ( $noDeveloper = false )
   $smarty->assign( 'lbversion', LIKEBACK_VERSION );
   $smarty->assign( 'statuses', validStatuses() );
   $smarty->assign( 'types',    validTypes() );
+  $smarty->assign( 'resolutions', validResolutions() );
 
   if( !$noDeveloper ) {
     $developer = getDeveloper();
@@ -296,13 +329,14 @@ function smarty_modifier_wrapQuote ( $text, $length = 75, $prepend = '> ' )
 
 function smarty_modifier_message( $text, $forWhat, $iconOrMessage = "message" )
 {
-  if( $forWhat != "status" && $forWhat != "type" )
-    return "invalid forWhat to Smarty message modifier (must be status or type)";
+  if( $forWhat != "status" && $forWhat != "type" && $forWhat != "resolution")
+    return "invalid forWhat to Smarty message modifier (must be status, type or resolution)";
   
   if( $iconOrMessage != "message" && $iconOrMessage != "icon" && $iconOrMessage != "both" )
     return "invalid iconOrMessage to Smarty message modifier (must be message, icon or both)";
 
   if( $forWhat == "status" )
+  {
     if( $iconOrMessage == "message" ) {
       return messageForStatus( $text );
     } elseif( $iconOrMessage == "icon" ) {
@@ -310,7 +344,9 @@ function smarty_modifier_message( $text, $forWhat, $iconOrMessage = "message" )
     } else {
       return iconForStatus( $text ) . " " . messageForStatus( $text );
     }
-  else
+  }
+  else if( $forWhat == "type" )
+  {
     if( $iconOrMessage == "message" ) {
       return messageForType( $text );
     } elseif( $iconOrMessage == "icon" ) {
@@ -318,4 +354,15 @@ function smarty_modifier_message( $text, $forWhat, $iconOrMessage = "message" )
     } else {
       return iconForType( $text ) . " " . messageForType( $text );
     }
+  }
+  else
+  {
+    if( $iconOrMessage == "message" ) {
+      return messageForResolution( $text );
+    } elseif( $iconOrMessage == "icon" ) {
+      return iconForResolution( $text );
+    } else {
+      return iconForResolution( $text ) . " " . messageForResolution( $text );
+    }
+  }
 }

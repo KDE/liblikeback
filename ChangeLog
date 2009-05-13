@@ -12,6 +12,12 @@
  set to the message belonging to the icon.
  * Added optional $silent argument to db_query() to not output anything if the
  query fails.
+ * Added 'icon' column to the Resolutions table.
+ * Added validResolutions(), iconForResolution() and messageForResolution()
+ function, added $resolutions to Smarty, and added resolutions support to
+ Smarty 'message' modifier.
+ * Gave comment.php, comment.tpl and newremark.tpl support for switching
+ resolutions as well as statuses.
 
 --- LikeBack v1.2 released ---
 

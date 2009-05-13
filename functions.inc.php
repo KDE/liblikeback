@@ -17,6 +17,8 @@
  *                                                                         *
  ***************************************************************************/
 
+require_once("db.php");
+
 // From http://fr.php.net/manual/fr/function.date.php
 // @Param $int_date Current date in UNIX timestamp
 function get_iso_8601_date($int_date) {
@@ -37,6 +39,18 @@ function validStatuses()
 function validDoneStatuses()
 {
   return array( "Closed" );
+}
+
+// Returns an array() of valid resolutions in LikeBack.
+function validResolutions()
+{
+  $rows = db_query( "SELECT `id` FROM `LikeBackResolutions`" );
+  $resolutions = array();
+  while( $resolution = db_fetch_array( $rows ) )
+  {
+    $resolutions[] = $resolution['id'];
+  }
+  return $resolutions;
 }
 
 // Returns an array() of valid types in LikeBack

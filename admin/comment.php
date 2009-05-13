@@ -54,28 +54,74 @@
     $newRemark = maybeStrip( $_POST['newRemark'] );
     $continue = 1;
 
-    // Gather a changed status
-    if( $continue && isset( $_POST['newStatus'] ) && maybeStrip( $_POST['newStatus'] ) != $comment->status ) {
-      $newStatus = maybeStrip( $_POST['newStatus'] );
-      if( !in_array( $newStatus, validStatuses() ) ) {
+    // Gather a changed status or resolution
+    $newStatus     = maybeStrip( $_POST['newStatus'] );
+    $newResolution = 0;
+    if( !$newStatus )
+      unset ($newStatus);
+    else if( substr( $newStatus, 0, 7 ) == 'closed_' )
+    {
+      // Check if it's a valid resolution and not set yet etc
+      $newResolution = substr( $newStatus, 7 );
+      $newStatus     = "closed";
+      if( $comment->status == "closed" && $comment->resolution == $newResolution ) {
+        unset ($newResolution);
+        unset ($newStatus);
+      }
+      else if( !in_array( $newResolution, validResolutions() ) ) {
         // todo nicer warning
-        echo "<h2>Warning: the status you chose is not in the list of valid statuses, not changing the status.";
+        echo "<h2>Warning: The resolution you chose is not in the list of valid resolutions, not changing the status.</h2>";
+        unset ($newResolution);
+        unset ($newStatus);
+        $continue = 0;
+      }
+    }
+    else
+    {
+      // Check if it's a valid status and not set yet etc
+      if( $comment->status == $newStatus ) {
+        unset ($newStatus);
+      }
+      else if( !in_array( $newStatus, validStatuses() ) ) {
+        // todo nicer warning
+        echo "<h2>Warning: The status you chose is not in the list of valid statuses, not changing the status.</h2>";
+        unset ($newStatus);
+        $continue = 0;
+      }
+    }
+
+    // if it didn't change or was invalid, 
+    if( $continue && isset( $newStatus ) ) {
+      if( $newStatus == "closed" && !db_query( "UPDATE LikeBack SET status=?, resolution=? WHERE id=?", array( $newStatus, $newResolution, $comment->id ) ) )
+      {
+        // todo nicer warning
+        echo "<h2>Warning: Couldn't set resolution for this bug to ".messageForResolution( $newResolution ).": ".mysql_error()."</h2>";
+        $continue = 0;
+      }
+      else if( !db_query("UPDATE LikeBack SET status=? WHERE id=?", array( $newStatus, $comment->id ) ) )
+      {
+        // todo nicer warning
+        echo "<h2>Warning: Couldn't set status for this bug to ".messageForStatus( $newStatus ).": ".mysql_error()."</h2>";
         $continue = 0;
       }
       else
       {
-        if( !db_query("UPDATE LikeBack SET status=? WHERE id=?", array( $newStatus, $comment->id ) ) ) {
-          // todo nicer warning
-          echo "<h2>Warning: Couldn't set status for this bug to $newStatus: ".mysql_error()."</h2>";
-          $continue = 0;
-        }
-        else
-        {
-          $information[] = "The developer set the status for this comment to " . messageForStatus( $newStatus );
+        if( $newStatus == "closed" ) {
+          if( $comment->status != "closed" )
+            $information[]     = "The developer closed the comment and set resolution to " . messageForResolution( $newResolution );
+          else
+            $information[]     = "The developer set the resolution for this comment to " . messageForResolution( $newResolution );
+          $comment->status     = $newStatus;
+          $comment->resolution = $newResolution;
+        } else {
+          if( $comment->status == "closed" )
+            $information[]     = "The developer reopened the comment and set the status to " . messageForStatus( $newStatus );
+          else
+            $information[]   = "The developer set the status for this comment to " . messageForStatus( $newStatus );
           $comment->status = $newStatus;
-          // also update the object in Smarty
-          $smarty->assign( 'comment', $comment );
         }
+        // also update the object in Smarty
+        $smarty->assign( 'comment', $comment );
       }
     }
 
