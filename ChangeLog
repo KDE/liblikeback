@@ -7,6 +7,10 @@
  the Javascript code which has been removed.
  * Fixed the commenttable to display the resolution icon if the status is
  closed.
+ * Added some input checking to options.php, and fixed an XHTML issue.
+ * Gave the options page a graphical overhaul.
+ * Added to the options page a form to change and delete existing resolutions,
+ and add new ones, and wrote the actual script that does that.
 
 2009-05-13 (dazjorz)
  * Replaced statuses "Thanks", "Solved", "Wontfix" and "Invalid" with

@@ -22,7 +22,7 @@
 $sessionStarted = 1;
 session_start();
 
-$title = "View Comment";
+$title = "LikeBack settings";
 include("../db.php");
 require_once("functions.php");
 require_once("../functions.inc.php");
@@ -31,6 +31,9 @@ $developer = getDeveloper();
 
 if (isset($_POST['saveOptions'])) {
   $email = maybeStrip( $_POST['email'] );
+  // just a precaution:
+  if( strlen($email) > 250 )
+    $email = substr($email, 0, 250);
 
   $types = array();
   foreach( validTypes() as $type ) {
@@ -38,6 +41,8 @@ if (isset($_POST['saveOptions'])) {
       array_push( $types, $type );
   }
   $types = join( ";", $types );
+  if( strlen($types) > 64 )
+    $types = substr($types, 0, 64 );
 
   $locales = array();
   $localesData = db_query("SELECT locale FROM LikeBack GROUP BY locale ORDER BY locale ASC") or die(mysql_error());
@@ -61,7 +66,7 @@ include("header.php");
 
 $smarty->display( 'html/lbheader.tpl' );
 
-$subBarContents = '<a href="view.php?useSessionFilter=true"><img src="icons/gohome.png" width="32" height="32" alt=""></a> &nbsp; &nbsp;
+$subBarContents = '<a href="view.php?useSessionFilter=true"><img src="icons/gohome.png" width="32" height="32" alt="Back" /></a> &nbsp; &nbsp;
    <strong><img src="icons/email.png" width="16" height="16" alt="E-mail" /> E-Mail Options</strong> &nbsp; &nbsp; '.$developer->login;
 $smarty->assign( 'subBarType',     'Options' );
 $smarty->assign( 'subBarContents', $subBarContents );
@@ -79,6 +84,19 @@ $smarty->assign( 'featureChecked', $featureChecked );
 
 $locales = db_fetchAll("SELECT locale FROM LikeBack GROUP BY locale ORDER BY locale ASC");
 $smarty->assign( 'locales', $locales );
+
+$rawResolutions = db_fetchAll( "SELECT `id`,`icon` FROM LikeBackResolutions" );
+$resolutions = array();
+$resolutionIcons = array();
+$i=0;
+foreach($rawResolutions as $rawResolution) {
+  $resolutions    [ $i ] = $rawResolution->id;
+  $resolutionIcons[ $i ] = $rawResolution->icon;
+  $i++;
+}
+// overwrite resolutions in smarty
+$smarty->assign( 'resolutions', $resolutions );
+$smarty->assign( 'resolutionIcons', $resolutionIcons );
 
 $smarty->display( 'html/options.tpl' );
 $smarty->display( 'html/bottom.tpl' );

@@ -1,11 +1,13 @@
   
   <div class="content">
    <form action="options.php" method="post">
-    <p class="Options" style="padding: 5px">
-     <label for="email"><strong>Your e-mail address: </strong></label><input type="text" name="email" id="email" value="{$developer->email|escape}">
-    </p>
     <div class="Options" style="padding: 5px">
-     <p style="margin: 0"><strong>Receive e-mails when</strong> new comments matching those criteria are posted:</p>
+     <fieldset>
+      <legend><label for="email"><strong>Your e-mail address: </strong></label></legend>
+      <input type="text" name="email" id="email" value="{$developer->email|escape}" style="width: 300px;" />
+     </fieldset>
+     <fieldset>
+     <legend><strong>Receive e-mails when</strong> new comments matching those criteria are posted:</legend>
      <table>
       <tr>
        <td style="vertical-align: top">
@@ -28,11 +30,76 @@
        </td>
       </tr>
      </table>
+     </fieldset>
+     <p style="text-align: center"><input type="submit" name="saveOptions" value="Save changes"/></p>
     </div>
-    <p style="text-align: center"><input type="submit" name="saveOptions" value="Ok"/></p>
    </form>
+   <div class="Options" style="padding: 5px; margin-top: 12px; overflow: hidden;">
+     <!-- <div style="float: left;"> -->
+      <fieldset>
+       <legend style="font-weight: bold;">Edit resolutions</legend>
+       <table style="margin: 0 auto;">
+        <thead>
+         <tr>
+          <th>Resolution</th>
+          <th>Rename</th>
+          <th>Change icon</th>
+          <th>Delete</th>
+         </tr>
+        </thead>
+        <tbody>
+{section name=j loop=$resolutions}
+         <tr>
+          <td>{$resolutions[j]|message:'resolution':'both'}</td>
+          {*on div: input is not allowed directly in form per specs *}
+          <td><form method="post" action="chresolution.php"><div>
+              <input type="text" name="newname" value="{$resolutions[j]|message:'resolution':'message'}"/>
+              <input type="hidden" name="id" value="{$resolutions[j]}"/>
+              <input type="submit" name="rename" value="Go"/>
+              </div></form></td>
+          <td><form method="post" action="chresolution.php"><div>
+              <input type="text" name="newicon" value="{$resolutionIcons[j]|htmlentities}"/>
+              <input type="hidden" name="id" value="{$resolutions[j]}"/>
+              <input type="submit" name="reicon" value="Go"/>
+              </div></form></td>
+          <td style="text-align: center;">
+            <a href="chresolution.php?id={$resolutions[j]}&amp;delete=1">
+              <img src="icons/invalid.png" alt="Delete"/>
+            </a>
+          </td>
+         </tr>
+{sectionelse}
+         <tr>
+          <td colspan="3"><strong>Error: No known resolutions</strong></td>
+         </tr>
+{/section}
+        </tbody>
+      </table>
+      </fieldset>
+      <form method="post" action="chresolution.php">
+       <fieldset>
+        <legend style="font-weight: bold;">New resolution</legend>
+        <table style="margin: 0 auto;">
+          <thead>
+           <tr>
+            <th>New name</th>
+            <th>New icon</th>
+            <th></th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr>
+            <td><input type="text" name="newname" value=""/></td>
+            <td><input type="text" name="newicon" value="solved.png"/></td>
+            <td><input type="submit" name="new" value="Create"/></td>
+           </tr>
+          </tbody>
+         </table>
+        </fieldset>
+      </form>
+     <!-- </div> -->
+   </div>
 
    <script type="text/javascript">
      document.getElementById("email").focus();
    </script>
-
