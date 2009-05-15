@@ -224,7 +224,7 @@ function getSmartyObject ( $noDeveloper = false )
   $smarty = new Smarty;
 
   $smarty->template_dir = 'templates';
-  $smarty->compile_dir  = '/tmp';
+  $smarty->compile_dir  = 'templates/cache';
   
   $smarty->register_modifier( 'wrapQuote', 'smarty_modifier_wrapQuote' );
   $smarty->register_modifier( 'message',   'smarty_modifier_message' );

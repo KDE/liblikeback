@@ -28,12 +28,19 @@ if( db_fetch_object( $q ) ) {
 }
 die("Upgrading to LikeBack 1.3.");
 
+if( !db_query("ALTER TABLE `LikeBack`           DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;\n"
+             ."ALTER TABLE `LikeBackDevelopers` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;\n"
+             ."ALTER TABLE `LikeBackRemarks`    DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;\n") )
+{
+  die( "Couldn't set character set for all tables to utf8: " . mysql_error() );
+}
+
 // Create resolutions table
 if( !db_query("CREATE TABLE `LikeBackResolutions` (
                  `id`        TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                  `printable` VARCHAR( 50 )    NOT NULL,
                  `icon`      VARCHAR( 50 )    NOT NULL,
-               );") )
+               ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;") )
 {
   die( "Couldn't create a LikeBackResolutions table: " . mysql_error() );
 }

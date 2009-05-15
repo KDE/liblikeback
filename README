@@ -13,10 +13,12 @@ Installation:
 * Put the Likeback directory in a publicly accessible location.
 * Restrict access to admin/ by HTTP authentication.
 * Copy db.conf.template.php to db.conf.php and modify it to your liking.
+* Make sure the user that runs all scripts can write to admin/templates/cache.
 * Run admin/install.php.
 * Add a crontab entry to run cron/sendReminders.php weekly (see cron/crontab).
 * Test your installation.
 
-To upgrade from 1.1, run admin/upgrade11to12.php, then add a crontab entry as above.
+To upgrade from 1.2, run admin/upgrade12to13.php, then make sure the web user can write to admin/templates/cache.
+To upgrade from 1.1, run admin/upgrade11to12.php, add a crontab entry as above, then follow instructions for upgrading from 1.2.
 
 Please report any bugs to sjors@kmess.org.

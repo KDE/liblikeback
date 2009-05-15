@@ -18,6 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
+// This script wants 'comment' in utf-8!
+
 require_once("db.php");
 require_once("functions.inc.php");
 $noadmin = 1;
@@ -57,8 +59,6 @@ require_once("admin/functions.php");
   $window  = isset ($window ) ? $window  : "";
   $context = isset ($context) ? $context : "";
   $email   = isset ($email  ) ? $email   : "";
-
-  $comment = utf8_decode( $comment );
 
   // TODO: Check version (newest?), window and context?
 

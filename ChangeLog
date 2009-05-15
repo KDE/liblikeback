@@ -1,4 +1,12 @@
 
+2009-05-15 (dazjorz)
+ * Fixed encoding issues in Likeback: send.php no longer calls utf8_decode,
+ the install and upgrade scripts set the default character encoding to
+ utf8_unicode_ci.
+ * Fixed caching issue, created a new 'cache' directory and let Smarty cache
+ to that.
+ * Updated README file.
+
 2009-05-14 (dazjorz)
  * Fixed syntax bug in upgrade12to13.php.
  * Removed smarty_iconForType and smarty_iconForStatus in favor of the message

@@ -38,7 +38,7 @@ if( db_count_results( $tables ) > 0 )
       type    VARCHAR(10),
       comment TEXT,
       email   VARCHAR(255)
-    );"
+    ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
   );
   echo mysql_error() . "<br/>";
 
@@ -54,7 +54,7 @@ if( db_count_results( $tables ) > 0 )
       lastVisit DATETIME,
       types     VARCHAR(64),
       locales   TEXT
-    );
+    ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
   ");
   echo mysql_error() . "<br/>";
 
@@ -65,7 +65,7 @@ if( db_count_results( $tables ) > 0 )
       developer  INT(4)   NOT NULL,
       commentId  INT(4)   NOT NULL,
       remark     TEXT     NOT NULL
-    );
+    ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
   ");
   echo mysql_error() . "<br/>";
 
@@ -74,7 +74,7 @@ if( db_count_results( $tables ) > 0 )
       `id`        TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
       `printable` VARCHAR( 50 )    NOT NULL,
       `icon`      VARCHAR( 50 )    NOT NULL,
-    );
+    ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
   ");
   echo mysql_error() . "<br/>";
 
