@@ -1,4 +1,7 @@
 
+2009-05-16 (dazjorz)
+ * Moved all of the backend to the backend/ directory.
+
 2009-05-15 (dazjorz)
  * Fixed encoding issues in Likeback: send.php no longer calls utf8_decode,
  the install and upgrade scripts set the default character encoding to
