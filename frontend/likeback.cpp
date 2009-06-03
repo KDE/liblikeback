@@ -32,7 +32,6 @@
 #include "likebackbar.h"
 #include "likebackdialog.h"
 #include "likeback_p.h"
-#include "../../kmessdebug.h"
 
 
 
@@ -163,7 +162,7 @@ void LikeBack::enableBar()
 {
   d->disabledCount--;
 
-#ifdef KMESSDEBUG_LIKEBACK
+#ifdef DEBUG_LIKEBACK
   if( d->disabledCount < 0 )
   {
     kError() << "Enabled more times than it was disabled. Please refer to the disableBar() documentation for more information and hints.";

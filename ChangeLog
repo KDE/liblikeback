@@ -1,6 +1,8 @@
 
 2009-06-03 (dazjorz)
  * Imported frontend directory.
+ * Updated README and AUTHORS because likeback doesn't only contain the
+ backend anymore.
 
 2009-05-16 (dazjorz)
  * Moved all of the backend to the backend/ directory.

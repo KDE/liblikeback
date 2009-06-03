@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+// Uncomment to enable debug output
+// #define DEBUG_LIKEBACK
 
 class KAboutData;
 class KAction;

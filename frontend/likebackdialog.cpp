@@ -22,14 +22,13 @@
 
 #include <KAboutData>
 #include <KApplication>
+#include <KConfig>
 #include <KDebug>
 #include <KMessageBox>
 #include <KPushButton>
 
 #include "likebackdialog.h"
-#include "../kmessconfig.h"
-#include "../../account.h"
-#include "../../kmessdebug.h"
+#include "likeback.h"
 
 
 
@@ -48,7 +47,7 @@ LikeBackDialog::LikeBackDialog( LikeBack::Button reason, const QString &initialC
   setDefaultButton( Ok );
   setObjectName( "LikeBackFeedBack" );
   showButtonSeparator( true );
-  restoreDialogSize( KMessConfig::instance()->getGlobalConfig( "LikeBackDialog" ) );
+  restoreDialogSize( KGlobal::config()->group( "LikeBackDialog" ) );
 
   // Set up the user interface
   QWidget *mainWidget = new QWidget( this );
@@ -118,7 +117,7 @@ LikeBackDialog::LikeBackDialog( LikeBack::Button reason, const QString &initialC
 // Destructor
 LikeBackDialog::~LikeBackDialog()
 {
-  KConfigGroup group = KMessConfig::instance()->getGlobalConfig( "LikeBackDialog" );
+  KConfigGroup group = KGlobal::config()->group( "LikeBackDialog" );
   saveDialogSize( group );
 }
 
@@ -229,7 +228,8 @@ void LikeBackDialog::slotButtonClicked( int buttonId )
   {
     emailAddress = emailAddressEdit_->text();
 
-    if( ! Account::isValidEmail( emailAddress ) )
+    // lame-ass way to check if the e-mail address is valid:
+    if( !email.contains( QRegExp( "^[A-Z0-9._%\\-]+@(?:[A-Z0-9\\-]+\\.)+[A-Z]{2,4}$", Qt::CaseInsensitive ) ) )
     {
       KMessageBox::error( this, i18n( "The email address you have entered is not valid, and cannot be used: '%1'", emailAddress ) );
       return;
@@ -262,7 +262,7 @@ void LikeBackDialog::slotButtonClicked( int buttonId )
                 "email="    + QUrl::toPercentEncoding( emailAddress ) );
 
 
-#ifdef KMESSDEBUG_LIKEBACK
+#ifdef DEBUG_LIKEBACK
   kDebug() << "http://" << m_likeBack->hostName() << ":" << m_likeBack->hostPort() << m_likeBack->remotePath();
   kDebug() << data;
 #endif
@@ -289,13 +289,13 @@ void LikeBackDialog::requestFinished( int id, bool error )
   // Only analyze the request we've sent
   if( id != m_requestNumber_ )
   {
-#ifdef KMESSDEBUG_LIKEBACK
+#ifdef DEBUG_LIKEBACK
   kDebug() << "Ignoring request" << id;
 #endif
     return;
   }
 
-#ifdef KMESSDEBUG_LIKEBACK
+#ifdef DEBUG_LIKEBACK
   kDebug() << "Request has" << (error?"failed":"succeeded");
 #endif
 

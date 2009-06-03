@@ -21,13 +21,8 @@
 
 #include <KApplication>
 
+#include "likeback.h"
 #include "likebackbar.h"
-#include "../../kmessdebug.h"
-
-
-// Uncomment to enable debug output
-// #define DEBUG_LIKEBACK
-
 
 
 // Constructor
