@@ -1,10 +1,10 @@
 
-This is the server backend of KMess Likeback. It is released under the GNU General Public License 2.0.
+This is the both the frontend and backend for Likeback. It is released under the GNU General Public License 2.0.
 
-Likeback was originally included in BasKet Note Pads. It was ported to KDE4 by Valerio Pilo. This folder
-contains only the backend of Likeback, heavily modified by Sjors Gielen.
+Likeback was originally included in BasKet Note Pads. Its frontend was ported to KDE4 by Valerio Pilo. This project contains
+the backend of Likeback, heavily modified by Sjors Gielen, and the ported KDE4 frontend.
 
-Dependencies:
+Backend dependencies:
 * Smarty - The template parsing library
 * PHP 5 (5.2.0 will do)
 
