@@ -63,7 +63,7 @@ function iconForStatus($status)
 // $resolution is an int
 function iconForResolution( $resolution )
 {
-  $q = db_query( "SELECT `icon` FROM `LikeBackResolutions` WHERE `id`=?", array( $resolution ) );
+  $q = db_query( "SELECT `icon` FROM `LikeBackResolutions` WHERE `id`=? OR `printable`=?", array( $resolution, $resolution ) );
   if( !$q )
     return "";
   $object = db_fetch_object( $q );
@@ -108,13 +108,20 @@ function messageForStatus($status)
 // $resolution is an int
 function messageForResolution( $resolution )
 {
-  $q = db_query( "SELECT `printable` FROM `LikeBackResolutions` WHERE `id`=?", array( $resolution ) );
-  if( !$q )
-    return "Unknown resolution";
-  $resolution = db_fetch_object( $q );
-  if( !$resolution )
-    return "Unknown resolution";
-  return $resolution->printable;
+  $isNumber = (int)$resolution == $resolution;
+  $q = db_query( "SELECT `printable` FROM `LikeBackResolutions` WHERE `id`=? OR `printable`=? LIMIT 1", array( $resolution, $resolution ) );
+  if( !$q && $isNumber )
+    return "Unknown resolution #$resolution";
+  elseif( !$q )
+    return "$resolution (unknown)";
+
+  $o_resolution = db_fetch_object( $q );
+  if( !$o_resolution && $isNumber )
+    return "Unknown resolution #$resolution";
+  elseif( !$o_resolution)
+    return "$resolution (unknown)";
+
+  return $o_resolution->printable;
 }
 
 /**

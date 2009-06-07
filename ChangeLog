@@ -1,4 +1,19 @@
 
+2009-06-08 (dazjorz)
+ * Implemented flags in database for 'email also sent to user' and 'status
+ changed to foo' etc:
+   - Added userNotified, statusChangedTo, resolutionchangedTo to database.
+   - Changed the way these flags are displayed to the user in comment.php;
+   using the remarkDeatils style.
+   - Made the sent e-mails a bit smarter to display the values outside of the
+   quoted remark message.
+   - Added part to upgrade script to convert old remarks to the newer format.
+ * Fixed upgrade script to actually allow upgrades.
+ * Changed resolutions to be stored as their printable strings, instead of
+ their ID's.
+ * Made iconForResolution and messageForResolution not mind if they receive
+ the resolution id or printable string.
+
 2009-06-03 (dazjorz)
  * Imported frontend directory.
  * Updated README and AUTHORS because likeback doesn't only contain the

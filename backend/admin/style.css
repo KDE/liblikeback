@@ -103,6 +103,7 @@ a.invisibleLink:visited { color: black; }
 form, .form { padding: 0; margin: 0; }
 .remark { margin: 5px; padding: 3px; }
 .remark * { margin: 2px; padding: 0; }
+.remarkDetails { margin-left: 5px; padding-left: 5px; border-left: 2px solid #6666ff; margin-bottom: 15px; }
 
 .summary { margin-bottom: 10px; }
 .summary th { text-align: right; vertical-align: top; border: none; }

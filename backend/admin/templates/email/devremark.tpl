@@ -4,7 +4,7 @@ A developer responded on your LikeBack feedback message. This is the message you
 
 {$comment->comment|wrapQuote}
 
-A developer, {$developer->login}, wrote this message to you:
+A developer, {$developer->login}, {if $newResolution}set the status to {$newStatus} ({$newResolution|message:'resolution'}) and {elseif $newStatus}set the status to {$newStatus} and {/if}wrote this message to you:
 
 {$remark|wrapQuote}
 

@@ -4,7 +4,7 @@ A developer responded on LikeBack issue #{$comment->id} (a {$comment->status} {$
 
 {$comment->comment|wrapQuote}
 
-{$developer->login} wrote this message:
+{$developer->login} {if $newResolution}set the status to {$newStatus} ({$newResolution|message:'resolution'}) and {elseif $newStatus}set the status to {$newStatus} and {/if}wrote this message{if $userNotified} to the user{/if}:
 
 {$remark|wrapQuote}
 

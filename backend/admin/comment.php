@@ -106,43 +106,39 @@
       }
       else
       {
+        // update the comment object
         if( $newStatus == "closed" ) {
-          if( $comment->status != "closed" )
-            $information[]     = "The developer closed the comment and set resolution to " . messageForResolution( $newResolution );
-          else
-            $information[]     = "The developer set the resolution for this comment to " . messageForResolution( $newResolution );
-          $comment->status     = $newStatus;
           $comment->resolution = $newResolution;
-        } else {
-          if( $comment->status == "closed" )
-            $information[]     = "The developer reopened the comment and set the status to " . messageForStatus( $newStatus );
-          else
-            $information[]   = "The developer set the status for this comment to " . messageForStatus( $newStatus );
-          $comment->status = $newStatus;
         }
-        // also update the object in Smarty
+        $comment->status = $newStatus;
+
         $smarty->assign( 'comment', $comment );
       }
     }
 
-    if( $continue && empty( $newRemark ) && count( $information ) == 0 )
+    if( $continue && empty( $newRemark ) && !isset($newStatus) && !isset($newResolution) )
     {
       echo "<h2>Warning: Nothing to change, skipping remark!</h2>";
       $continue = 0;
     }
+    
+    if( isset( $newStatus ) )
+      $smarty->assign( 'newStatus', $newStatus );
+    else
+      $smarty->assign( 'newStatus', "" );
+    if( isset( $newResolution ) )
+      $smarty->assign( 'newResolution', $newResolution );
+    else
+      $smarty->assign( 'newResolution', "" );
+    $smarty->assign( 'remark', $newRemark );
+
+    $userNotified = (!empty($comment->email) and isset($_POST['mailUser'])) and $_POST['mailUser'] == 'checked';
 
     // Send a mail to the original feedback poster
-    if ( $continue && !empty($comment->email) and isset($_POST['mailUser']) and $_POST['mailUser'] == 'checked' ) {
+    if ( $continue && $userNotified ) {
       $from          = $likebackMail;
       $to            = $comment->email;
       $subject       = $likebackMailSubject . " - Answer to your feedback";
-
-      if( empty( $newRemark ) )
-        $smarty->assign( 'remark', join("\r\n",$information) );
-      else if( count( $information ) > 0 )
-        $smarty->assign( 'remark', join("\r\n",$information)."\r\n\r\n".$newRemark );
-      else
-        $smarty->assign( 'remark', $newRemark );
 
       $message = $smarty->fetch( 'email/devremark.tpl' );
       $message = wordwrap($message, 80);
@@ -151,22 +147,7 @@
         "Content-Type: text/plain; charset=\"UTF-8\"\r\n" .
         "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
       mail($to, $subject, $message, $headers);
-
-      // Add a warning on the remark, to notify the developer that the message was also sent to the user
-      // TODO: add this as a flag in the database
-      $information[] = "This remark has also been sent to the user.";
     }
-
-    if( $continue && count( $information ) && !empty($newRemark) )
-      $newRemark = join("\r\n", $information) . "\r\n\r\n" . $newRemark;
-    else if( $continue && count( $information ) )
-      $newRemark = join("\r\n", $information );
-    else if( $continue && empty($newRemark) )
-    {
-      echo "<h2>Warning: Nothing to change, skipping remark!</h2>";
-      $continue = 0;
-    }
-
 
     // Send a mail to all developers interested in this bug
     $sendMailTo = sendMailTo( $comment->type, $comment->locale );
@@ -181,7 +162,6 @@
 
       $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $comment->id;
 
-      $smarty->assign( 'remark',  $newRemark );
       $smarty->assign( 'url',     $url );
       $message = $smarty->fetch( 'email/devremark_todev.tpl' );
       $message = wordwrap($message, 80);
@@ -194,8 +174,37 @@
     }
 
     if( $continue )
-      db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, remark) VALUES(?, ?, ?, ?);",
-        array( get_iso_8601_date(time()), $developer->id, $comment->id, $newRemark ) );
+    {
+      $placeholders = "(?, ?, ?, ?, ";
+      $values = array( get_iso_8601_date(time()), $developer->id, $comment->id, $newRemark );
+
+      if( $userNotified )
+        $placeholders .= "'1', ";
+      else
+        $placeholders .= "'0', ";
+
+      if( isset( $newStatus ) )
+      {
+        $placeholders .= "?, ";
+        $values[] = $newStatus;
+      }
+      else
+        $placeholders .= "NULL, ";
+
+      if( isset( $newResolution ) )
+      {
+        $placeholders .= "?";
+        $values[] = messageForResolution( $newResolution );
+      }
+      else
+        $placeholders .= "NULL";
+
+      $placeholders .= ")";
+
+      db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, "
+        ."remark, userNotified, statusChangedTo, resolutionChangedTo) "
+        ."VALUES " . $placeholders, $values );
+    }
   }
 
   $smarty->display( 'html/comment.tpl' );
