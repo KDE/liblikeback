@@ -18,6 +18,28 @@
  * Added view.php to insert a list of <a name> tags for all comment ID's not
  in the list, to allow the browser to go back to the same position when a
  comment is removed from the list.
+ * Implemented bug triaging to Trac, including signals from Trac back to
+ Likeback to close a comment:
+ 	 - Added Triaged status and icon, etc.
+	 - Added tracbug and tracbugChangedTo columns to the database.
+	 - Gave comment.php support for the Triaged status, with its quirks, along
+	 with comment.tpl and remarks.tpl.
+	 - Added new templates for e-mails sent out when the integration service
+	 changes anything.
+	 - Added a script, requested by the Trac plugin, which sends out the
+	 e-mails and does the modifications.
+	 - Added trac plugin which sends a signal to LikeBack when a ticket is
+	 changed.
+ * Gave the bug status changing system a do-over, there are now several
+ options to choose from:
+ 	 - Added the choice options to newremark.tpl, newremark_closedmutations.tpl,
+	 and newremark_openmutations.tpl.
+	 - Modified comment.php to work according to the new system.
+	 - Added piece of javascript to make the option directly selected when you
+	 click a textedit or combobox.
+ * Fixed bug in send.php, to use the right caching directory.
+ * Changed validResolutions() to return printables, not ID's.
+ * Fixed a bug in iconForStatus when $status was not all-lowercase.
 
 2009-06-03 (dazjorz)
  * Imported frontend directory.

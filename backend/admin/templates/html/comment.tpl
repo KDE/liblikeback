@@ -8,6 +8,8 @@
     <tr><th>Status:</th>  <td><a {$newRemarkFocus}>
 {if strToLower($comment->status) == "closed"}
       {$comment->resolution|message:'resolution':'both'}
+{elseif strToLower($comment->status) == "triaged" && isset( $tracurl ) && $comment->tracbug }
+      {$comment->status|message:'status':'both'} - Trac bug <a href="{$tracurl|htmlentities}/ticket/{$comment->tracbug}">#{$comment->tracbug}</a>
 {else}
       {$comment->status|message:'status':'both'}
 {/if}

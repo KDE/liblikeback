@@ -32,7 +32,7 @@ function get_iso_8601_date($int_date) {
 // Returns an array() of valid statuses in LikeBack.
 function validStatuses()
 {
-  return array( "New", "Confirmed", "Progress", "Closed" );
+  return array( "New", "Confirmed", "Progress", "Triaged", "Closed" );
 }
 
 // Returns an array() of "done" statuses in LikeBack.
@@ -44,11 +44,11 @@ function validDoneStatuses()
 // Returns an array() of valid resolutions in LikeBack.
 function validResolutions()
 {
-  $rows = db_query( "SELECT `id` FROM `LikeBackResolutions`" );
+  $rows = db_query( "SELECT `printable` FROM `LikeBackResolutions`" );
   $resolutions = array();
   while( $resolution = db_fetch_array( $rows ) )
   {
-    $resolutions[] = $resolution['id'];
+    $resolutions[] = $resolution['printable'];
   }
   return $resolutions;
 }

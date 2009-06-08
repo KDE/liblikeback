@@ -174,7 +174,7 @@ while( $remark = db_fetch_object( $result ) )
 
   if( !db_query( $query, $placeholders ) )
   {
-    print "Failed to execute a query for remark ID " . $remark->id . ".\n";;
+    print "Failed to execute a query for remark ID " . $remark->id . ": " . mysql_error() . "\n";
     print "Query tried: $query\n";
     print "Placeholders: "; print_r($placeholders);
     print "\n";
@@ -182,4 +182,13 @@ while( $remark = db_fetch_object( $result ) )
   }
 }
 
+// Add a Trac entry to the database
+if( !db_query( "ALTER TABLE `LikeBack` ADD `tracbug` SMALLINT UNSIGNED NULL ;" ) )
+{
+  die("Failed to add tracbug to the LikeBack table: " . mysql_error());
+}
+if( !db_query( "ALTER TABLE `LikeBackRemarks` ADD `tracbugChangedTo` SMALLINT UNSIGNED NULL ;" ) )
+{
+  die("Failed to add tracbugchangedto to the LikeBackRemarks table: " . mysql_error() );
+}
 echo "Done with the upgrade, your LikeBack 1.3 installation is ready.\n";

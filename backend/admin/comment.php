@@ -48,65 +48,90 @@
   $smarty->assign( 'subBarContents', $subBarContents );
   $smarty->display( 'html/lbsubbar.tpl' );
 
-  if( isset( $_POST['newRemark'] ) )
+  if( isset( $_POST['mutation'] ) )
   {
-    $information = array();
+    $mutation  = maybeStrip( $_POST['mutation']  );
     $newRemark = maybeStrip( $_POST['newRemark'] );
     $continue = 1;
 
-    // Gather a changed status or resolution
-    $newStatus     = maybeStrip( $_POST['newStatus'] );
-    $newResolution = 0;
-    if( !$newStatus )
-      unset ($newStatus);
-    else if( substr( $newStatus, 0, 7 ) == 'closed_' )
+    switch( $mutation )
     {
-      // Check if it's a valid resolution and not set yet etc
-      $newResolution = substr( $newStatus, 7 );
+    case "none":
+      // just update the remark, below
+      if( strlen($newRemark) == 0 )
+      {
+        echo '<h2><font color="#ff0000">Error: Nothing to do.</font></h2>';
+        $continue = 0;
+      }
+      break;
+    case "reclose":
+      // set status to Closed, resolution to recloseResolution
+      $newResolution = maybeStrip( $_POST['recloseResolution'] );
+    case "close":
+      // set status to Closed, resolution to closeResolution
       $newStatus     = "closed";
-      if( $comment->status == "closed" && $comment->resolution == $newResolution ) {
-        unset ($newResolution);
-        unset ($newStatus);
-      }
-      else if( !in_array( $newResolution, validResolutions() ) ) {
-        // todo nicer warning
-        echo "<h2>Warning: The resolution you chose is not in the list of valid resolutions, not changing the status.</h2>";
-        unset ($newResolution);
-        unset ($newStatus);
+      if( $mutation == "close" )
+        $newResolution = maybeStrip( $_POST['closeResolution'] );
+      if( strToLower( $comment->status ) == "closed" && $comment->resolution == $newResolution ) {
+        echo '<h2><font color="#ff0000">Error: The comment already has the chosen status.</font></h2>';
         $continue = 0;
       }
-    }
-    else
-    {
-      // Check if it's a valid status and not set yet etc
+      elseif( !in_array( $newResolution, validResolutions() ) && !in_array( messageForResolution( $newResolution ), validResolutions() ) )
+      {
+        echo '<h2><font color="#ff0000">Error: The resolution you chose is not valid.</font></h2>';
+        $continue = 0;
+      }
+      break;
+    case "restatus":
+      // set status to restatusStatus
+      $newStatus = maybeStrip( $_POST['restatusStatus'] );
+    case "reopen":
+      // set status to reopenStatus
+      if( $mutation == "reopen" )
+        $newStatus = maybeStrip( $_POST['reopenStatus'] );
+
       if( $comment->status == $newStatus ) {
-        unset ($newStatus);
-      }
-      else if( !in_array( $newStatus, validStatuses() ) ) {
-        // todo nicer warning
-        echo "<h2>Warning: The status you chose is not in the list of valid statuses, not changing the status.</h2>";
-        unset ($newStatus);
+        echo '<h2><font color="#ff0000">Error: The comment already has the chosen status.</font></h2>';
         $continue = 0;
       }
+      elseif( !in_array( $newStatus, validStatuses() ) )
+      {
+        echo '<h2><font color="#ff0000">Error: The status you chose is not valid.</font></h2>';
+        $continue = 0;
+      }
+      break;
+    case "triage":
+      // set status to Triaged, update tracbug
+      $newStatus  = "triaged";
+      $newTracBug = (int) $_POST['tracbug'];
+      if( $newTracBug == 0 ) {
+        echo '<h2><font color="#ff0000">Error: Invalid trac bug.</font></h2>';
+        $continue = 0;
+      }
+      break;
     }
 
     $oldStatus = $comment->status;
 
-    // if it didn't change or was invalid, 
     if( $continue && isset( $newStatus ) ) {
-      if( $newStatus == "closed" && !db_query( "UPDATE LikeBack SET status=?, resolution=? WHERE id=?", array( $newStatus, $newResolution, $comment->id ) ) )
+      $query = "";
+      $placeholders = array();
+      switch( $newStatus )
       {
-        // todo nicer warning
-        echo "<h2>Warning: Couldn't set resolution for this bug to ".messageForResolution( $newResolution ).": ".mysql_error()."</h2>";
-        $continue = 0;
+      case "closed":
+        $query = "UPDATE LikeBack SET status=?, resolution=? WHERE id=?";
+        $placeholders = array( $newStatus, $newResolution, $comment->id );
+        break;
+      case "triaged":
+        $query = "UPDATE LikeBack SET status=?, tracbug=? WHERE id=?";
+        $placeholders = array( $newStatus, $newTracBug, $comment->id );
+        break;
+      default:
+        $query = "UPDATE LikeBack SET status=? WHERE id=?";
+        $placeholders = array( $newStatus, $comment->id );
       }
-      else if( !db_query("UPDATE LikeBack SET status=? WHERE id=?", array( $newStatus, $comment->id ) ) )
-      {
-        // todo nicer warning
-        echo "<h2>Warning: Couldn't set status for this bug to ".messageForStatus( $newStatus ).": ".mysql_error()."</h2>";
-        $continue = 0;
-      }
-      else
+
+      if( db_query( $query, $placeholders ) )
       {
         // update the comment object
         if( $newStatus == "closed" ) {
@@ -116,23 +141,23 @@
 
         $smarty->assign( 'comment', $comment );
       }
+      else
+      {
+        echo '<h2><font color="#ff0000">Unable to update game state; newStatus='.$newStatus.'; query='.$query.'; error='.mysql_error().'</font></h2>';
+        $continue = 0;
+      }
     }
 
-    if( $continue && empty( $newRemark ) && !isset($newStatus) && !isset($newResolution) )
-    {
-      echo "<h2>Warning: Nothing to change, skipping remark!</h2>";
-      $continue = 0;
-    }
-    
-    if( isset( $newStatus ) )
-      $smarty->assign( 'newStatus', $newStatus );
-    else
-      $smarty->assign( 'newStatus', "" );
-    if( isset( $newResolution ) )
-      $smarty->assign( 'newResolution', $newResolution );
-    else
-      $smarty->assign( 'newResolution', "" );
+
+    if( !isset( $newStatus ) ) $newStatus = "";
+    if( !isset( $newResolution ) ) $newResolution = "";
+    if( !isset( $newTracBug ) ) $newTracBug = 0;
+    $smarty->assign( 'newStatus', $newStatus );
+    $smarty->assign( 'newResolution', $newResolution );
+    $smarty->assign( 'tracbug', $newTracBug );
     $smarty->assign( 'remark', $newRemark );
+    $tracurl = LIKEBACK_TRAC_URL . "/ticket/$newTracBug";
+    $smarty->assign( 'tracurl', $tracurl );
 
     $userNotified = (!empty($comment->email) and isset($_POST['mailUser'])) and $_POST['mailUser'] == 'checked';
 
@@ -140,7 +165,7 @@
     if ( $continue && $userNotified ) {
       $from          = $likebackMail;
       $to            = $comment->email;
-      $subject       = $likebackMailSubject . " - Answer to your feedback";
+      $subject       = $likebackMailSubject . " - Answer to your feedback, #" . $comment->id;
 
       $message = $smarty->fetch( 'email/devremark.tpl' );
       $message = wordwrap($message, 80);
@@ -185,7 +210,7 @@
       else
         $placeholders .= "'0', ";
 
-      if( isset( $newStatus ) && $newStatus != $oldStatus ) // when resolution changes, newStatus==oldStatus=="Closed"; don't save it
+      if( $newStatus && $newStatus != $oldStatus ) // when resolution changes, newStatus==oldStatus=="Closed"; don't save it
       {
         $placeholders .= "?, ";
         $values[] = $newStatus;
@@ -193,19 +218,30 @@
       else
         $placeholders .= "NULL, ";
 
-      if( isset( $newResolution ) )
+      if( $newResolution )
+      {
+        $placeholders .= "?, ";
+        $values[] = messageForResolution( $newResolution );
+      }
+      else
+        $placeholders .= "NULL, ";
+
+      if( $newTracBug )
       {
         $placeholders .= "?";
-        $values[] = messageForResolution( $newResolution );
+        $values[] = $newTracBug;
       }
       else
         $placeholders .= "NULL";
 
       $placeholders .= ")";
 
-      db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, "
-        ."remark, userNotified, statusChangedTo, resolutionChangedTo) "
-        ."VALUES " . $placeholders, $values );
+      if( !db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, "
+        ."remark, userNotified, statusChangedTo, resolutionChangedTo, tracbugChangedTo) "
+        ."VALUES " . $placeholders, $values ) )
+      {
+        echo '<h2><font color="#ff0000">Error: Failed to insert new remark: ' . mysql_error() . '</font></h2>';
+      }
     }
   }
 

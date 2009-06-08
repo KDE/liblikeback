@@ -99,7 +99,7 @@ require_once("admin/functions.php");
 
     $smarty  = getSmartyObject( true );
     $smarty->template_dir = 'admin/templates';
-    $smarty->compile_dir  = '/tmp';
+    $smarty->compile_dir  = 'admin/templates/cache';
 
     $smarty->assign( 'version',   $version );
     $smarty->assign( 'fullVersion', $fullVersion );

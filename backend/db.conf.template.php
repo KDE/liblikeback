@@ -45,5 +45,10 @@
   // The URL to LikeBack (without 'admin/', but it should exist after this link!)
   define( "LIKEBACK_URL", "http://example.org/likeback" );
 
+  // The URL to a Trac instance (if empty, support for trac is disabled - also should *not* end in /!)
+  define( "LIKEBACK_TRAC", "" );
+  // The secret compiled into the trac plugin
+  define( "LIKEBACK_TRAC_SECRET", "" );
+
   // Don't change this:
   define( "LIKEBACK_VERSION", "1.3-svn" );

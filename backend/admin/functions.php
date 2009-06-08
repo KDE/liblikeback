@@ -39,7 +39,7 @@ function iconForType($type)
 
 function iconForStatus($status)
 {
-  if( !in_array( $status, validStatuses() ) )
+  if( !in_array( ucfirst( $status ), validStatuses() ) )
     return "";
 
   $ostatus = $status;
@@ -93,6 +93,7 @@ function messageForStatus($status)
   case "new": return "New";
   case "confirmed": return "Confirmed";
   case "progress": return "In progress";
+  case "triaged": return "Triaged";
   case "thanks": return "Thanks";
   case "solved": return "Solved";
   case "wontfix": return "Won't fix";
@@ -239,6 +240,7 @@ function getSmartyObject ( $noDeveloper = false )
   $smarty->assign( 'project',  LIKEBACK_PROJECT );
   $smarty->assign( 'appLogo',  LIKEBACK_APP_LOGO );
   $smarty->assign( 'lbversion', LIKEBACK_VERSION );
+  $smarty->assign( 'tracurl',   LIKEBACK_TRAC_URL );
   $smarty->assign( 'statuses', validStatuses() );
   $smarty->assign( 'types',    validTypes() );
   $smarty->assign( 'resolutions', validResolutions() );
