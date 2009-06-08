@@ -141,7 +141,24 @@ include("header.php");
 
 
   $comments = array();
+  $oldid    = -1;
   while ($line = db_fetch_object($data)) {
+    # add an <a name> for every skipped ID so #comment_n scrolls to the right position even if
+    # it's been removed from the list
+    $aname = "";
+    if( $oldid != -1 )
+    {
+      $diff  = $line->id - $oldid;
+      while( $diff > 1 ) {
+        $aname .= '<a name="comment_' . ($oldid + --$diff) . '"></a>';
+      }
+      while( $diff < -1 ) {
+        $aname .= '<a name="comment_' . ($oldid + ++$diff) . '"></a>';
+      }
+    }
+    $oldid = $line->id;
+    $line->aname = $aname;
+
     $line->date = strtotime( $line->date );
 
     $line->window   = preg_replace( "/->\s*$/", "", $line->window );

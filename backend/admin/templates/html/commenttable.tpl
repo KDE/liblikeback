@@ -20,7 +20,7 @@
 {assign var='id' value=`$comment->id`}
 {assign var='class' value="class=\"`$comment->status` `$comment->type`\""}
      <tr {$class} id="comment_{$id}">
-      <td class="nobr"><a href="{$commentLink}" {$class}>#{$comment->id}</a></td>
+      <td class="nobr">{$comment->aname}<a href="{$commentLink}" {$class}>#{$comment->id}</a></td>
       <td class="nobr">{$comment->type|message:'type':'icon'}&nbsp;</td>
       <td class="nobr">
         <a title="Comment status" href="{$commentLink}#newRemark">

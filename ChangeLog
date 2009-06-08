@@ -13,6 +13,11 @@
  their ID's.
  * Made iconForResolution and messageForResolution not mind if they receive
  the resolution id or printable string.
+ * Fixed comment.php not to save Status was changed when only Resolution was
+ changed (Status stays at Closed for those changes)
+ * Added view.php to insert a list of <a name> tags for all comment ID's not
+ in the list, to allow the browser to go back to the same position when a
+ comment is removed from the list.
 
 2009-06-03 (dazjorz)
  * Imported frontend directory.

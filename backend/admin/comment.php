@@ -90,6 +90,8 @@
       }
     }
 
+    $oldStatus = $comment->status;
+
     // if it didn't change or was invalid, 
     if( $continue && isset( $newStatus ) ) {
       if( $newStatus == "closed" && !db_query( "UPDATE LikeBack SET status=?, resolution=? WHERE id=?", array( $newStatus, $newResolution, $comment->id ) ) )
@@ -183,7 +185,7 @@
       else
         $placeholders .= "'0', ";
 
-      if( isset( $newStatus ) )
+      if( isset( $newStatus ) && $newStatus != $oldStatus ) // when resolution changes, newStatus==oldStatus=="Closed"; don't save it
       {
         $placeholders .= "?, ";
         $values[] = $newStatus;
