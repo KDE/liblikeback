@@ -184,8 +184,7 @@
       $from    = $likebackMail;
       $to      = $sendMailTo;
       $subject = $likebackMailSubject . ' - New remark for '.messageForStatus($comment->status).
-        ' '.messageForType($comment->type).' #'.$comment->id
-        .' ('.$comment->version.' - '.$comment->locale.')';
+        ' '.messageForType($comment->type).' #'.$comment->id;
 
       $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $comment->id;
 

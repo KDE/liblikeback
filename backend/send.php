@@ -93,7 +93,7 @@ require_once("admin/functions.php");
     $sender  = $likebackMail;
     $replyTo = $likebackMail; // (empty($email) ? $sendMailTo : $email);
     $to      = $sendMailTo;
-    $subject = "[LikeBack: $type] #$id ($version - $locale)";
+    $subject = $likebackMailSubject . " - New " . messageForType($type) . " comment #$id ($version - $locale)";
 
     $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $id;
 
@@ -119,7 +119,6 @@ require_once("admin/functions.php");
       "Content-Type: text/plain; charset=\"UTF-8\"\r\n" .
       "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
 
-//echo "***** To: $to<br>\r\n***** Subject: $subject<br>\r\n***** Message: $message<br>\r\n***** Headers: $headers";
     mail($to, $subject, $message, $headers);
   }
 

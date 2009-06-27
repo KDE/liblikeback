@@ -133,9 +133,7 @@ foreach( $comments as $comment )
   if ( !empty($sendMailTo) ) {
     $from    = $likebackMail;
     $to      = $sendMailTo;
-    $subject = $likebackMailSubject . ' - New remark for '.messageForStatus($comment->status).
-      ' '.messageForType($comment->type).' #'.$comment->id
-      .' ('.$comment->version.' - '.$comment->locale.')';
+    $subject = $likebackMailSubject . ' - Comment automatically closed, LikeBack#' . $comment->id . ', Trac#' . $ticketid;
 
     $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $comment->id;
 

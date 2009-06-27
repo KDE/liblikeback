@@ -1,4 +1,13 @@
 
+2009-06-26 (dazjorz)
+ * Made the subject of all e-mails sent out by LikeBack start with
+ "likebackMailSubject - ".
+ * Fixed wrapping bug in e-mail where a LikeBack comment from a "deep window"
+ (i.e. $window very long) would wrap without a '>' at the start of the line
+ for the window parameter.
+ * Fixed incorrect subject in a mail sent out by the Trac integration when it
+ automatically closes a LikeBack comment.
+
 2009-06-08 (dazjorz)
  * Implemented flags in database for 'email also sent to user' and 'status
  changed to foo' etc:
