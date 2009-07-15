@@ -1,4 +1,8 @@
 
+2009-07-16 (dazjorz)
+ * Fixed encoding issues in the Trac plugin, and bumped version number to
+ 1.3.0 for imminent LikeBack release.
+
 2009-06-26 (dazjorz)
  * Made the subject of all e-mails sent out by LikeBack start with
  "likebackMailSubject - ".

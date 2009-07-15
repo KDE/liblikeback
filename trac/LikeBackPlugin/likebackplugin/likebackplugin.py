@@ -30,13 +30,13 @@ class LikeBackPlugin(Component):
         fields that have changed.
         Notify LikeBack, it will handle the rest.
         """
-        values = {'author' : author,
-                  'comment' : comment,
+        values = {'author' : author.encode('utf-8'),
+                  'comment' : comment.encode('utf-8'),
                   'ticketid' : ticket.id,
-                  'summary' : ticket['summary'],
-                  'status' : ticket['status'],
-                  'resolution' : ticket['resolution'],
-                  'secret' : integration_secret}
+                  'summary' : ticket['summary'].encode('utf-8'),
+                  'status' : ticket['status'].encode('utf-8'),
+                  'resolution' : ticket['resolution'].encode('utf-8'),
+                  'secret' : integration_secret.encode('utf-8')}
         data = urllib.urlencode( values )
         req = urllib2.Request( likeback_url, data )
         response = urllib2.urlopen( req )

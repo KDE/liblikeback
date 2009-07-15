@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-version='1.2.89'
+version='1.3.0'
 
 setup(name='LikeBackPlugin',
       version=version,
