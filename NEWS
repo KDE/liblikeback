@@ -1,4 +1,22 @@
 
+Changes between LikeBack 1.3 and 1.2:
+--------------------------------------
+- Added the concept of a "Resolution" - All statuses which previously meant the
+bug was done (Thanks, Solved, etc) are now "Closed", and a Resolution is set.
+- Added the LikeBack frontend.
+- Added remark flags for "e-mail sent to user" and "status changed to ...",
+instead of the previous behaviour of embedding them as strings in the remark.
+- Added bug triaging to Trac, including signals from Trac back to LikeBack to
+close a comment. A LikeBackPlugin to Trac is available.
+- Added the new bug changing system: now, the options that are available for
+changing a bugs' status are shown in an easier way, which makes it much easier
+to manage bugs.
+- Changed the subject of all e-mails sent out by LikeBack to start with the
+likebackMailSubject as set in the configuration.
+- Fixed some encoding issues.
+- Fixed some cache issues.
+- Many more code and layout cleanups and bugfixes (see ChangeLog for a list).
+
 Changes between LikeBack 1.2 and 1.1:
 --------------------------------------
 - Added a script which is supposed to be run through cron, to send developers weekly reminders of unclosed comments.
