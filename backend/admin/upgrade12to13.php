@@ -28,9 +28,9 @@ if( db_fetch_object( $q ) ) {
 }
 print("Upgrading to LikeBack 1.3.");
 
-if( !db_query("ALTER TABLE `LikeBack`           DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;\n"
-             ."ALTER TABLE `LikeBackDevelopers` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;\n"
-             ."ALTER TABLE `LikeBackRemarks`    DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;\n") )
+if( !db_query( "ALTER TABLE `LikeBack`           DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;" )
+ || !db_query( "ALTER TABLE `LikeBackDevelopers` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;" )
+ || !db_query( "ALTER TABLE `LikeBackRemarks`    DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;" ) )
 {
   die( "Couldn't set character set for all tables to utf8: " . mysql_error() );
 }
@@ -39,14 +39,14 @@ if( !db_query("ALTER TABLE `LikeBack`           DEFAULT CHARACTER SET utf8 COLLA
 if( !db_query("CREATE TABLE `LikeBackResolutions` (
                  `id`        TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                  `printable` VARCHAR( 50 )    NOT NULL,
-                 `icon`      VARCHAR( 50 )    NOT NULL,
+                 `icon`      VARCHAR( 50 )    NOT NULL
                ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;") )
 {
   die( "Couldn't create a LikeBackResolutions table: " . mysql_error() );
 }
 
 // Insert some standard resolutions
-if( !db_query("INSERT INTO `LikeBackResolutions` ( `printable` )
+if( !db_query("INSERT INTO `LikeBackResolutions` ( `printable`, `icon` )
   VALUES ( 'Solved', 'solved.png' ), ( 'Invalid', 'invalid.png' ), ( 'Won\'t fix', 'invalid.png' ), ( 'Thanks', 'solved.png' )") )
 {
   die( "Couldn't give LikeBackResolutions its initial content: " . mysql_error() );
@@ -59,10 +59,10 @@ if( !db_query("ALTER TABLE `LikeBack` ADD `resolution` VARCHAR(50) NULL AFTER `s
 }
 
 # Now merge all "done" statuses to be set to "closed"
-if( !db_query("UPDATE `LikeBack` SET `status`='Closed', `resolution`='Solved' WHERE `status`='Solved';\n" .
-              "UPDATE `LikeBack` SET `status`='Closed', `resolution`='Invalid' WHERE `status`='Invalid';\n" .
-              "UPDATE `LikeBack` SET `status`='Closed', `resolution`='Won\'t fix' WHERE `status`='Wontfix';\n" .
-              "UPDATE `LikeBack` SET `status`='Closed', `resolution`='Thanks' WHERE `status`='Thanks';\n" ) )
+if( !db_query("UPDATE `LikeBack` SET `status`='Closed', `resolution`='Solved' WHERE `status`='Solved';")
+  ||!db_query("UPDATE `LikeBack` SET `status`='Closed', `resolution`='Invalid' WHERE `status`='Invalid';")
+  ||!db_query("UPDATE `LikeBack` SET `status`='Closed', `resolution`='Won\'t fix' WHERE `status`='Wontfix';")
+  ||!db_query("UPDATE `LikeBack` SET `status`='Closed', `resolution`='Thanks' WHERE `status`='Thanks';\n" ) )
 {
   die( "Couldn't update LikeBack comment statuses: " . mysql_error() );
 }
