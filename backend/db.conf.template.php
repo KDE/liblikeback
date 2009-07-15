@@ -51,4 +51,4 @@
   define( "LIKEBACK_TRAC_SECRET", "" );
 
   // Don't change this:
-  define( "LIKEBACK_VERSION", "1.3-svn" );
+  define( "LIKEBACK_VERSION", "1.4-svn" );
