@@ -4,7 +4,8 @@ A user sent a new comment via LikeBack:
 
 > Version: {$fullVersion}
 > Locale:  {$locale}
-{"Window:  ".$window|wrapQuote}{* window may be quite long and therefore wrap over lines*}
+{"Window:  $window"|wrapQuote}{* window may be quite long and therefore wrap over lines*}
+
 > Type:    {$type}
 > Comment:
 {$comment|wrapQuote}
