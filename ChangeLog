@@ -1,3 +1,7 @@
+2009-08-31 (Valerio)
+ * Added error reporting to the Trac plugin.
+ * Moved the Trac plugin configuration to trac.ini.
+ * Rewritten the README.
 
 --- LikeBack v1.3 released ---
 

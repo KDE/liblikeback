@@ -1,14 +1,29 @@
 
-This is the both the frontend and backend for Likeback. Both are released under the GNU General Public License 2.0.
+Likeback
+============
 
-Likeback was originally included in BasKet Note Pads. Its frontend was ported to KDE4 by Valerio Pilo. This project contains
-the backend of Likeback, heavily modified by Sjors Gielen, and the ported KDE4 frontend.
+This package contains both the frontend and backend for Likeback.
+All the code and scripts are released under the GNU General Public License 2.0.
+
+Likeback was originally included in BasKet Note Pads. Its frontend was ported
+to KDE4 by Valerio Pilo.
+
+This project contains the backend of Likeback, heavily modified by Sjors
+Gielen, and the ported KDE4 frontend. Also included:
+* an email gateway (email/ dir) with which Likeback can send email
+* a Trac plugin, to link together Trac and Likeback tickets
+
 
 Backend dependencies:
+============
+
 * Smarty - The template parsing library
 * PHP 5 (5.2.0 will do)
 
-Installation:
+
+Backend Installation:
+============
+
 * Install the Smarty library.
 * Put the Likeback directory in a publicly accessible location.
 * Restrict access to admin/ by HTTP authentication.
@@ -18,7 +33,54 @@ Installation:
 * Add a crontab entry to run cron/sendReminders.php weekly (see cron/crontab).
 * Test your installation.
 
-To upgrade from 1.2, run admin/upgrade12to13.php, then make sure the web user can write to admin/templates/cache.
-To upgrade from 1.1, run admin/upgrade11to12.php, add a crontab entry as above, then follow instructions for upgrading from 1.2.
 
-Please report any bugs to sjors@kmess.org.
+Backend Upgrades:
+============
+
+- To upgrade from 1.2:
+  * run admin/upgrade12to13.php
+  * make sure the web user can write to admin/templates/cache
+
+- To upgrade from 1.1:
+  * run admin/upgrade11to12.php
+  * add a crontab entry as for the "Backend Installation" paragraph
+  * follow the instructions for upgrading from 1.2.
+
+
+Frontend Installation:
+============
+
+The code in the frontend/ directory can be included in any subdirectory of your
+KDE4 project, with any build system.
+
+
+Trac Plugin Installation:
+============
+
+You need to create a Python Egg of the plugin, then copy it to trac's plugin dir.
+
+* chdir into the trac/LikeBackPlugin dir of this package:
+  cd /path/to/likeback/directory/trac/LikeBackPlugin
+* create the Python Egg:
+  python setup.py bdist_egg
+* copy the egg in Trac:
+  cp dist/*.egg /path/to/trac/plugins
+* add to the trac configuration file "conf/trac.ini":
+  ----------------------- CUT -----------------------
+  [likeback-plugin]
+  integration_secret = 111222333AAABBBCCC
+  likeback_url = http://www.example.com/likeback/
+  ----------------------- CUT -----------------------
+  where "integration_secret" is an alphanumeric string you need to also set in
+  your backend's "db.conf.php" file; and "likeback_url" is the full URL
+  to your Likeback backend site (with trailing slash)
+* if needed, restart your webserver to have Trac re-read its configuration and
+  plugins list
+* from the trac administration, enable the plugin.
+
+
+Contacts:
+============
+
+Please report any bugs to sjors@kmess.org or to our public forum,
+http://kmess.org/board
