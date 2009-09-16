@@ -1,3 +1,6 @@
+2009-09-16 (Valerio)
+ * Fixed an installation issue, an invalid SQL query.
+
 2009-08-31 (Valerio)
  * Added error reporting to the Trac plugin.
  * Moved the Trac plugin configuration to trac.ini.
@@ -269,7 +272,7 @@
  * Started using these three functions throughout the code.
  * Added two (production-safe) warnings to functions.php (yes, the other
  functions file).
- * Added db_fetchAll() function to fetch all objects returned by a query, and 
+ * Added db_fetchAll() function to fetch all objects returned by a query, and
  used it in view.php.
  * Added db_buildQuery_checkArray() function to build the conditional part of
  a query based on an element name and an array of possible values.

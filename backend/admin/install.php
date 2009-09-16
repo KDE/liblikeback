@@ -73,7 +73,7 @@ if( db_count_results( $tables ) > 0 )
     CREATE TABLE `LikeBackResolutions` (
       `id`        TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
       `printable` VARCHAR( 50 )    NOT NULL,
-      `icon`      VARCHAR( 50 )    NOT NULL,
+      `icon`      VARCHAR( 50 )    NOT NULL
     ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
   ");
   echo mysql_error() . "<br/>";
