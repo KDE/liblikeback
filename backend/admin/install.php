@@ -37,7 +37,8 @@ if( db_count_results( $tables ) > 0 )
       `resolution` TINYINT UNSIGNED NOT NULL DEFAULT '0',
       type    VARCHAR(10),
       comment TEXT,
-      email   VARCHAR(255)
+      email   VARCHAR(255),
+      tracbug SMALLINT UNSIGNED NULL
     ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
   );
   echo mysql_error() . "<br/>";
@@ -64,7 +65,11 @@ if( db_count_results( $tables ) > 0 )
       `dateTime` DATETIME NOT NULL,
       developer  INT(4)   NOT NULL,
       commentId  INT(4)   NOT NULL,
-      remark     TEXT     NOT NULL
+      remark     TEXT     NOT NULL,
+      userNotified TINYINT UNSIGNED NOT NULL DEFAULT '0',
+      statusChangedTo VARCHAR(50) NULL,
+      resolutionChangedTo VARCHAR(50) NULL,
+      tracbugChangedTo SMALLINT UNSIGNED NULL
     ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
   ");
   echo mysql_error() . "<br/>";

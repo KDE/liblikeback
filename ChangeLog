@@ -1,5 +1,5 @@
-2009-09-16 (Valerio)
- * Fixed an installation issue, an invalid SQL query.
+2009-10-12 (Valerio)
+ * Merged patch by Enrico Ros: Fixed the installation SQL queries.
 
 2009-08-31 (Valerio)
  * Added error reporting to the Trac plugin.
