@@ -46,7 +46,8 @@
   define( "LIKEBACK_URL", "http://example.org/likeback" );
 
   // The URL to a Trac instance (if empty, support for trac is disabled - also should *not* end in /!)
-  define( "LIKEBACK_TRAC", "" );
+  define( "LIKEBACK_TRAC_URL", "" );
+
   // The secret compiled into the trac plugin
   define( "LIKEBACK_TRAC_SECRET", "" );
 

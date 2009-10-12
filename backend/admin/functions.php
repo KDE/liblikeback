@@ -23,6 +23,8 @@ if( !isset($noadmin) or !$noadmin )
 
 // Include Smarty
 include_once('/usr/share/php/smarty/libs/Smarty.class.php');
+// If you place the Smarty libs locally (inside 'admin/smarty'), use the following instead:
+//include_once('smarty/Smarty.class.php');
 
 function iconForType($type)
 {
@@ -260,6 +262,8 @@ function getDeveloper() {
 
   if( isset( $_SERVER['PHP_AUTH_USER'] ) )
     $userName = $_SERVER['PHP_AUTH_USER'];
+  else if( isset( $_SERVER['REMOTE_USER'] ) )
+    $userName = $_SERVER['REMOTE_USER'];
 
   if( isset( $developer ) && $developer && $developer->login == $userName)
     return $developer;

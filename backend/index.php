@@ -18,5 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 
-header( 'Location: admin/' );
+// we go directly to 'view.php' ic case the .htaccess file inside admin/ was
+// rewritten.
+header( 'Location: admin/view.php' );
 die();
