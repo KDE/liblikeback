@@ -38,13 +38,22 @@ img       { padding: 1px; border: none; vertical-align: middle; }
   text-decoration: underline;
 }
 
-/* Comment list base color and settings */
+/* Comment list base colors and settings */
+#data { width: 100%; }
+#data tr td {
+  text-align: center;
+  padding: 1px 3px;
+}
 .listed-minor {
   font-size: smaller;
 }
 a.listed-comment, a.listed-comment:hover,
 a.listed-comment:active, a.listed-comment:visited {
   color: black;
+}
+#data tr td.listed-comment,
+#data tr td.listed-status {
+  text-align: justify;
 }
 
 /* Comment list status color */
@@ -74,6 +83,14 @@ a.Wontfix, a.Wontfix:visited {
 .CommentsTableActions {
   text-align: center;
   border-bottom: 0;
+}
+
+table#filtersTable tr td:first-child {
+  font-weight: bold;
+}
+table#filtersTable tfoot td {
+  padding-top: 1em;
+  padding-left: 2em;
 }
 
 .found    { background-color: #FFFF7F; }
@@ -107,8 +124,6 @@ a         { text-decoration: none; font-weight: normal; }
 a:hover   { text-decoration: none; font-weight: normal; }
 a, a:visited { color: blue; }
 a.invisibleLink:visited { color: black; }
-
-#data { width: 100%; }
 
 #statusMenu { position: absolute; display: none; border: 1px solid navy; background-color: #eeeee6; padding: 1px; }
 #statusMenu a { display: block; padding: 1px 3px; border: 1px solid #eeeee6; }

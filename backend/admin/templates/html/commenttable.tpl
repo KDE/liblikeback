@@ -69,7 +69,7 @@
 {/if}
       <td class="nobr">{$comment->aname}<a href="{$commentLink}" {$class}>#{$comment->id}</a></td>
       <td class="nobr">{$comment->type|message:'type':'icon'}&nbsp;</td>
-      <td class="nobr">
+      <td class="nobr listed-status">
         <a title="Comment status" href="{$commentLink}#newRemark">
 {if strToLower($comment->status) == "closed" }
           {$comment->resolution|message:'resolution':'icon'}

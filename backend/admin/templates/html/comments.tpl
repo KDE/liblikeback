@@ -8,5 +8,5 @@
 {include file='html/commenttable.tpl'}
 
 <div class="content">
-  <a href="view.php?useSessionFilter=true">Go back to the comments list</a>
+  <a href="view.php">Go back to the comments list</a>
 </div>

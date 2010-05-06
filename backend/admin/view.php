@@ -21,10 +21,14 @@
 $title = "Comment List";
 include("header.php");
 
-
-  if (isset($_GET['useSessionFilter']) && $_GET['useSessionFilter'] == "true" && isset( $_SESSION['postedFilter'] ) )
+  if( ! empty( $_POST ) )
+  {
+    $_SESSION['postedFilter'] = $_POST;
+  }
+  elseif( isset( $_SESSION['postedFilter'] ) )
+  {
     $_POST = $_SESSION['postedFilter'];
-  $_SESSION['postedFilter'] = $_POST;
+  }
 
   // Figure out if we are filtering or if it is the first time:
   $filtering = isset($_POST['filtering']);
@@ -130,7 +134,7 @@ include("header.php");
 
   // Show the pager
   $page = (isset($_GET['page']) ? maybeStrip( $_GET['page'] ) : "");
-  $pageInfo = pageBrowser( 'view.php?useSessionFilter=true',
+  $pageInfo = pageBrowser( 'view.php',
                            $page,
                            $numResults,
                            $pagerCount );

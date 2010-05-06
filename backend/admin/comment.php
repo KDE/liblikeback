@@ -26,7 +26,7 @@ include("header.php");
 
 if( empty( $_REQUEST['id'] ) && empty( $_POST ) )
 {
-  header( 'Location: view.php?useSessionFilter=true' );
+  header( 'Location: view.php' );
   exit();
 }
 
@@ -57,7 +57,7 @@ else
 
 if( empty( $commentIds ) )
 {
-  header( 'Location: view.php?useSessionFilter=true' );
+  header( 'Location: view.php' );
   exit();
 }
 
