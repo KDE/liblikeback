@@ -12,9 +12,9 @@
      <tr>
       <th colspan="4" class="CommentsTableMarksLinks">
         In this page:<br />
-        <a href="#" onclick="return mark(true);">Mark all</a>
-        or
-        <a href="#" onclick="return mark(false);">Mark none</a>
+        <a href="#" onclick="return mark('check');">Mark all</a>,
+        <a href="#" onclick="return mark('uncheck');">mark none</a>,<br/>
+        <a href="#" onclick="return mark('invert');">invert selection</a>
       </th>
       <th colspan="5" class="CommentsTableLinks">
         <a href="#newRemark">Actions on selected comments...</a>

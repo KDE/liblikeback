@@ -374,10 +374,13 @@ $smarty->assign( 'comment', $comment );
 $smarty->assign( 'skipped', count( $dupes ) );
 $smarty->display( 'html/comment.tpl' );
 
-$remarks = db_fetchAll("SELECT   LikeBackRemarks.*, login " .
-                  "FROM     LikeBackRemarks, LikeBackDevelopers " .
-                  "WHERE    LikeBackDevelopers.id=developer AND commentId=? " .
-                  "ORDER BY dateTime ASC", array($comment->id));
+$remarks = db_fetchAll( "SELECT    r.*, IF(d.id,d.login,'Nobody') as login " .
+                        "FROM      LikeBackRemarks r ".
+                        "LEFT JOIN LikeBackDevelopers d " .
+                        "ON        d.id = r.developer " .
+                        "WHERE     r.commentId=? " .
+                        "GROUP BY  r.id " .
+                        "ORDER BY  dateTime ASC", array($comment->id));
 
 $smarty->assign( 'remarks', $remarks );
 $smarty->assign( 'page', (isset($_REQUEST['page']) ? maybeStrip($_REQUEST['page']) : "") );

@@ -16,10 +16,17 @@ function mark( state )
 {
   var checkboxobj = document.forms['newRemarkForm'].elements;
   if( ! checkboxobj ) return;
-  var checkboxLength = checkboxobj.length;
-  if( !checkboxLength ) return;
-  for( var i = 0; i < checkboxLength; i++ ) {
-    checkboxobj[i].checked = state ? true : false;
+
+  for( var i = 0; i < checkboxobj.length; i++ )
+  {
+    var item = checkboxobj[i];
+	switch( state )
+	{
+		case 'check':   item.checked = true;           break;
+		case 'uncheck': item.checked = false;          break;
+		case 'invert':  item.checked = ! item.checked; break;
+		default:        return false;
+	}
   }
 
   // For onclick events

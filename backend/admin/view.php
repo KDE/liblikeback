@@ -99,7 +99,7 @@ include("header.php");
 
   // Filter version:
   if (!empty($versionFilter)) {
-    $conditional .= ' AND version=?';
+    $conditional .= ' AND c.version=?';
     array_push( $placeholders, $versionFilter );
   }
 
@@ -121,7 +121,7 @@ include("header.php");
   // Filter text:
   if (!empty($textFilter))
   {
-    $conditional .= " AND comment LIKE ?";
+    $conditional .= " AND c.comment LIKE ?";
     $placeholders[] = "%$textFilter%";
   }
 
@@ -140,11 +140,11 @@ include("header.php");
                            $pagerCount );
   $page = $pageInfo['page_current'];
 
-  $data = db_query("SELECT   LikeBack.*, COUNT(LikeBackRemarks.id) AS remarkCount " .
-                   "FROM     LikeBack LEFT JOIN LikeBackRemarks ON LikeBack.id=commentId " .
+  $data = db_query("SELECT   c.*, COUNT(r.id) AS remarkCount " .
+                   "FROM     LikeBack c LEFT JOIN LikeBackRemarks r ON c.id=r.commentId " .
                    "WHERE    ".$conditional." ".
-                   "GROUP BY LikeBack.id " .
-                   "ORDER BY date DESC " .
+                   "GROUP BY c.id " .
+                   "ORDER BY c.date DESC " .
                    "LIMIT    ".$pageInfo['page_start'].", ".$pageInfo['page_count'], $placeholders );
 
 
