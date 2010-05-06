@@ -1,6 +1,6 @@
   <fieldset>
    <legend>Filtering options</legend>
-   <form action="view.php" method="GET">
+   <form action="view.php" method="POST">
      <table id="filtersTable">
       <tfoot>
         <tr>
