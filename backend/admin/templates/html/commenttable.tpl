@@ -84,7 +84,7 @@
         </a>
       </td>
       {* todo: replace found parts from textFilter with <span class="found">, see rev 4651 of view.php *}
-      <td class="listed-comment"><a href="{$commentLink}" class="listed-comment {$comment->status} {$comment->type}">{$comment->comment|escape:'html':'utf-8'|nl2br}</a></td>
+      <td class="listed-comment"><a href="{$commentLink}" class="listed-comment {$comment->status} {$comment->type}">{$comment->comment|nl2br}</a></td>
       <td class="nobr">{$comment->locale|escape:'html':'utf-8'}</td>
       <td class="nobr">
         <div title="{$comment->date|date_format:"%d-%m-%Y"}, at {$comment->date|date_format:"%T"}">

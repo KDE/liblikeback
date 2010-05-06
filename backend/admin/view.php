@@ -167,7 +167,7 @@ include("header.php");
     $line->date = strtotime( $line->date );
 
     // Fix the encoding of the comments
-    $line->comment = utf8_decode( stripslashes( $line->comment ) );
+    $line->comment = htmlentities( stripslashes( utf8_decode( $line->comment ) ) );
 
     $line->window   = preg_replace( "/->\s*$/", "", $line->window );
 

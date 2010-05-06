@@ -200,7 +200,8 @@ $dupes = array();
 while( $comment = db_fetch_object( $data ) )
 {
   // Fix the encoding of the comments
-  $comment->comment = utf8_decode( stripslashes( $comment->comment ) );
+  $comment->comment = stripslashes( utf8_decode( $comment->comment ) );
+  $comment->comment = htmlentities( $comment->comment, ENT_QUOTES, 'utf-8' );
 
   $comments[] = $comment;
 }

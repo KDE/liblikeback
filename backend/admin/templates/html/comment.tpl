@@ -26,5 +26,5 @@
 {/if}
    </table>
    <div class="comment">
-   {$comment->comment|escape:'html':'utf-8'|nl2br}
+   {$comment->comment|nl2br}
    </div>
