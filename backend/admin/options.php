@@ -27,8 +27,6 @@ include("../db.php");
 require_once("functions.php");
 require_once("../functions.inc.php");
 
-$developer = getDeveloper();
-
 if (isset($_POST['saveOptions'])) {
   $email = maybeStrip( $_POST['email'] );
   // just a precaution:
@@ -59,8 +57,12 @@ if (isset($_POST['saveOptions'])) {
     array_push( $locales, '-*' );
   $locales = join( ";", $locales );
 
+  $developer = getDeveloper();
   db_query("UPDATE LikeBackDevelopers SET email=?, types=?, locales=? WHERE login=?", array( $email, $types, $locales, $developer->login ) );
 }
+
+// Get the updated options
+$developer = getDeveloper();
 
 include("header.php");
 
