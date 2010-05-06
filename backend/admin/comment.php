@@ -199,12 +199,20 @@ $comments = array();
 $dupes = array();
 while( $comment = db_fetch_object( $data ) )
 {
+  // Fix the encoding of the comments
+  $comment->comment = utf8_decode( stripslashes( $comment->comment ) );
+
   $comments[] = $comment;
 }
 
 foreach( $comments as $comment )
 {
   // Don't send remarks if there isn't a new one
+  if( ! $flag_HaveChanges && empty( $newRemark ) )
+  {
+    continue;
+  }
+
   if( $flag_HaveChanges && $comment->lastRemark === $newRemark )
   {
 	$dupes[] = $comment->id;

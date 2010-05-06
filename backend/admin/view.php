@@ -146,7 +146,8 @@ include("header.php");
 
   $comments = array();
   $oldid    = -1;
-  while ($line = db_fetch_object($data)) {
+  while ($line = db_fetch_object($data))
+  {
     # add an <a name> for every skipped ID so #comment_n scrolls to the right position even if
     # it's been removed from the list
     $aname = "";
@@ -164,6 +165,9 @@ include("header.php");
     $line->aname = $aname;
 
     $line->date = strtotime( $line->date );
+
+    // Fix the encoding of the comments
+    $line->comment = utf8_decode( stripslashes( $line->comment ) );
 
     $line->window   = preg_replace( "/->\s*$/", "", $line->window );
 
