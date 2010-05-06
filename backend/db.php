@@ -36,6 +36,9 @@ switch ($dbType) {
     die("Unknown database type $dbType.");
 }
 
+// Used to access the executed queries list, in case of errors or when debugging
+$dbQueries = array();
+
 // Security if there is an hole in the remaining code:
 unset($dbServer);
 unset($dbBase);
@@ -45,7 +48,7 @@ unset($dbPass);
 // Returns false if the query failed!
 function db_query( $query, $args = array(), $silent = false )
 {
-  global $dbType;
+  global $dbType, $dbQueries;
 
   // Fill in the placeholders
   $lastpos = 0;
@@ -77,6 +80,8 @@ function db_query( $query, $args = array(), $silent = false )
 
   if ( LIKEBACK_DEBUG && !$silent )
     echo "<!-- Executing SQL Query:\n" . str_replace( ">", "&gt;", $query) . "\n-->";
+
+  $dbQueries[] = $query;
 
   switch ($dbType) {
     default:
@@ -172,18 +177,53 @@ function db_buildQuery_checkArray( $element, $array )
   return $placeholders;
 }
 
-  function db_count_results($result)
+function db_count_results($result)
+{
+  global $dbType;
+  switch ($dbType) {
+    default:
+    case "mysql":
+      return mysql_num_rows($result);
+  }
+}
+
+function db_insert_id()
+{
+  return mysql_insert_id();
+}
+
+
+
+function db_get_last_query()
+{
+  global $dbQueries;
+
+  return end( $dbQueries );
+}
+
+
+function db_error()
+{
+  global $dbType;
+  switch( $dbType )
   {
-    global $dbType;
-    switch ($dbType) {
-      default:
-      case "mysql":
-        return mysql_num_rows($result);
-    }
+    default:
+    case 'mysql':
+      return mysql_error();
+  }
+}
+
+
+function db_debug_dump()
+{
+  global $dbQueries;
+
+  if( empty( $dbQueries ) )
+  {
+    return array( 'None' );
   }
 
-  function db_insert_id()
-  {
-    return mysql_insert_id();
-  }
-?>
+  return $dbQueries;
+}
+
+

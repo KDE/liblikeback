@@ -6,5 +6,6 @@
   <title>{$pageTitle} - LikeBack</title>
   <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"/>
   <link rel="stylesheet" type="text/css" href="style.css"/>
+  <script language="javascript" type="text/javascript" src="scripts.js"></script>
  </head>
  <body>

@@ -11,3 +11,17 @@ function setMutationTo( value ) {
     }
   }
 }
+
+function mark( state )
+{
+  var checkboxobj = document.forms['newRemarkForm'].elements;
+  if( ! checkboxobj ) return;
+  var checkboxLength = checkboxobj.length;
+  if( !checkboxLength ) return;
+  for( var i = 0; i < checkboxLength; i++ ) {
+    checkboxobj[i].checked = state ? true : false;
+  }
+
+  // For onclick events
+  return false;
+}

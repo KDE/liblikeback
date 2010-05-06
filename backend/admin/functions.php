@@ -21,10 +21,20 @@
 if( !isset($noadmin) or !$noadmin )
   require_once("../functions.inc.php");
 
-// Include Smarty
-include_once('/usr/share/php/smarty/libs/Smarty.class.php');
-// If you place the Smarty libs locally (inside 'admin/smarty'), use the following instead:
-//include_once('smarty/Smarty.class.php');
+// Include Smarty (from the system)
+@include_once('/usr/share/php/smarty/libs/Smarty.class.php');
+// Include Smarty (from a local Smarty lib (inside 'admin/smarty')
+@include_once('smarty/Smarty.class.php');
+if( ! class_exists( 'Smarty' ) )
+{
+  die( 'Unable to load the Smarty template engine. Please, place it in the admin/smarty/ directory to use LikeBack.' );
+}
+
+
+// Cache for the resolutions
+$_LikeBackResolutions = array();
+
+
 
 function iconForType($type)
 {
@@ -62,18 +72,44 @@ function iconForStatus($status)
     . messageForStatus( $ostatus ) . '" title="' . messageForStatus( $ostatus ) . '" />';
 }
 
-// $resolution is an int
+
 function iconForResolution( $resolution )
 {
-  $q = db_query( "SELECT `icon` FROM `LikeBackResolutions` WHERE `id`=? OR `printable`=?", array( $resolution, $resolution ) );
-  if( !$q )
-    return "";
-  $object = db_fetch_object( $q );
-  if( !$object )
-    return "";
+  $isNumber = ( (int) $resolution ) == $resolution;
+  $resolutions = getResolutions();
 
-  return '<img src="icons/' . htmlentities( $object->icon ) . '" width="16" height="16" alt="'
-    . messageForResolution( $resolution ) . '" title="' . messageForResolution( $resolution ) . '" />';
+  foreach( $resolutions as $item )
+  {
+    if( (   $isNumber && $item->id == $resolution )
+    ||  ( ! $isNumber && $item->printable == $resolution ) )
+    {
+		$message = messageForResolution( $resolution );
+		return '<img src="icons/' . htmlentities( $item->icon ) . '" width="16" height="16" alt="' . $message . '" title="' . $message . '" />';
+    }
+  }
+
+  return "[icon not found for $resolution]";
+}
+
+
+function messageForResolution( $resolution )
+{
+  $isNumber = is_numeric( $resolution );
+  $resolutions = getResolutions();
+
+  foreach( $resolutions as $item )
+  {
+    if( (   $isNumber && $item->id == $resolution )
+    ||  ( ! $isNumber && $item->printable == $resolution ) )
+    {
+		return $item->printable;
+    }
+  }
+
+	if( $isNumber )
+		return "Unknown resolution #$resolution";
+	else
+		return "$resolution (unknown)";
 }
 
 
@@ -88,6 +124,7 @@ function messageForType( $type )
   return "Unknown type";
 }
 
+
 function messageForStatus($status)
 {
   switch( strToLower( $status ) )
@@ -101,31 +138,13 @@ function messageForStatus($status)
   case "wontfix": return "Won't fix";
   case "invalid": return "Invalid";
   case "closed": return "Closed";
-  default: 
+  default:
     if( ! LIKEBACK_PRODUCTION )
       echo "<!-- Warning: messageForStatus( $status ) == unknown status! -->";
     return "Unknown status";
   }
 }
 
-// $resolution is an int
-function messageForResolution( $resolution )
-{
-  $isNumber = (int)$resolution == $resolution;
-  $q = db_query( "SELECT `printable` FROM `LikeBackResolutions` WHERE `id`=? OR `printable`=? LIMIT 1", array( $resolution, $resolution ) );
-  if( !$q && $isNumber )
-    return "Unknown resolution #$resolution";
-  elseif( !$q )
-    return "$resolution (unknown)";
-
-  $o_resolution = db_fetch_object( $q );
-  if( !$o_resolution && $isNumber )
-    return "Unknown resolution #$resolution";
-  elseif( !$o_resolution)
-    return "$resolution (unknown)";
-
-  return $o_resolution->printable;
-}
 
 /**
  *  Generates pages navigation controls to use in lists of items
@@ -235,7 +254,7 @@ function getSmartyObject ( $noDeveloper = false )
 
   $smarty->template_dir = 'templates';
   $smarty->compile_dir  = 'templates/cache';
-  
+
   $smarty->register_modifier( 'wrapQuote', 'smarty_modifier_wrapQuote' );
   $smarty->register_modifier( 'message',   'smarty_modifier_message' );
 
@@ -258,27 +277,35 @@ function getSmartyObject ( $noDeveloper = false )
 
 // Returns the current developer if someone is logged in
 function getDeveloper() {
-  global $developer;
+  global $developer, $likebackMail;
+
+  // Just in case HTTP authentication isn't working or is turned off
+  $nobody = new stdclass();
+  $nobody->id = 0;
+  $nobody->login = 'developer';
+  $nobody->email = $likebackMail;
 
   if( isset( $_SERVER['PHP_AUTH_USER'] ) )
     $userName = $_SERVER['PHP_AUTH_USER'];
-  else if( isset( $_SERVER['REMOTE_USER'] ) )
+  if( isset( $_SERVER['REMOTE_USER'] ) )
     $userName = $_SERVER['REMOTE_USER'];
+  else
+    $userName = $nobody->login;
 
-  if( isset( $developer ) && $developer && $developer->login == $userName)
+  if( isset( $developer ) && $developer && $developer->login == $userName )
     return $developer;
 
   if( !isset( $userName ) || empty( $userName ) ) {
     if( !LIKEBACK_PRODUCTION )
       echo "<!-- Tried to fetch developer but nobody was logged in! -->";
-    return FALSE;
+    return $nobody;
   }
 
   $data = db_query("SELECT * FROM LikeBackDevelopers WHERE login=? LIMIT 1", array( $userName ) );
   if( !$data ) {
     if( !LIKEBACK_PRODUCTION )
       echo "<!-- Couldn't retrieve developer information from database: " . mysql_error() . " -->";
-    return FALSE;
+    return $nobody;
   }
 
   $developer = db_fetch_object($data);
@@ -289,12 +316,12 @@ function getDeveloper() {
   {
     if( !LIKEBACK_PRODUCTION )
       echo "<!-- Couldn't insert new developer $userName in database: " . mysql_error() . " -->";
-    return FALSE;
+    return $nobody;
   }
   return getDeveloper();
 }
 
-// We're doing 75 because of an apparant bug in wordwrap(), 
+// We're doing 75 because of an apparant bug in wordwrap(),
 // during testing it wrapped lines of exactly 80 characters even if the
 // second parameter was 80; this was not reproducable so the fix for now is
 // to let wrapQuote wrap 75 characters.
@@ -316,7 +343,7 @@ function smarty_modifier_message( $text, $forWhat, $iconOrMessage = "message" )
 {
   if( $forWhat != "status" && $forWhat != "type" && $forWhat != "resolution")
     return "invalid forWhat to Smarty message modifier (must be status, type or resolution)";
-  
+
   if( $iconOrMessage != "message" && $iconOrMessage != "icon" && $iconOrMessage != "both" )
     return "invalid iconOrMessage to Smarty message modifier (must be message, icon or both)";
 
@@ -351,3 +378,37 @@ function smarty_modifier_message( $text, $forWhat, $iconOrMessage = "message" )
     }
   }
 }
+
+
+function likeback_mail( $to, $subject, $message, $headers )
+{
+  if( ! LIKEBACK_DEBUG )
+  {
+    return mail( $to, $subject, $message, $headers );
+  }
+
+  static $messageShown = false;
+  if( ! $messageShown )
+  {
+    $messageShown = true;
+    echo "<h5>Email sending: Debugging mode is on, no real emails will be sent!</h5>";
+  }
+
+  echo <<<DEBUG
+<fieldset>
+  <legend>Debuggging email</legend>
+  <pre style="font-size: smaller;">
+To: {$to}
+Subject: {$subject}
+---------------------
+Headers:
+{$headers}
+---------------------
+Message:
+{$message}
+</pre>
+</fieldset>
+DEBUG;
+}
+
+

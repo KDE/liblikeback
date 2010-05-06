@@ -85,7 +85,7 @@ $smarty->assign( 'featureChecked', $featureChecked );
 $locales = db_fetchAll("SELECT locale FROM LikeBack GROUP BY locale ORDER BY locale ASC");
 $smarty->assign( 'locales', $locales );
 
-$rawResolutions = db_fetchAll( "SELECT `id`,`icon` FROM LikeBackResolutions" );
+$rawResolutions = getResolutions();
 $resolutions = array();
 $resolutionIcons = array();
 $i=0;

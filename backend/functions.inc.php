@@ -41,15 +41,45 @@ function validDoneStatuses()
   return array( "Closed" );
 }
 
+
+// Cache the resolutions for the request's duration
+function getResolutions()
+{
+  global $_LikeBackResolutions;
+
+  if( empty( $_LikeBackResolutions ) )
+  {
+    $q = db_query( "SELECT * FROM `LikeBackResolutions`" );
+    if( !$q )
+    {
+      return '';
+    }
+
+    while( $item = db_fetch_object( $q ) )
+    {
+      $_LikeBackResolutions[ $item->id ] = $item;
+    }
+  }
+
+  return $_LikeBackResolutions;
+}
+
 // Returns an array() of valid resolutions in LikeBack.
 function validResolutions()
 {
-  $rows = db_query( "SELECT `printable` FROM `LikeBackResolutions`" );
-  $resolutions = array();
-  while( $resolution = db_fetch_array( $rows ) )
+  static $resolutions = array();
+
+  // Cache the values for the request's duration
+  if( ! empty( $resolutions ) )
   {
-    $resolutions[] = $resolution['printable'];
+    return $resolutions;
   }
+
+  foreach( getResolutions() as $resolution )
+  {
+    $resolutions[] = $resolution->printable;
+  }
+
   return $resolutions;
 }
 
@@ -63,7 +93,10 @@ function validTypes()
 function maybeStrip( $variable )
 {
   if( get_magic_quotes_gpc() )
+  {
     return stripslashes( $variable );
+  }
+
   return $variable;
 }
 
@@ -104,14 +137,27 @@ function getLikeBackUrl ()
 }
 
 // Returns an array() of developers interested in this $type, $locale
-function sendMailTo ($type, $locale)
+function sendMailTo( $type, $locale )
 {
+  static $developersData = array();
+
+  // Cache the values for the request's duration
+  if( empty( $developersData ) )
+  {
+    $data = db_query("SELECT * FROM LikeBackDevelopers WHERE email!=''");
+    while( $developer = db_fetch_object( $data ) )
+	{
+      $developersData[ $developer->id ] = $developer;
+	}
+  }
+
   $sendMailTo = array();
-  $data = db_query("SELECT * FROM LikeBackDevelopers WHERE email!=''");
-  while ($line = db_fetch_object($data)) {
+  while( $line = db_fetch_object( $developersData ) )
+  {
     if (matchType($line->types, $type) && matchLocale($line->locales, $locale))
       array_push( $sendMailTo, $line->email );
   }
+
   return $sendMailTo;
 }
 

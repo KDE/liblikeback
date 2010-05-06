@@ -1,6 +1,25 @@
+{if $showEditingOptions}
+   <form name="newRemarkForm" action="comment.php" method="post">
+{/if}
    <table id="data">
     <thead>
+{if $showEditingOptions}
      <tr>
+      <th colspan="4" class="CommentsTableMarksLinks">
+        In this page:<br />
+        <a href="#" onclick="return mark(true);">Mark all</a>
+        or
+        <a href="#" onclick="return mark(false);">Mark none</a>
+      </th>
+      <th colspan="5" class="CommentsTableLinks">
+        <a href="#newRemark">Actions on selected comments...</a>
+      </th>
+     </tr>
+{/if}
+     <tr>
+{if $showEditingOptions}
+      <th class="noexpand">Mark</th>
+{/if}
       <th class="noexpand">Id</th>
       <th class="noexpand">Type</th>
       <th class="noexpand">Status</th>
@@ -13,6 +32,15 @@
       {* <th>&nbsp;</th> *}
      </tr>
     </thead>
+{if $showEditingOptions}
+    <tfoot>
+     <tr>
+      <td colspan="9" class="CommentsTableActions">
+        {include file='html/newremark_multi.tpl'}
+      </td>
+     </tr>
+    </tfoot>
+{/if}
     <tbody>
 {section name=i loop=$comments}
 {assign var='comment' value="$comments[i]"}
@@ -20,6 +48,9 @@
 {assign var='id' value=`$comment->id`}
 {assign var='class' value="class=\"`$comment->status` `$comment->type`\""}
      <tr {$class} id="comment_{$id}">
+{if $showEditingOptions}
+      <td class="nobr"><input type="checkbox" name="check_comment_{$id}" /></a></td>
+{/if}
       <td class="nobr">{$comment->aname}<a href="{$commentLink}" {$class}>#{$comment->id}</a></td>
       <td class="nobr">{$comment->type|message:'type':'icon'}&nbsp;</td>
       <td class="nobr">
@@ -58,15 +89,13 @@
      </tr>
 {sectionelse}
      <tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td class="listed-comment" style="text-align: center; font-weight: bold;"><br/>No comments were found.</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td class="listed-comment error" colspan="{if $showEditingOptions}9{else}8{/if}">
+        No comments were found.
+      </td>
      </tr>
 {/section}
     </tbody>
    </table>
+{if $showEditingOptions}
+   </form>
+{/if}

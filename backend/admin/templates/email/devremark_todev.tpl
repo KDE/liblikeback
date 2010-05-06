@@ -4,7 +4,7 @@ A developer responded on LikeBack issue #{$comment->id} (a {$comment->status} {$
 
 {$comment->comment|wrapQuote}
 
-{$developer->login} {if $newResolution} set the status to {$newStatus} ({$newResolution|message:'resolution'}){elseif strToLower( $newStatus ) == "triaged"} triaged the bug over to Trac #{$tracbug} (at <{$tracurl}>){elseif $newStatus} set the status to {$newStatus}{/if}{if $newStatus and $remark}, and{/if}{if $remark} wrote this message{if $userNotified} to the user{/if}:
+Developer {$developer->login} {if $newResolution}set the status to {$newStatus} ({$newResolution|message:'resolution'}){elseif strToLower( $newStatus ) == "triaged"}triaged the bug over to Trac #{$tracbug} (at <{$tracurl}>){elseif $newStatus}set the status to {$newStatus}{/if}{if $newStatus and $remark}, and {/if}{if $remark}wrote this message{if $userNotified} to the user{/if}:
 
 {$remark|wrapQuote}
 

@@ -21,6 +21,7 @@
 $title = "Comment List";
 include("header.php");
 
+
   if (isset($_GET['useSessionFilter']) && $_GET['useSessionFilter'] == "true" && isset( $_SESSION['postedFilter'] ) )
     $_POST = $_SESSION['postedFilter'];
   $_SESSION['postedFilter'] = $_POST;
@@ -85,7 +86,7 @@ include("header.php");
   $smarty->assign( 'statusFilter', $statusFilter );
   $smarty->assign( 'typesFilter', $typesFilter );
   $smarty->assign( 'textValue', $textValue );
-  
+
   $conditional = '1+1';
   $placeholders = array();
 
@@ -180,7 +181,8 @@ echo '<div class="content">';
 $smarty->display( 'html/viewfilters.tpl' );
 
 echo '<div id="navi">' . $pageInfo['navi'] . "</div>\n";
-$smarty->assign( 'comments', $comments );
-$smarty->assign( 'page',     $page );
+$smarty->assign( 'comments',           $comments );
+$smarty->assign( 'page',               $page );
+$smarty->assign( 'showEditingOptions', true );
 $smarty->display( 'html/commenttable.tpl' );
 $smarty->display( 'html/bottom.tpl' );

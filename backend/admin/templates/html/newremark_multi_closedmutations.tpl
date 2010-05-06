@@ -1,5 +1,5 @@
       <label><input type="radio" name="mutation" value="reopen"/>
-        Reopen comment with status:</label>
+      Reopen comment with status:</label>
         <select name="reopenStatus" onclick="setMutationTo('reopen')">
 {section name=i loop=$statuses}
   {if strToLower($statuses[i]) != "closed" && strToLower($statuses[i]) != "triaged" && strToLower($statuses[i]) != strToLower($comment->status)}

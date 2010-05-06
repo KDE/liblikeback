@@ -18,241 +18,357 @@
  *                                                                         *
  ***************************************************************************/
 
-  if (!isset($_REQUEST['id']) || !is_numeric($_REQUEST['id'])) {
-    header("Location: view.php?useSessionFilter=true");
-    exit();
-  }
+// Pass an 'id' parameter in the GET query string to show a single comment.
+// Pass via POST some fields named check_comment_<comment_id> to edit all those comments at once.
 
-  $title = "View Comment";
-  include("header.php");
+$title = "View Comment";
+include("header.php");
 
-  $data = db_query("SELECT * FROM LikeBack WHERE id=? LIMIT 1", array( maybeStrip( $_REQUEST['id'] ) ) );
-  $comment = db_fetch_object($data);
+if( empty( $_REQUEST['id'] ) && empty( $_POST ) )
+{
+  header( 'Location: view.php?useSessionFilter=true' );
+  exit();
+}
 
-  if (!$comment) {
-    header("Location: view.php?useSessionFilter=true");
-    exit();
-  }
-  
-  $smarty->assign( 'comment', $comment );
-  $smarty->display( 'html/lbheader.tpl' );
-
-  if( isset( $_REQUEST['page'] ) )
-    $page = "&amp;page=" . htmlentities( maybeStrip( $_REQUEST['page'] ) );
-  else
-    $page = "";
-
-  $subBarContents = '<a href="view.php?useSessionFilter=true' . $page . '#comment_' . $comment->id . '"><img src="icons/gohome.png" width="32" height="32" alt="Go home"/></a>'."\n";
-  $subBarContents .= ' &nbsp; &nbsp;' . iconForType( $comment->type ) . ' ' . messageForType( $comment->type ) . ' &nbsp; #<strong>' . $comment->id . '</strong> &nbsp; &nbsp; ' . $comment->date;
-  $smarty->assign( 'subBarType',     $comment->type );
-  $smarty->assign( 'subBarContents', $subBarContents );
-  $smarty->display( 'html/lbsubbar.tpl' );
-
-  if( isset( $_POST['mutation'] ) )
+$commentIds = array();
+if( ! empty( $_REQUEST['id'] ) )
+{
+  // Process a single comment
+  $commentIds[] = $_REQUEST['id'];
+}
+else
+{
+  // Get the list of ids of the selected comments from the POST data
+  $checkboxName = "check_comment_";
+  $size = strlen( $checkboxName );
+  foreach( $_POST as $key => $item )
   {
-    $mutation  = maybeStrip( $_POST['mutation']  );
-    $newRemark = maybeStrip( $_POST['newRemark'] );
-    $continue = 1;
-
-    switch( $mutation )
+    // Filter the non-checkbox form fields
+    if( strpos( $key, $checkboxName ) === false )
     {
-    case "none":
-      // just update the remark, below
-      if( strlen($newRemark) == 0 )
-      {
-        echo '<h2><font color="#ff0000">Error: Nothing to do.</font></h2>';
-        $continue = 0;
-      }
-      break;
+      continue;
+    }
+
+    $id = (int)substr( $key, $size );
+    if( ! isset( $commentIds[ $id ] ) )
+      $commentIds[] = $id;
+  }
+}
+
+if( empty( $commentIds ) )
+{
+  header( 'Location: view.php?useSessionFilter=true' );
+  exit();
+}
+
+// True if there are more than one selected comments
+$flag_MultipleComments = ( count( $commentIds ) > 1 );
+// True if there is any change to record
+$flag_HaveChanges      = ( ! empty( $_POST['mutation'] ) );
+
+
+$error = '';
+$query = '';
+$placeholders = array();
+
+$newStatus = '';
+$newResolution = '';
+$newTracBug = 0;
+$newRemark = maybeStrip( $_POST['newRemark'] );
+
+
+if( $flag_HaveChanges )
+{
+  $mutation = maybeStrip( $_POST['mutation'] );
+  switch( $mutation )
+  {
     case "reclose":
       // set status to Closed, resolution to recloseResolution
       $newResolution = maybeStrip( $_POST['recloseResolution'] );
+      // Go on to "close"
+
+
     case "close":
       // set status to Closed, resolution to closeResolution
       $newStatus     = "closed";
       if( $mutation == "close" )
         $newResolution = maybeStrip( $_POST['closeResolution'] );
-      if( strToLower( $comment->status ) == "closed" && $comment->resolution == $newResolution ) {
-        echo '<h2><font color="#ff0000">Error: The comment already has the chosen status.</font></h2>';
-        $continue = 0;
-      }
-      elseif( !in_array( $newResolution, validResolutions() ) && !in_array( messageForResolution( $newResolution ), validResolutions() ) )
+
+      if( empty( $newResolution ) )
       {
-        echo '<h2><font color="#ff0000">Error: The resolution you chose is not valid.</font></h2>';
-        $continue = 0;
+        $error = 'No resolution was selected.';
+      }
+      else
+      if( ! in_array( $newResolution, validResolutions() )
+      &&  ! in_array( messageForResolution( $newResolution ), validResolutions() ) )
+      {
+        $error = 'The resolution you chose, &quot;' . $newResolution . '&quot;, is not valid.';
       }
       break;
+
+
     case "restatus":
       // set status to restatusStatus
       $newStatus = maybeStrip( $_POST['restatusStatus'] );
+      // Go on to "reopen"
+
+
     case "reopen":
       // set status to reopenStatus
       if( $mutation == "reopen" )
         $newStatus = maybeStrip( $_POST['reopenStatus'] );
 
-      if( $comment->status == $newStatus ) {
-        echo '<h2><font color="#ff0000">Error: The comment already has the chosen status.</font></h2>';
-        $continue = 0;
-      }
-      elseif( !in_array( $newStatus, validStatuses() ) )
+      if( empty( $newStatus ) )
       {
-        echo '<h2><font color="#ff0000">Error: The status you chose is not valid.</font></h2>';
-        $continue = 0;
+        $error = 'No status was selected.';
       }
+      else
+      if( !in_array( $newStatus, validStatuses() ) )
+      {
+        $error = 'The status you chose, &quot;' . $newStatus . '&quot;, is not valid.';
+      }
+
       break;
+
+
     case "triage":
       // set status to Triaged, update tracbug
       $newStatus  = "triaged";
       $newTracBug = (int) $_POST['tracbug'];
       if( $newTracBug == 0 ) {
-        echo '<h2><font color="#ff0000">Error: Invalid trac bug.</font></h2>';
-        $continue = 0;
+        $error = 'Invalid trac bug.';
       }
       break;
-    }
-
-    $oldStatus = $comment->status;
-
-    if( $continue && isset( $newStatus ) ) {
-      $query = "";
-      $placeholders = array();
-      switch( $newStatus )
-      {
-      case "closed":
-        $query = "UPDATE LikeBack SET status=?, resolution=? WHERE id=?";
-        $placeholders = array( $newStatus, $newResolution, $comment->id );
-        break;
-      case "triaged":
-        $query = "UPDATE LikeBack SET status=?, tracbug=? WHERE id=?";
-        $placeholders = array( $newStatus, $newTracBug, $comment->id );
-        break;
-      default:
-        $query = "UPDATE LikeBack SET status=? WHERE id=?";
-        $placeholders = array( $newStatus, $comment->id );
-      }
-
-      if( db_query( $query, $placeholders ) )
-      {
-        // update the comment object
-        if( $newStatus == "closed" ) {
-          $comment->resolution = $newResolution;
-        }
-        $comment->status = $newStatus;
-
-        $smarty->assign( 'comment', $comment );
-      }
-      else
-      {
-        echo '<h2><font color="#ff0000">Unable to update game state; newStatus='.$newStatus.'; query='.$query.'; error='.mysql_error().'</font></h2>';
-        $continue = 0;
-      }
-    }
 
 
-    if( !isset( $newStatus ) ) $newStatus = "";
-    if( !isset( $newResolution ) ) $newResolution = "";
-    if( !isset( $newTracBug ) ) $newTracBug = 0;
-    $smarty->assign( 'newStatus', $newStatus );
-    $smarty->assign( 'newResolution', $newResolution );
-    $smarty->assign( 'tracbug', $newTracBug );
-    $smarty->assign( 'remark', $newRemark );
-    $tracurl = LIKEBACK_TRAC_URL . "/ticket/$newTracBug";
-    $smarty->assign( 'tracurl', $tracurl );
-
-    $userNotified = (!empty($comment->email) and isset($_POST['mailUser'])) and $_POST['mailUser'] == 'checked';
-
-    // Send a mail to the original feedback poster
-    if ( $continue && $userNotified ) {
-      $from          = $likebackMail;
-      $to            = $comment->email;
-      $subject       = $likebackMailSubject . " - Answer to your feedback, #" . $comment->id;
-
-      $message = $smarty->fetch( 'email/devremark.tpl' );
-      $message = wordwrap($message, 80);
-
-      $headers = "From: $from\r\n" .
-        "Content-Type: text/plain; charset=\"UTF-8\"\r\n" .
-        "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
-      mail($to, $subject, $message, $headers);
-    }
-
-    // Send a mail to all developers interested in this bug
-    $sendMailTo = sendMailTo( $comment->type, $comment->locale );
-    $sendMailTo = join( ", ", $sendMailTo );
-
-    if ( $continue && !empty($sendMailTo) ) {
-      $from    = $likebackMail;
-      $to      = $sendMailTo;
-      $subject = $likebackMailSubject . ' - New remark for '.messageForStatus($comment->status).
-        ' '.messageForType($comment->type).' #'.$comment->id;
-
-      $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $comment->id;
-
-      $smarty->assign( 'url',     $url );
-      $message = $smarty->fetch( 'email/devremark_todev.tpl' );
-      $message = wordwrap($message, 80);
-
-      $headers = "From: $from\r\n" .
-        "Content-Type: text/plain; charset=\"UTF-8\"\r\n" .
-        "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
-
-      mail($to, $subject, $message, $headers);
-    }
-
-    if( $continue )
-    {
-      $placeholders = "(?, ?, ?, ?, ";
-      $values = array( get_iso_8601_date(time()), $developer->id, $comment->id, $newRemark );
-
-      if( $userNotified )
-        $placeholders .= "'1', ";
-      else
-        $placeholders .= "'0', ";
-
-      if( $newStatus && $newStatus != $oldStatus ) // when resolution changes, newStatus==oldStatus=="Closed"; don't save it
-      {
-        $placeholders .= "?, ";
-        $values[] = $newStatus;
-      }
-      else
-        $placeholders .= "NULL, ";
-
-      if( $newResolution )
-      {
-        $placeholders .= "?, ";
-        $values[] = messageForResolution( $newResolution );
-      }
-      else
-        $placeholders .= "NULL, ";
-
-      if( $newTracBug )
-      {
-        $placeholders .= "?";
-        $values[] = $newTracBug;
-      }
-      else
-        $placeholders .= "NULL";
-
-      $placeholders .= ")";
-
-      if( !db_query("INSERT INTO LikeBackRemarks(dateTime, developer, commentId, "
-        ."remark, userNotified, statusChangedTo, resolutionChangedTo, tracbugChangedTo) "
-        ."VALUES " . $placeholders, $values ) )
-      {
-        echo '<h2><font color="#ff0000">Error: Failed to insert new remark: ' . mysql_error() . '</font></h2>';
-      }
-    }
+    case "none":
+    default:
+      // just update the remark, below
+      break;
   }
 
-  $smarty->display( 'html/comment.tpl' );
+  if( ! $error && ! empty( $newStatus ) )
+  {
+    $idList = implode( ',', $commentIds );
+    switch( $newStatus )
+    {
+    case "closed":
+      $query = "UPDATE LikeBack SET status=?, resolution=? WHERE id IN({$idList})";
+      $placeholders = array( $newStatus, $newResolution, $idList );
+      break;
+    case "triaged":
+      $query = "UPDATE LikeBack SET status=?, tracbug=? WHERE id IN({$idList})";
+      $placeholders = array( $newStatus, $newTracBug, $idList );
+      break;
+    default:
+      $query = "UPDATE LikeBack SET status=? WHERE id IN({$idList})";
+      $placeholders = array( $newStatus, $idList );
+    }
 
-  $remarks = db_fetchAll("SELECT   LikeBackRemarks.*, login " .
-                   "FROM     LikeBackRemarks, LikeBackDevelopers " .
-                   "WHERE    LikeBackDevelopers.id=developer AND commentId=? " .
-                   "ORDER BY dateTime ASC", array($comment->id));
+    if( ! db_query( $query, $placeholders ) )
+    {
+      $error = 'Unable to update the comments.<br/>' .
+               'The failing query was: &laquo;' . db_get_last_query() . '&raquo;<br/>' .
+               'Database error: &quot;' . db_error() . '&quot;.';
+    }
 
-  $smarty->assign( 'remarks', $remarks );
-  $smarty->assign( 'page', (isset($_REQUEST['page']) ? maybeStrip($_REQUEST['page']) : "") );
-  $smarty->display( 'html/remarks.tpl' );
+  }
+
+  if( $error )
+  {
+    echo '<h2 class="error">Error: ' . $error . '</h2>';
+  }
+}
+
+
+
+// Fetch the updated comments, then update their remarks, and show the changed comments
+
+$data = db_query( 'SELECT LikeBack.*, COUNT(LikeBackRemarks.id) AS remarkCount, ' .
+                    '(SELECT remark ' .
+                    'FROM LikeBackRemarks ' .
+                    'WHERE commentId = LikeBack.id ' .
+                    'ORDER BY dateTime DESC '.
+                    'LIMIT 1 ) AS lastRemark ' .
+                  'FROM LikeBack ' .
+                  'LEFT JOIN LikeBackRemarks ON LikeBack.id = commentId ' .
+                  'WHERE LikeBack.id IN(' . implode( ",", $commentIds ) . ')' .
+                  'GROUP BY LikeBack.id' );
+
+$comments = array();
+$dupes = array();
+while( $comment = db_fetch_object( $data ) )
+{
+  $comments[] = $comment;
+
+  // Don't send remarks if there isn't a new one
+  if( $comment->lastRemark === $newRemark )
+  {
+	$dupes[] = $comment->id;
+    continue;
+  }
+
+  if( $mutation == 'none' && empty( $newRemark ) )
+  {
+    continue;
+  }
+
+  // Show the updated number of remarks in the comment summary
+  if( ! empty( $newRemark ) )
+  {
+	$comment->remarkCount++;
+  }
+
+  $smarty->assign( 'comment', $comment );
+  $smarty->assign( 'newStatus', $newStatus );
+  $smarty->assign( 'newResolution', $newResolution );
+  $smarty->assign( 'tracbug', $newTracBug );
+  $smarty->assign( 'remark', $newRemark );
+  $smarty->assign( 'tracurl', LIKEBACK_TRAC_URL . '/ticket/' . $newTracBug );
+
+  $userNotified = !  empty( $comment->email )
+                  && isset( $_POST['mailUser'] ) && ( $_POST['mailUser'] == 'checked' );
+
+  // Send a mail to the original feedback poster
+  if( $userNotified )
+  {
+    $from    = $likebackMail;
+    $to      = $comment->email;
+    $subject = $likebackMailSubject . " - Answer to your feedback, #" . $comment->id;
+
+    $message = $smarty->fetch( 'email/devremark.tpl' );
+    $message = wordwrap( $message, 80 );
+
+    $headers = "From: $from\r\n" .
+                "Content-Type: text/plain; charset=\"UTF-8\"\r\n" .
+                "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
+    likeback_mail( $to, $subject, $message, $headers );
+  }
+
+  // Send a mail to all developers interested in this bug
+  $sendMailTo = sendMailTo( $comment->type, $comment->locale );
+  $sendMailTo = join( ", ", $sendMailTo );
+
+  if( ! empty( $sendMailTo ) )
+  {
+    $from    = $likebackMail;
+    $to      = $sendMailTo;
+    $subject = $likebackMailSubject .
+                ' - New remark for ' . messageForStatus( $comment->status ) .
+                ' ' . messageForType( $comment->type ) . ' #' . $comment->id;
+
+    $url     = getLikeBackUrl() . "/admin/comment.php?id=" . $comment->id;
+    $message = $smarty->fetch( 'email/devremark_todev.tpl' );
+    $message = wordwrap( $message, 80 );
+
+    $smarty->assign( 'url', $url );
+
+    $headers = "From: $from\r\n" .
+                "Content-Type: text/plain; charset=\"UTF-8\"\r\n" .
+                "X-Mailer: Likeback/" . LIKEBACK_VERSION . " using PHP/" . phpversion();
+
+    likeback_mail( $to, $subject, $message, $headers );
+  }
+
+  $placeholders = '(?, ?, ?, ?, ';
+  $values = array( get_iso_8601_date(time()), $developer->id, $comment->id, $newRemark );
+
+  if( $userNotified )
+    $placeholders .= "'1', ";
+  else
+    $placeholders .= "'0', ";
+
+  if( $newStatus )
+  {
+    $placeholders .= '?, ';
+    $values[] = $newStatus;
+  }
+  else
+    $placeholders .= 'NULL, ';
+
+  if( $newResolution )
+  {
+    $placeholders .= '?, ';
+    $values[] = messageForResolution( $newResolution );
+  }
+  else
+    $placeholders .= 'NULL, ';
+
+  if( $newTracBug )
+  {
+    $placeholders .= '?';
+    $values[] = $newTracBug;
+  }
+  else
+    $placeholders .= 'NULL';
+
+  $placeholders .= ')';
+
+  $query = 'INSERT INTO LikeBackRemarks( ' .
+              'dateTime, developer, commentId, remark, ' .
+              'userNotified, statusChangedTo, resolutionChangedTo, tracbugChangedTo'.
+            ' ) VALUES ' . $placeholders;
+  if( ! db_query( $query, $values ) )
+  {
+    echo '<h2 class="error">Error: Failed to insert a new remark.<br/>' .
+          'The failing query was: &laquo;' . db_get_last_query() . '&raquo;<br/>' .
+          'Database error: &quot;' . db_error() . '&quot;.</h2>';
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+// Only display the list of changed comments
+if( $flag_MultipleComments )
+{
+  $smarty->assign( 'comments',           $comments );
+  $smarty->assign( 'skipped',            count( $dupes ) );
+  $smarty->assign( 'page',               1 );
+  $smarty->assign( 'showEditingOptions', false );
+  $smarty->display( 'html/comments.tpl' );
 
   $smarty->display( 'html/bottom.tpl' );
+  return;
+}
+
+
+// There's only one comment, show it
+$comment = array_pop( $comments );
+
+
+$smarty->display( 'html/lbheader.tpl' );
+
+if( isset( $_REQUEST['page'] ) )
+  $page = "&amp;page=" . htmlentities( maybeStrip( $_REQUEST['page'] ) );
+else
+  $page = "";
+
+
+$subBarContents = '<a href="view.php?useSessionFilter=true' . $page . '#comment_' . $comment->id . '"><img src="icons/gohome.png" width="32" height="32" alt="Go home"/></a>'."\n";
+$subBarContents .= ' &nbsp; &nbsp;' . iconForType( $comment->type ) . ' ' . messageForType( $comment->type ) . ' &nbsp; #<strong>' . $comment->id . '</strong> &nbsp; &nbsp; ' . $comment->date;
+$smarty->assign( 'subBarType',     $comment->type );
+$smarty->assign( 'subBarContents', $subBarContents );
+$smarty->display( 'html/lbsubbar.tpl' );
+
+$smarty->assign( 'comment', $comment );
+$smarty->assign( 'skipped', count( $dupes ) );
+$smarty->display( 'html/comment.tpl' );
+
+$remarks = db_fetchAll("SELECT   LikeBackRemarks.*, login " .
+                  "FROM     LikeBackRemarks, LikeBackDevelopers " .
+                  "WHERE    LikeBackDevelopers.id=developer AND commentId=? " .
+                  "ORDER BY dateTime ASC", array($comment->id));
+
+$smarty->assign( 'remarks', $remarks );
+$smarty->assign( 'page', (isset($_REQUEST['page']) ? maybeStrip($_REQUEST['page']) : "") );
+$smarty->display( 'html/remarks.tpl' );
+
+$smarty->display( 'html/bottom.tpl' );
