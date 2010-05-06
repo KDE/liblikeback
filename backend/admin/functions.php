@@ -75,7 +75,7 @@ function iconForStatus($status)
 
 function iconForResolution( $resolution )
 {
-  $isNumber = ( (int) $resolution ) == $resolution;
+  $isNumber = is_numeric( $resolution );
   $resolutions = getResolutions();
 
   foreach( $resolutions as $item )

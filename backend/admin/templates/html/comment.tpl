@@ -1,8 +1,3 @@
-
-{if $skipped > 0}
-    <h2 class="error">The comment was already up to date.</h2>
-{/if}
-
 {assign var=newRemarkFocus value='class="invisibleLink" href="javascript:document.getElementById(\'newRemark\').focus();"'}
   <div class="content">
    <table class="summary">

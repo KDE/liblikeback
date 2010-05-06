@@ -61,11 +61,6 @@ if( empty( $commentIds ) )
   exit();
 }
 
-// True if there are more than one selected comments
-$flag_MultipleComments = ( count( $commentIds ) > 1 );
-// True if there is any change to record
-$flag_HaveChanges      = ( ! empty( $_POST['mutation'] ) || ! empty( $_POST['newRemark'] ) );
-
 
 $error = '';
 $query = '';
@@ -76,6 +71,11 @@ $newResolution = '';
 $newTracBug = 0;
 $newRemark = isset( $_POST['newRemark'] ) ? maybeStrip( $_POST['newRemark'] ) : '';
 $mutation = isset( $_POST['mutation'] ) ? maybeStrip( $_POST['mutation'] ) : '';
+
+// True if there are more than one selected comments
+$flag_MultipleComments = ( count( $commentIds ) > 1 );
+// True if there is any change to record
+$flag_HaveChanges      = ( ! empty( $newRemark ) || ( $mutation != 'none' && $mutation != '' ) );
 
 
 if( $flag_HaveChanges )
@@ -196,7 +196,6 @@ $data = db_query( 'SELECT LikeBack.*, COUNT(LikeBackRemarks.id) AS remarkCount, 
                   'GROUP BY LikeBack.id' );
 
 $comments = array();
-$dupes = array();
 while( $comment = db_fetch_object( $data ) )
 {
   // Fix the encoding of the comments
@@ -209,14 +208,9 @@ while( $comment = db_fetch_object( $data ) )
 foreach( $comments as $comment )
 {
   // Don't send remarks if there isn't a new one
-  if( ! $flag_HaveChanges && empty( $newRemark ) )
+  if( ! $flag_HaveChanges
+  &&  ( empty( $newRemark ) || $comment->lastRemark == $newRemark ) )
   {
-    continue;
-  }
-
-  if( $flag_HaveChanges && $comment->lastRemark === $newRemark )
-  {
-	$dupes[] = $comment->id;
     continue;
   }
 
@@ -330,19 +324,10 @@ foreach( $comments as $comment )
 
 
 
-
-
-
-
-
-
-
-
 // Only display the list of changed comments
 if( $flag_MultipleComments )
 {
   $smarty->assign( 'comments',           $comments );
-  $smarty->assign( 'skipped',            count( $dupes ) );
   $smarty->assign( 'page',               1 );
   $smarty->assign( 'showEditingOptions', false );
   $smarty->display( 'html/comments.tpl' );
@@ -371,7 +356,6 @@ $smarty->assign( 'subBarContents', $subBarContents );
 $smarty->display( 'html/lbsubbar.tpl' );
 
 $smarty->assign( 'comment', $comment );
-$smarty->assign( 'skipped', count( $dupes ) );
 $smarty->display( 'html/comment.tpl' );
 
 $remarks = db_fetchAll( "SELECT    r.*, IF(d.id,d.login,'Nobody') as login " .

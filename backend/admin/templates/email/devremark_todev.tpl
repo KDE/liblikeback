@@ -1,6 +1,6 @@
 Hi!
 
-A developer responded on LikeBack issue #{$comment->id} (a {$comment->status} {$comment->type}):
+A developer responded on LikeBack comment #{$comment->id} (a {$comment->status} {$comment->type}):
 
 {$comment->comment|wrapQuote}
 
