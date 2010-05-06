@@ -21,23 +21,21 @@ img       { padding: 1px; border: none; vertical-align: middle; }
 .subBar.Options { border-bottom: 1px solid #DFDFFF; }
 
 /* Comment list navigation */
-#navi {
+.pager {
   text-align: center;
+  font-size: larger;
+  font-weight: bold;
   padding: 1em;
 }
-#navi a, #navi a:active, #navi a:visited {
+.pager a, .pager a:active, .pager a:visited {
   color: #444;
+  font-weight: bold;
   text-decoration: underline;
 }
-#navi a:hover {
+.pager a:hover {
   color: #777;
+  font-weight: bold;
   text-decoration: underline;
-}
-#navi h4, #navi p {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-#navi span {
 }
 
 /* Comment list base color and settings */

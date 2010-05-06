@@ -55,20 +55,19 @@ foreach( validStatuses() as $status ) {
 }
 
 // Get the counts of developers
-$numDevsWE  = db_query( "SELECT COUNT(*) AS count FROM `LikeBackDevelopers` WHERE `email`!=''" );
-$numDevsWE  = db_fetch_object( $numDevsWE );
-if( $numDevsWE )
-  $numDevsWE= $numDevsWE->count;
-$numDevs    = db_query( "SELECT COUNT(*) AS count FROM `LikeBackDevelopers`" );
-$numDevs    = db_fetch_object( $numDevs );
-if( $numDevs )
-  $numDevs  = $numDevs->count;
+$developersQuery = 'SELECT COUNT(*) AS count FROM `LikeBackDevelopers` ' .
+  ' WHERE `login` != \'Nobody\' AND `login` != \'LikeBackTracIntegration\' ';
 
-$subBarContents = '<a href="view.php?useSessionFilter=true"><img src="icons/gohome.png" width="32" height="32" alt=""></a> &nbsp; &nbsp;
-   <strong>LikeBack statistics</strong>';
+$numDevs = db_query( $developersQuery );
+$numDevs = db_fetch_object( $numDevs );
+$numDevs = ( $numDevs ) ? $numDevs->count : 0;
+$numDevsWE = db_query( $developersQuery . " AND `email`!=''" );
+$numDevsWE = db_fetch_object( $numDevsWE );
+$numDevsWE = ( $numDevsWE ) ? $numDevsWE->count : 0;
 
 $smarty->assign( 'subBarType',     'Options' );
-$smarty->assign( 'subBarContents', $subBarContents );
+$smarty->assign( 'isHome',         false );
+$smarty->assign( 'subBarContents', 'LikeBack statistics' );
 $smarty->assign( 'totalCount',     $totalCount );
 $smarty->assign( 'typeCounts',     $types );
 $smarty->assign( 'statusCounts',   $statuses );

@@ -64,7 +64,7 @@ if( empty( $commentIds ) )
 // True if there are more than one selected comments
 $flag_MultipleComments = ( count( $commentIds ) > 1 );
 // True if there is any change to record
-$flag_HaveChanges      = ( ! empty( $_POST['mutation'] ) );
+$flag_HaveChanges      = ( ! empty( $_POST['mutation'] ) || ! empty( $_POST['newRemark'] ) );
 
 
 $error = '';
@@ -74,12 +74,12 @@ $placeholders = array();
 $newStatus = '';
 $newResolution = '';
 $newTracBug = 0;
-$newRemark = maybeStrip( $_POST['newRemark'] );
+$newRemark = isset( $_POST['newRemark'] ) ? maybeStrip( $_POST['newRemark'] ) : '';
+$mutation = isset( $_POST['mutation'] ) ? maybeStrip( $_POST['mutation'] ) : '';
 
 
 if( $flag_HaveChanges )
 {
-  $mutation = maybeStrip( $_POST['mutation'] );
   switch( $mutation )
   {
     case "reclose":
@@ -200,9 +200,12 @@ $dupes = array();
 while( $comment = db_fetch_object( $data ) )
 {
   $comments[] = $comment;
+}
 
+foreach( $comments as $comment )
+{
   // Don't send remarks if there isn't a new one
-  if( $comment->lastRemark === $newRemark )
+  if( $flag_HaveChanges && $comment->lastRemark === $newRemark )
   {
 	$dupes[] = $comment->id;
     continue;
@@ -352,9 +355,9 @@ else
   $page = "";
 
 
-$subBarContents = '<a href="view.php?useSessionFilter=true' . $page . '#comment_' . $comment->id . '"><img src="icons/gohome.png" width="32" height="32" alt="Go home"/></a>'."\n";
-$subBarContents .= ' &nbsp; &nbsp;' . iconForType( $comment->type ) . ' ' . messageForType( $comment->type ) . ' &nbsp; #<strong>' . $comment->id . '</strong> &nbsp; &nbsp; ' . $comment->date;
+$subBarContents = iconForType( $comment->type ) . ' ' . messageForType( $comment->type ) . ' &nbsp; #<strong>' . $comment->id . '</strong> &nbsp; &nbsp; ' . $comment->date;
 $smarty->assign( 'subBarType',     $comment->type );
+$smarty->assign( 'isHome',         false );
 $smarty->assign( 'subBarContents', $subBarContents );
 $smarty->display( 'html/lbsubbar.tpl' );
 

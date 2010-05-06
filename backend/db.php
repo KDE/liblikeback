@@ -99,7 +99,7 @@ function db_fetch_object($result)
 {
   global $dbType;
 
-  if( $result === false )
+  if( $result === false || $result === null )
   {
     return false;
   }

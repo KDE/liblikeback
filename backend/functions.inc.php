@@ -152,10 +152,10 @@ function sendMailTo( $type, $locale )
   }
 
   $sendMailTo = array();
-  while( $line = db_fetch_object( $developersData ) )
+  foreach( $developersData as $developer )
   {
-    if (matchType($line->types, $type) && matchLocale($line->locales, $locale))
-      array_push( $sendMailTo, $line->email );
+    if (matchType($developer->types, $type) && matchLocale($developer->locales, $locale))
+      array_push( $sendMailTo, $developer->email );
   }
 
   return $sendMailTo;

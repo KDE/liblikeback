@@ -29,6 +29,9 @@ include("header.php");
   // Figure out if we are filtering or if it is the first time:
   $filtering = isset($_POST['filtering']);
 
+  // Retrieve the pager settings
+  $pagerCount = (isset($_POST["pagerCount"]) ? maybeStrip( $_POST["pagerCount"] ) : 50);
+
   // Gather the versions and version filter
   $versionFilter = (isset($_POST["version"]) ? maybeStrip( $_POST["version"] ) : "");
 
@@ -130,7 +133,7 @@ include("header.php");
   $pageInfo = pageBrowser( 'view.php?useSessionFilter=true',
                            $page,
                            $numResults,
-                           50 );
+                           $pagerCount );
   $page = $pageInfo['page_current'];
 
   $data = db_query("SELECT   LikeBack.*, COUNT(LikeBackRemarks.id) AS remarkCount " .
@@ -172,17 +175,19 @@ include("header.php");
   }
 
 $smarty->display( 'html/lbheader.tpl' );
-$subBarContents = '<span id="countMessage">Number of displayed comments: <strong id="commentCount">' . count($comments). '</strong></span>';
+// $subBarContents = '<span id="countMessage">Number of displayed comments: <strong id="commentCount">' . count($comments). '</strong></span>';
 $smarty->assign( 'subBarType',     'Options' );
-$smarty->assign( 'subBarContents', $subBarContents );
+$smarty->assign( 'isHome',         true );
+$smarty->assign( 'subBarContents', $pageInfo['description'] );
 $smarty->display( 'html/lbsubbar.tpl' );
 
-echo '<div class="content">';
+$smarty->assign( 'pagerChoices', array( 10, 25, 50, 100, 500 ) );
+$smarty->assign( 'pagerSelection', $pageInfo['page_count'] );
 $smarty->display( 'html/viewfilters.tpl' );
 
-echo '<div id="navi">' . $pageInfo['navi'] . "</div>\n";
 $smarty->assign( 'comments',           $comments );
 $smarty->assign( 'page',               $page );
+$smarty->assign( 'pager',              $pageInfo['pager'] );
 $smarty->assign( 'showEditingOptions', true );
 $smarty->display( 'html/commenttable.tpl' );
 $smarty->display( 'html/bottom.tpl' );

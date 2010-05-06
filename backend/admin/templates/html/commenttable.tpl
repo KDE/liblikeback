@@ -1,6 +1,11 @@
 {if $showEditingOptions}
    <form name="newRemarkForm" action="comment.php" method="post">
 {/if}
+
+{if $pager}
+   <div class="pager">{$pager}</div>
+{/if}
+
    <table id="data">
     <thead>
 {if $showEditingOptions}
@@ -32,15 +37,26 @@
       {* <th>&nbsp;</th> *}
      </tr>
     </thead>
-{if $showEditingOptions}
     <tfoot>
      <tr>
+{if $showEditingOptions}
       <td colspan="9" class="CommentsTableActions">
+{if $pager}
+        <div class="pager">{$pager}</div>
+{/if}
         {include file='html/newremark_multi.tpl'}
       </td>
+{else}
+{if $pager}
+      <td colspan="9" class="pager">
+        {$pager}
+      </td>
+{else}
+      <td colspan="9"></td>
+{/if}
+{/if}
      </tr>
     </tfoot>
-{/if}
     <tbody>
 {section name=i loop=$comments}
 {assign var='comment' value="$comments[i]"}
@@ -96,6 +112,7 @@
 {/section}
     </tbody>
    </table>
+
 {if $showEditingOptions}
    </form>
 {/if}

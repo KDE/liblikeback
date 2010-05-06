@@ -201,10 +201,10 @@ function pageBrowser( $url, $currentPage, $numItems, $itemsPerPage )
 
   $pagesList = array();
 
-  //     $pagesList[] = ( $currentPage > $minPages )
-  //       ? ' <a href="' . $url . $queryChar . 'page=' . ($currentPage - 1) . '">' .
-  //            ($currentPage - 1) . '</a> '
-  //       : ' <span>' . ($currentPage - 1) . '</span> ';
+  if( $minPages > 1 )
+  {
+    $pagesList[] = ' <span>...</span> ';
+  }
 
   for( $idx = $minPages; $idx <= $maxPages; $idx++ )
     $pagesList[] = ( $idx == $currentPage )
@@ -212,33 +212,32 @@ function pageBrowser( $url, $currentPage, $numItems, $itemsPerPage )
       : ' <a href="' . $url . $queryChar . 'page=' . $idx . '">' .
            $idx . '</a> ';
 
-  //     $pagesList[] = ( $currentPage != $maxPages )
-  //       ? ' <a href="' . $url . $queryChar . 'page=' . ($currentPage + 1) . '">' .
-  //           ($currentPage + 1) . '</a> '
-  //       : ' <span>' . ($currentPage + 1) . '</span> ';
+  if( $maxPages < $numPages )
+  {
+    $pagesList[] = ' <span>...</span> ';
+  }
 
   // Now create the 'first' and 'last' pages links, if we need 'em
 
   $firstPage = ( $currentPage > 1 )
-    ? ' <a href="' . $url . $queryChar . 'page=1">First</a> '
-    : ' <span>First</span> ';
+    ? ' <a href="' . $url . $queryChar . 'page=1">First page</a> '
+    : ' <span>First page</span> ';
 
   $lastPage = ( $currentPage < $numPages )
-    ? ' <a href="' . $url . $queryChar . 'page=' . ($numPages) . '">Last</a> '
-    : ' <span>Last</span> ';
+    ? ' <a href="' . $url . $queryChar . 'page=' . ($numPages) . '">Last page (' . $numPages . ')</a> '
+    : ' <span>Last page (' . $numPages . ')</span> ';
 
 
   // Lastly, make up the actual pages list and return it all to the caller.
 
-  $navi = '<h4>Showing items from ' . ($firstItem + 1) . ' to ' . $lastItem . ', out of '.$numItems.' items</h4>' .
-          '<p>' .
-          $firstPage . ' &mdash; ' .
-          implode( ' &middot; ', $pagesList ) .
-          ' &mdash; ' . $lastPage .
-          '</p>';
+  $description = 'Showing items from ' . ($firstItem + 1) . ' to ' . $lastItem . ', out of '.$numItems.' items';
+  $pager = $firstPage . ' | ' .
+           implode( ' &middot; ', $pagesList ) .
+           ' | ' . $lastPage;
 
   return array(
-    'navi' => $navi,
+    'description' => $description,
+    'pager' => $pager,
     'page_start' => $firstItem,
     'page_count' => $itemsPerPage,
     'page_current' => $currentPage,
@@ -281,9 +280,12 @@ function getDeveloper() {
 
   // Just in case HTTP authentication isn't working or is turned off
   $nobody = new stdclass();
-  $nobody->id = 0;
-  $nobody->login = 'developer';
-  $nobody->email = $likebackMail;
+  $nobody->id        = 0;
+  $nobody->login     = 'Nobody';
+  $nobody->email     = $likebackMail;
+  $nobody->lastvisit = null;
+  $nobody->types     = null;
+  $nobody->locales   = null;
 
   if( isset( $_SERVER['PHP_AUTH_USER'] ) )
     $userName = $_SERVER['PHP_AUTH_USER'];
@@ -295,7 +297,7 @@ function getDeveloper() {
   if( isset( $developer ) && $developer && $developer->login == $userName )
     return $developer;
 
-  if( !isset( $userName ) || empty( $userName ) ) {
+  if( !isset( $userName ) || empty( $userName ) || $userName == $nobody->login ) {
     if( !LIKEBACK_PRODUCTION )
       echo "<!-- Tried to fetch developer but nobody was logged in! -->";
     return $nobody;

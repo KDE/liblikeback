@@ -2,6 +2,14 @@
      <legend>Filtering options</legend>
      <form action="view.php" method="post">
      <div> {* todo make it a table or so *}
+
+      <strong>Comments per page:</strong>
+        <select name="pagerCount">
+{section name=i loop=$pagerChoices}
+{assign var=choice value="$pagerChoices[i]"}
+          <option value="{$choice}" {if $pagerSelection eq $choice}selected="selected"{/if}>{$choice}</option>
+{/section}
+        </select><br/>
       <strong>Version:</strong>
         <select name="version">
 {if empty( $selectedVersion ) }{assign var=selected value='selected="selected"'}{else}{assign var=selected value=""}{/if}
@@ -43,4 +51,3 @@
      </div>
      </form>
     </fieldset>
-
