@@ -173,7 +173,7 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
          * @returns The list of accepted locales for the user to write comments.
          * @see setAcceptedLanguages()
          */
-        QStringList acceptedLocales();
+        QStringList acceptedLocales() const;
 
         /**
          * Set the path where LikeBack should send every comments.
@@ -189,19 +189,19 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
          * @returns The server host name to contact when sending comments.
          * @see setServer()
          */
-        QString hostName();
+        QString hostName() const;
 
         /**
          * @returns The path to the send script on the server.
          * @see setServer()
          */
-        QString remotePath();
+        QString remotePath() const;
 
         /**
          * @returns The port used to contact the server using the HTTP protocol.
          * @see setServer()
          */
-        quint16 hostPort();
+        quint16 hostPort() const;
 
   /**
    * Create the menu actions.
@@ -240,7 +240,7 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
         /**
          * @returns The combination of buttons that are shown in the comment dialog and the button-bar.
          */
-        Button buttons();
+        Button buttons() const;
 
         /**
          * @returns true if the button-bar is currently enabled. Ie, if it has been re-enabled as many times as it has been disabled.
@@ -252,32 +252,32 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
         /**
          * @returns true if the user has enabled the LikeBack bar for this version.
          */
-        bool userWantsToShowBar();
+        bool userWantsToShowBar() const;
 
         /**
          * @returns A pointer to the KAboutData used to determin the application name and version.
          * @see The LikeBack constructor for more information.
          */
-        const KAboutData *aboutData();
+        const KAboutData *aboutData() const;
 
         /**
          * @returns A pointer to the KConfig group to store user configuration (email address, if the button-bar should be shown).
          * @see The LikeBack constructor for more information.
          */
-        KConfig *config();
+        KConfig *config() const;
 
         /**
          * During the first comment sending, the user is invited to enter his email address for the developers to be able to contact him back.
          * He is only asked once, or he can set or change it by using the bottom-left button in the comment dialog.
          * @returns true if the user has already configured his email address.
          */
-        bool emailAddressAlreadyProvided();
+        bool emailAddressAlreadyProvided() const;
 
         /**
          * @returns The email user address, or ask it to the user if he have not provided or ignored it.
          * @returns An empty string if the user cancelled the request dialog.
          */
-        QString emailAddress();
+        QString emailAddress() const;
 
         /**
          * Define or re-define the user email address.

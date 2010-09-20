@@ -141,7 +141,7 @@ void LikeBack::setAcceptedLanguages( const QStringList &locales )
 
 
 // Return the accepted languages for the comments
-QStringList LikeBack::acceptedLocales()
+QStringList LikeBack::acceptedLocales() const
 {
   return d->acceptedLocales;
 }
@@ -159,7 +159,7 @@ void LikeBack::setServer(const QString &hostName, const QString &remotePath, qui
 
 
 // Get the developers site hostname
-QString LikeBack::hostName()
+QString LikeBack::hostName() const
 {
   return d->hostName;
 }
@@ -167,7 +167,7 @@ QString LikeBack::hostName()
 
 
 // Get the path on the developers site
-QString LikeBack::remotePath()
+QString LikeBack::remotePath() const
 {
   return d->remotePath;
 }
@@ -175,7 +175,7 @@ QString LikeBack::remotePath()
 
 
 // Get the developers site port
-quint16 LikeBack::hostPort()
+quint16 LikeBack::hostPort() const
 {
   return d->hostPort;
 }
@@ -232,7 +232,7 @@ void LikeBack::execCommentDialog( Button type, const QString &initialComment, co
 }
 
 // Retrieve which feedback buttons are active
-LikeBack::Button LikeBack::buttons()
+LikeBack::Button LikeBack::buttons() const
 {
   return d->buttons;
 }
@@ -240,7 +240,7 @@ LikeBack::Button LikeBack::buttons()
 
 
 // Get the KAboutData stored object
-const KAboutData* LikeBack::aboutData()
+const KAboutData* LikeBack::aboutData() const
 {
   return d->aboutData;
 }
@@ -248,7 +248,7 @@ const KAboutData* LikeBack::aboutData()
 
 
 // Get the KDE config stored object
-KConfig *LikeBack::config()
+KConfig *LikeBack::config() const
 {
   return d->config.config();
 }
@@ -281,7 +281,7 @@ void LikeBack::createActions( KActionCollection *parent )
 
 
 // Return whether the user wants to enable the likeback bar or not
-bool LikeBack::userWantsToShowBar()
+bool LikeBack::userWantsToShowBar() const
 {
   // You can choose to store the button bar status per version.
   // On debug builds from SVN, where the version changes at almost every build,
@@ -470,7 +470,7 @@ QString LikeBack::activeWindowPath()
 
 
 // Return whether the email address was confirmed by the user
-bool LikeBack::emailAddressAlreadyProvided()
+bool LikeBack::emailAddressAlreadyProvided() const
 {
   return d->config.readEntry( "emailAlreadyAsked", false );
 }
@@ -478,7 +478,7 @@ bool LikeBack::emailAddressAlreadyProvided()
 
 
 // Return the currently saved email address, or the account's email address, if present
-QString LikeBack::emailAddress()
+QString LikeBack::emailAddress() const
 {
   KEMailSettings emailSettings;
   return d->config.readEntry( "emailAddress", emailSettings.getSetting( KEMailSettings::EmailAddress ) );
