@@ -1,10 +1,10 @@
 set(likeback_SRCS
-    LikeBack.cpp
-    LikeBackDialog.cpp
-    LikeBackBar.cpp
+    likeback.cpp
+    likebackdialog.cpp
+    likebackbar.cpp
 )
 
-kde4_add_ui_files(likeback_SRCS LikeBackDialog.ui LikeBackBar.ui)
+kde4_add_ui_files(likeback_SRCS likebackdialog.ui likebackbar.ui)
 
 kde4_add_library(likeback SHARED ${likeback_SRCS})
 
@@ -29,8 +29,8 @@ install(FILES
 
 install(
     FILES
-    LikeBack.h
-    LikeBackExport.h
+    likeback.h
+    likebackexport.h
     DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT Devel
 )
