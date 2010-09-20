@@ -138,7 +138,7 @@ QString LikeBackDialog::introductionText()
       acceptedLocales << kLocale->languageCodeToName( locale );
     }
   }
-  else if( ! kLocale->language().startsWith( "en" ) )
+  else if( ! kLocale->language().startsWith( QLatin1String("en") ) )
   {
     acceptedLocales << kLocale->languageCodeToName( "en" );
   }
