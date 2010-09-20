@@ -38,10 +38,10 @@ LikeBackBar::LikeBackBar( LikeBack *likeBack )
   setObjectName( "LikeBackBar" );
 
   // Set the button icons
-  m_likeButton   ->setIcon( KIcon( "likeback_like"    ) );
-  m_dislikeButton->setIcon( KIcon( "likeback_dislike" ) );
-  m_bugButton    ->setIcon( KIcon( "likeback_bug"     ) );
-  m_featureButton->setIcon( KIcon( "likeback_feature" ) );
+  m_likeButton   ->setIcon( KIcon( "edit-like-likeback"    ) );
+  m_dislikeButton->setIcon( KIcon( "edit-dislike-likeback" ) );
+  m_bugButton    ->setIcon( KIcon( "tools-report-bug-likeback"     ) );
+  m_featureButton->setIcon( KIcon( "tools-report-feature-likeback" ) );
 
   // Show buttons for the enabled types of feedback only
   LikeBack::Button buttons = likeBack->buttons();
