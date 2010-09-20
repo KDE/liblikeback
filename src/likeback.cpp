@@ -3,8 +3,9 @@
                              -------------------
     begin                : unknown
     imported to LB svn   : 3 june, 2009
-    copyright            : (C) 2006 by Sebastien Laout
-                           (C) 2008-2009 by Valerio Pilo, Sjors Gielen
+    copyright            : © 2006 by Sebastien Laout
+                           © 2008-2009 by Valerio Pilo, Sjors Gielen
+                           © 2010 Harald Sitter <apachelogger@ubuntu.com>
     email                : sjors@kmess.org
  ***************************************************************************/
 
@@ -75,11 +76,11 @@ LikeBack::LikeBack( Button buttons, bool showBarByDefault, KConfig *config, cons
  , d(new LikeBackPrivate(this))
 {
   // Use default KApplication config and aboutData if not provided:
-  if( config == 0 )
+  if(!config)
   {
     config = KGlobal::config().data();
   }
-  if( aboutData == 0 )
+  if(!aboutData)
   {
     aboutData = KGlobal::mainComponent().aboutData();
   }
