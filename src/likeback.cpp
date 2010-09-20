@@ -326,10 +326,10 @@ void LikeBack::showInformationMessage()
 
   // Load and register the images needed by the message:
   KIconLoader *loader = KIconLoader::global();
-  QString likeIconPath   ( loader->iconPath( "likeback_like",    KIconLoader::Small ) );
-  QString dislikeIconPath( loader->iconPath( "likeback_dislike", KIconLoader::Small ) );
-  QString bugIconPath    ( loader->iconPath( "likeback_bug",     KIconLoader::Small ) );
-  QString featureIconPath( loader->iconPath( "likeback_feature", KIconLoader::Small ) );
+  QString likeIconPath   ( loader->iconPath( "edit-like-likeback",    KIconLoader::Small ) );
+  QString dislikeIconPath( loader->iconPath( "edit-dislike-likeback", KIconLoader::Small ) );
+  QString bugIconPath    ( loader->iconPath( "tools-report-bug-likeback",     KIconLoader::Small ) );
+  QString featureIconPath( loader->iconPath( "tools-report-feature-likeback", KIconLoader::Small ) );
 
   // Show a message reflecting the allowed types of comment:
   Button buttons = d->buttons;
