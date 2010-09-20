@@ -20,11 +20,19 @@
 #ifndef LIKEBACK_PRIVATE_H
 #define LIKEBACK_PRIVATE_H
 
-#include <QtCore/QTimer>
+#include <QtCore/QString>
+
+#include <KConfigGroup>
+
+#include "likeback.h"
 
 class QButtonGroup;
 
-class Kaction;
+class KAboutData;
+class KAction;
+class KToggleAction;
+
+class LikeBackBar;
 
 class LikeBackPrivate
 {

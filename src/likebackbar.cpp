@@ -17,13 +17,13 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "likebackbar.h"
+
 #include <QtGui/QResizeEvent>
 
 #include <KApplication>
 
 #include "likeback.h"
-#include "likebackbar.h"
-
 
 // Constructor
 LikeBackBar::LikeBackBar( LikeBack *likeBack )

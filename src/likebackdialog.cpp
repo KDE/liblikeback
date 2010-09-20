@@ -17,8 +17,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <QHttp>
-#include <QHttpRequestHeader>
+#include "likebackdialog.h"
+
+#include <QtNetwork/QHttp>
+#include <QtNetwork/QHttpRequestHeader>
 
 #include <KAboutData>
 #include <KApplication>
@@ -27,7 +29,6 @@
 #include <KMessageBox>
 #include <KPushButton>
 
-#include "likebackdialog.h"
 #include "likeback.h"
 
 

@@ -18,6 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "likeback.h"
+#include "likeback_p.h"
+
 #include <KAboutData>
 #include <KAction>
 #include <KActionCollection>
@@ -29,10 +32,8 @@
 #include <KStandardDirs>
 #include <KToggleAction>
 
-#include "likeback.h"
 #include "likebackbar.h"
 #include "likebackdialog.h"
-#include "likeback_p.h"
 
 LikeBackPrivate::LikeBackPrivate(LikeBack *q)
  : q_ptr(q)
