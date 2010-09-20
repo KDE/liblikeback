@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=@CMAKE_INSTALL_PREFIX@
+libdir=@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@
+includedir=@CMAKE_INSTALL_PREFIX@/include/LikeBack
+
+Name: liblikeback
+Description: User feedback system
+Version: @LIKEBACK_VERSION@
+Libs: -L${libdir} -llikeback
+Cflags: -I${includedir}

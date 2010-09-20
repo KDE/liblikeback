@@ -14,8 +14,9 @@ target_link_libraries(likeback
 )
 
 set_target_properties(likeback
-    PROPERTIES VERSION ${LIB_VERSION}
-    SOVERSION ${LIB_SOVERSION}
+    PROPERTIES
+    VERSION ${LIKEBACK_LIB_VERSION}
+    SOVERSION ${LIKEBACK_LIB_SOVERSION}
 )
 
 install(TARGETS likeback ${INSTALL_TARGETS_DEFAULT_ARGS})
