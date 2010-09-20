@@ -9,4 +9,5 @@ include(KDE4Defaults)
 include_directories(${QT_INCLUDES} ${KDE4_INCLUDES})
 
 add_subdirectory(data)
+add_subdirectory(includes)
 add_subdirectory(src)
