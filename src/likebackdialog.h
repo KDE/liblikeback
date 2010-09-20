@@ -21,13 +21,11 @@
 #define LIKEBACKDIALOG_H
 
 #include <KDialog>
-
-#include <QButtonGroup>
-
-#include "likeback.h"
-
 #include "ui_likebackdialog.h"
 
+#include <QtGui/QButtonGroup>
+
+#include "likeback.h"
 
 class LikeBackDialog : public KDialog, private Ui::LikeBackDialog
 {
