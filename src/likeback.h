@@ -248,6 +248,55 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
          */
         bool enabledBar();
 
+
+        /**
+         * @returns true if the user has enabled the LikeBack bar for this version.
+         */
+        bool userWantsToShowBar();
+
+        /**
+         * @returns A pointer to the KAboutData used to determin the application name and version.
+         * @see The LikeBack constructor for more information.
+         */
+        const KAboutData *aboutData();
+
+        /**
+         * @returns A pointer to the KConfig group to store user configuration (email address, if the button-bar should be shown).
+         * @see The LikeBack constructor for more information.
+         */
+        KConfig *config();
+
+        /**
+         * During the first comment sending, the user is invited to enter his email address for the developers to be able to contact him back.
+         * He is only asked once, or he can set or change it by using the bottom-left button in the comment dialog.
+         * @returns true if the user has already configured his email address.
+         */
+        bool emailAddressAlreadyProvided();
+
+        /**
+         * @returns The email user address, or ask it to the user if he have not provided or ignored it.
+         * @returns An empty string if the user cancelled the request dialog.
+         */
+        QString emailAddress();
+
+        /**
+         * Define or re-define the user email address.
+   * LikeBack will not ask it again to the user, unless you set @p userProvided to false.
+   * Then, this call can be considered as setting the default email address, that the user should confirm later.
+         */
+        void setEmailAddress( const QString &address, bool userProvided = false );
+
+        /**
+         * @returns true if @p version is an Alpha, Beta, RC, SVN or CVS version.
+         * You can use this static method in the constructor to enable the button-bar by default only during beta-releases.
+         */
+        static bool isDevelopmentVersion(const QString &version);
+
+  bool isLikeActive() const;
+  bool isDislikeActive() const;
+  bool isBugActive() const;
+  bool isFeatureActive() const;
+
   public Q_SLOTS:
 
         /**
@@ -305,56 +354,6 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
   private:
         LikeBackPrivate *d;
         Q_PRIVATE_SLOT(d, void execCommentDialogFromHelp());
-
-  public:
-
-        /**
-         * @returns true if the user has enabled the LikeBack bar for this version.
-         */
-        bool userWantsToShowBar();
-
-        /**
-         * @returns A pointer to the KAboutData used to determin the application name and version.
-         * @see The LikeBack constructor for more information.
-         */
-        const KAboutData *aboutData();
-
-        /**
-         * @returns A pointer to the KConfig group to store user configuration (email address, if the button-bar should be shown).
-         * @see The LikeBack constructor for more information.
-         */
-        KConfig *config();
-
-        /**
-         * During the first comment sending, the user is invited to enter his email address for the developers to be able to contact him back.
-         * He is only asked once, or he can set or change it by using the bottom-left button in the comment dialog.
-         * @returns true if the user has already configured his email address.
-         */
-        bool emailAddressAlreadyProvided();
-
-        /**
-         * @returns The email user address, or ask it to the user if he have not provided or ignored it.
-         * @returns An empty string if the user cancelled the request dialog.
-         */
-        QString emailAddress();
-
-        /**
-         * Define or re-define the user email address.
-   * LikeBack will not ask it again to the user, unless you set @p userProvided to false.
-   * Then, this call can be considered as setting the default email address, that the user should confirm later.
-         */
-        void setEmailAddress( const QString &address, bool userProvided = false );
-
-        /**
-         * @returns true if @p version is an Alpha, Beta, RC, SVN or CVS version.
-         * You can use this static method in the constructor to enable the button-bar by default only during beta-releases.
-         */
-        static bool isDevelopmentVersion(const QString &version);
-
-  bool isLikeActive() const;
-  bool isDislikeActive() const;
-  bool isBugActive() const;
-  bool isFeatureActive() const;
 };
 
 #endif // LIKEBACK_H
