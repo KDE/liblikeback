@@ -84,22 +84,15 @@ LikeBack::LikeBack(Button buttons, bool showBarByDefault, KConfig *config, const
         aboutData = KGlobal::mainComponent().aboutData();
     }
 
-    // Initialize properties (1/2):
-    d->buttons          = buttons;
-    d->config           = config->group("LikeBack");
-    d->aboutData        = aboutData;
+    d->buttons  = buttons;
+    d->config  = config->group("LikeBack");
+    d->aboutData = aboutData;
     d->showBarByDefault = showBarByDefault;
-
-    // Initialize properties (2/2) [Needs aboutData to be set]:
     d->showBar = userWantsToShowBar();
-
-    // Initialize the button-bar:
     d->bar = new LikeBackBar(this);
 
-    // Show the information message if it is the first time, and if the button-bar is shown:
     showInformationMessage();
 
-    // Show the bar if that's wanted by the developer or the user:
     if (d->showBar) {
         d->bar->setBarVisible(true);
     }
