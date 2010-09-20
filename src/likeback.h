@@ -248,7 +248,7 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
          */
         bool enabledBar();
 
-  public slots:
+  public Q_SLOTS:
 
         /**
          * Temporarily disable the button-bar: it is hiden from the screen if it was shown.
@@ -295,18 +295,16 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
          */
         void execCommentDialog(Button type = AllButtons, const QString &initialComment = "", const QString &windowPath = "", const QString &context = "");
 
+        /**
+         * Explicitely set if the floating button-bar should be shown or not.
+         * Tehorically, this choice should only be left to the user,
+         * and to the developers for the default value, already provided in the constructor.
+         */
+        void setUserWantsToShowBar(bool showBar);
+
   private:
         LikeBackPrivate *d;
         Q_PRIVATE_SLOT(d, void execCommentDialogFromHelp());
-
-  public Q_SLOTS:
-
-  /**
-   * Explicitely set if the floating button-bar should be shown or not.
-   * Tehorically, this choice should only be left to the user,
-   * and to the developers for the default value, already provided in the constructor.
-   */
-  void setUserWantsToShowBar(bool showBar);
 
   public:
 

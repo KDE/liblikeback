@@ -55,7 +55,7 @@ class LikeBackDialog : public KDialog, private Ui::LikeBackDialog
     // Identifier of the sent request
     int           m_requestNumber_;
 
-  private slots:
+  private Q_SLOTS:
     // Check if the UI should allow the user to send the comment
     void verify();
     // Send the comment to the developers site (reimpl. from KDialog)

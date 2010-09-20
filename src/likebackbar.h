@@ -41,7 +41,7 @@ class LikeBackBar : public QWidget, private Ui::LikeBackBar
     // Show or hide the bar
     void     setBarVisible( bool visible );
 
-  private slots:
+  private Q_SLOTS:
     // The Bug button has been clicked
     void     bugClicked();
     // Move the bar to the new active window
