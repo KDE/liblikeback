@@ -98,15 +98,11 @@ LikeBack::LikeBack(Button buttons, bool showBarByDefault, KConfig *config, const
     }
 }
 
-
-
 // Destructor
 LikeBack::~LikeBack()
 {
     delete d;
 }
-
-
 
 // Set the windows listing flag
 void LikeBack::setWindowNamesListing(WindowListing windowListing)
@@ -114,15 +110,11 @@ void LikeBack::setWindowNamesListing(WindowListing windowListing)
     d->windowListing = windowListing;
 }
 
-
-
 // Return the windows listing flag
 LikeBack::WindowListing LikeBack::windowNamesListing()
 {
     return d->windowListing;
 }
-
-
 
 // Set which languages are accepted by the developers for the comments
 void LikeBack::setAcceptedLanguages(const QStringList &locales)
@@ -130,15 +122,11 @@ void LikeBack::setAcceptedLanguages(const QStringList &locales)
     d->acceptedLocales          = locales;
 }
 
-
-
 // Return the accepted languages for the comments
 QStringList LikeBack::acceptedLocales() const
 {
     return d->acceptedLocales;
 }
-
-
 
 // Set the site address where to send feedback
 void LikeBack::setServer(const QString &hostName, const QString &remotePath, quint16 hostPort)
@@ -148,15 +136,11 @@ void LikeBack::setServer(const QString &hostName, const QString &remotePath, qui
     d->hostPort   = hostPort;
 }
 
-
-
 // Get the developers site hostname
 QString LikeBack::hostName() const
 {
     return d->hostName;
 }
-
-
 
 // Get the path on the developers site
 QString LikeBack::remotePath() const
@@ -164,15 +148,11 @@ QString LikeBack::remotePath() const
     return d->remotePath;
 }
 
-
-
 // Get the developers site port
 quint16 LikeBack::hostPort() const
 {
     return d->hostPort;
 }
-
-
 
 // Disable the LikeBack Bar
 void LikeBack::disableBar()
@@ -180,8 +160,6 @@ void LikeBack::disableBar()
     d->disabledCount++;
     d->bar->setBarVisible(d->bar && d->disabledCount > 0);
 }
-
-
 
 // Enable the LikeBack Bar
 void LikeBack::enableBar()
@@ -197,15 +175,11 @@ void LikeBack::enableBar()
     d->bar->setBarVisible(d->bar && d->disabledCount <= 0);
 }
 
-
-
 // Get whether the bar is enabled or not
 bool LikeBack::enabledBar()
 {
     return d->disabledCount <= 0;
 }
-
-
 
 // Display the Send Comments dialog
 void LikeBack::execCommentDialog(Button type, const QString &initialComment, const QString &windowPath, const QString &context)
@@ -227,23 +201,17 @@ LikeBack::Button LikeBack::buttons() const
     return d->buttons;
 }
 
-
-
 // Get the KAboutData stored object
 const KAboutData* LikeBack::aboutData() const
 {
     return d->aboutData;
 }
 
-
-
 // Get the KDE config stored object
 KConfig *LikeBack::config() const
 {
     return d->config.config();
 }
-
-
 
 // Create the menu actions
 void LikeBack::createActions(KActionCollection *parent)
@@ -266,8 +234,6 @@ void LikeBack::createActions(KActionCollection *parent)
     }
 }
 
-
-
 // Return whether the user wants to enable the likeback bar or not
 bool LikeBack::userWantsToShowBar() const
 {
@@ -278,8 +244,6 @@ bool LikeBack::userWantsToShowBar() const
 
     return d->config.readEntry("userWantToShowBar", d->showBarByDefault);
 }
-
-
 
 // Set whether the user wants to enable the likeback bar or not
 void LikeBack::setUserWantsToShowBar(bool showBar)
@@ -300,8 +264,6 @@ void LikeBack::setUserWantsToShowBar(bool showBar)
 
     d->bar->setBarVisible(showBar);
 }
-
-
 
 // Show a dialog box to introduce the user to LikeBack
 void LikeBack::showInformationMessage()
@@ -416,8 +378,6 @@ void LikeBack::showInformationMessage()
                              KMessageBox::Notify);
 }
 
-
-
 // Return the current window hierarchy
 QString LikeBack::activeWindowPath()
 {
@@ -440,15 +400,11 @@ QString LikeBack::activeWindowPath()
     return windowNames.join(" -> ");
 }
 
-
-
 // Return whether the email address was confirmed by the user
 bool LikeBack::emailAddressAlreadyProvided() const
 {
     return d->config.readEntry("emailAlreadyAsked", false);
 }
-
-
 
 // Return the currently saved email address, or the account's email address, if present
 QString LikeBack::emailAddress() const
@@ -457,8 +413,6 @@ QString LikeBack::emailAddress() const
     return d->config.readEntry("emailAddress", emailSettings.getSetting(KEMailSettings::EmailAddress));
 }
 
-
-
 // Change the saved email address
 void LikeBack::setEmailAddress(const QString &address, bool userProvided)
 {
@@ -466,8 +420,6 @@ void LikeBack::setEmailAddress(const QString &address, bool userProvided)
     d->config.writeEntry("emailAlreadyAsked", (userProvided || emailAddressAlreadyProvided()));
     d->config.sync(); // Make sure the option is saved, even if the application crashes after that.
 }
-
-
 
 // FIXME: Should be moved to KAboutData? Cigogne will also need it.
 bool LikeBack::isDevelopmentVersion(const QString &version)
@@ -479,15 +431,11 @@ bool LikeBack::isDevelopmentVersion(const QString &version)
            version.indexOf("cvs",   0, Qt::CaseInsensitive) != -1;
 }
 
-
-
 // Return whether the Like button is active
 bool LikeBack::isLikeActive() const
 {
     return (d->buttons & Like);
 }
-
-
 
 // Return whether the Dislike button is active
 bool LikeBack::isDislikeActive() const
@@ -495,22 +443,16 @@ bool LikeBack::isDislikeActive() const
     return (d->buttons & Dislike);
 }
 
-
-
 // Return whether the Bug button is active
 bool LikeBack::isBugActive() const
 {
     return (d->buttons & Bug);
 }
 
-
-
 // Return whether the Feature button is active
 bool LikeBack::isFeatureActive() const
 {
     return (d->buttons & Feature);
 }
-
-
 
 #include "likeback.moc"
