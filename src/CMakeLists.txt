@@ -22,7 +22,9 @@ set_target_properties(likeback
 install(TARGETS likeback ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(
-    FILES likeback.h
+    FILES
+        likeback.h
+        likebackexport.h
     DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT Devel
 )
