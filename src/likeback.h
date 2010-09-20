@@ -349,7 +349,7 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
 
         /**
          * Explicitely set if the floating button-bar should be shown or not.
-         * Tehorically, this choice should only be left to the user,
+         * Theoretically, this choice should only be left to the user,
          * and to the developers for the default value, already provided in the constructor.
          */
         void setUserWantsToShowBar(bool showBar);
