@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include "likebackexport.h"
+
 // Uncomment to enable debug output
 // #define DEBUG_LIKEBACK
 
@@ -72,7 +74,7 @@ class LikeBackPrivate;
  * @see Visit http://basket.kde.org/likeback.php for more information, screenshots, a tutorial, hints, return of experiences, and to download the server-side developer interface...
  * @author Sebastien Laout <slaout@linux62.org>
  */
-class LikeBack : public QObject
+class LIKEBACK_KDE_EXPORT LikeBack : public QObject
 {
   Q_OBJECT
   public:
