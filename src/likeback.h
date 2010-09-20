@@ -61,7 +61,7 @@ class LikeBackPrivate;
  *     // Instanciate the LikeBack system, and show the first-use information dialog if the button-bar is shown:
  *     LikeBack *likeBack = new LikeBack(LikeBack::AllButtons, LikeBack::isDevelopmentVersion(KGlobal::mainComponent().aboutData->version())); // Show button-bar only in beta-versions
  *     likeBack->setServer("myapp.kde.org", "/likeback/send.php");
- *     likeBack->setAcceptedLanguages(QStringList::split(";", "en;fr"), i18n("Please write in English or French."));
+ *     likeBack->setAcceptedLanguages(QStringList() << "en" << "fr");
  *
  *     // Comment the following line once you are sure all your windows have a name:
  *     likeBack->setWindowNamesListing(LikeBack::WarnUnnamedWindows);
@@ -125,7 +125,10 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
          *                         The version is used to store the button-bar visibility per version (can be shown in a development version but not in a final one...)
          *                         and to send with the comment, so you can filter per version and know if a comment refers the latest version of the application or not.
          */
-        explicit LikeBack(Button buttons = DefaultButtons, bool showBarByDefault = false,  KConfig *config = 0, const KAboutData *aboutData = 0 );
+        explicit LikeBack(Button buttons = DefaultButtons,
+                          bool showBarByDefault = false,
+                          KConfig *config = 0,
+                          const KAboutData *aboutData = 0 );
 
         /**
          * Destructor.
@@ -162,7 +165,7 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
          * Passing an empty list and an empty string to the method will make LikeBack display the default message telling the user only English is accepted.
          * Example of call you can quickly copy, paste and adapt:
          * @code
-         *     likeBack->setAcceptedLanguages(QStringList::split(";", "en;fr"), i18n("Please write in English or French."));
+         *     likeBack->setAcceptedLanguages(QStringList() << "en" << "fr");
          * @endcode
          * @note During tests, if you do not see the sentence, it is because you are running the application with an "accepted language": do not be surprised ;-)
          * @param locales The list of locales where the message does not need to be shown. See TODO TODO for a list of available locales for you to choose.
