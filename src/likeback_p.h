@@ -30,7 +30,7 @@ class LikeBackPrivate
 {
     Q_DECLARE_PUBLIC(LikeBack);
 public:
-    LikeBackPrivate();
+    LikeBackPrivate(LikeBack *q);
     ~LikeBackPrivate();
 
     LikeBack *q_ptr;

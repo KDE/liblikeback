@@ -33,9 +33,9 @@
 #include "likebackdialog.h"
 #include "likeback_p.h"
 
-// Constructor
-LikeBackPrivate::LikeBackPrivate()
- : bar(0)
+LikeBackPrivate::LikeBackPrivate(LikeBack *q)
+ : q_ptr(q)
+ , bar(0)
  , aboutData(0)
  , buttons(LikeBack::DefaultButtons)
  , hostName()
@@ -51,7 +51,6 @@ LikeBackPrivate::LikeBackPrivate()
 {
 }
 
-// Destructor
 LikeBackPrivate::~LikeBackPrivate()
 {
   delete bar;
@@ -68,9 +67,12 @@ void LikeBackPrivate::execCommentDialogFromHelp()
   q->execCommentDialog( LikeBack::AllButtons, /*initialComment=*/"", /*windowPath=*/"HelpMenuAction" );
 }
 
+// --------------------------------- Public --------------------------------- //
+
 // Constructor
 LikeBack::LikeBack( Button buttons, bool showBarByDefault, KConfig *config, const KAboutData *aboutData )
  : QObject()
+ , d(new LikeBackPrivate(this))
 {
   // Use default KApplication config and aboutData if not provided:
   if( config == 0 )
@@ -83,7 +85,6 @@ LikeBack::LikeBack( Button buttons, bool showBarByDefault, KConfig *config, cons
   }
 
   // Initialize properties (1/2):
-  d = new LikeBackPrivate();
   d->buttons          = buttons;
   d->config           = config->group( "LikeBack" );
   d->aboutData        = aboutData;
