@@ -20,13 +20,6 @@ set_target_properties(likeback
 
 install(TARGETS likeback ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-install(FILES
-        likeback_like.png
-        likeback_dislike.png
-        likeback_bug.png
-        likeback_feature.png
-        DESTINATION ${DATA_INSTALL_DIR}/likeback/images)
-
 install(
     FILES
     likeback.h
