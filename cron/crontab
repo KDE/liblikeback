@@ -1,7 +1,0 @@
-# Add this to crontab, or if your system has /etc/cron.d (like debian), symlink/copy this file there!
-
-PHP="/usr/bin/php"
-LIKEBACK_DIR="/srv/www/htdocs/devel/likeback/cron"
-
-# m h dom mon dow user             command
-00 12   * *   mon www-data         ${PHP} ${LIKEBACK_DIR}/sendReminders.php
