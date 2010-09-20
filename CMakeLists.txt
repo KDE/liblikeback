@@ -1,4 +1,4 @@
-project(likeback)
+project(liblikeback)
 
 set(LIB_VERSION "0.0.0")
 set(LIB_SOVERSION "0")
