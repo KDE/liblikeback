@@ -270,7 +270,7 @@ void LikeBack::showInformationMessage()
 {
     // don't show the message if the bar isn't enabled.
     // message doesn't make sense without the bar
-    if (! d->showBar) return;
+    if (!d->showBar) return;
 
     // Load and register the images needed by the message:
     KIconLoader *loader = KIconLoader::global();
