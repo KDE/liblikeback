@@ -229,7 +229,7 @@ void LikeBackDialog::slotButtonClicked( int buttonId )
     emailAddress = emailAddressEdit_->text();
 
     // lame-ass way to check if the e-mail address is valid:
-    if( !email.contains( QRegExp( "^[A-Z0-9._%\\-]+@(?:[A-Z0-9\\-]+\\.)+[A-Z]{2,4}$", Qt::CaseInsensitive ) ) )
+    if( !emailAddress.contains( QRegExp( "^[A-Z0-9._%\\-]+@(?:[A-Z0-9\\-]+\\.)+[A-Z]{2,4}$", Qt::CaseInsensitive ) ) )
     {
       KMessageBox::error( this, i18n( "The email address you have entered is not valid, and cannot be used: '%1'", emailAddress ) );
       return;
