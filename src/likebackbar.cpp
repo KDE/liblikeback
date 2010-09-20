@@ -17,7 +17,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <QResizeEvent>
+#include <QtGui/QResizeEvent>
 
 #include <KApplication>
 
