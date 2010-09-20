@@ -20,14 +20,10 @@
 #ifndef LIKEBACKBAR_H
 #define LIKEBACKBAR_H
 
-#include <QTimer>
-#include <QWidget>
-
-#include "likeback.h"
-
+#include <QtGui/QWidget>
 #include "ui_likebackbar.h"
 
-
+#include "likeback.h"
 
 class LikeBackBar : public QWidget, private Ui::LikeBackBar
 {
