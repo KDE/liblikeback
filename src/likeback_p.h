@@ -20,20 +20,20 @@
 #ifndef LIKEBACK_PRIVATE_H
 #define LIKEBACK_PRIVATE_H
 
-#include <QTimer>
-
+#include <QtCore/QTimer>
 
 class QButtonGroup;
 
 class Kaction;
 
-
-
 class LikeBackPrivate
 {
-  public:
-                          LikeBackPrivate();
-                         ~LikeBackPrivate();
+    Q_DECLARE_PUBLIC(LikeBack);
+public:
+    LikeBackPrivate();
+    ~LikeBackPrivate();
+
+    LikeBack *q_ptr;
 
   LikeBackBar             *bar;
   KConfigGroup             config;
@@ -50,39 +50,14 @@ class LikeBackPrivate
   QString                  fetchedEmail;
   KAction                 *sendAction;
   KToggleAction           *showBarAction;
+
+public Q_SLOTS:
+  /**
+   * Slot triggered by the "Help -> Send a Comment to Developers" KAction.
+   * It popups the comment dialog, and set the window path to "HelpMenuAction",
+   * because current window path has no meaning in that case.
+   */
+  void execCommentDialogFromHelp();
 };
-
-
-
-// Constructor
-LikeBackPrivate::LikeBackPrivate()
- : bar(0)
- , aboutData(0)
- , buttons(LikeBack::DefaultButtons)
- , hostName()
- , remotePath()
- , hostPort(80)
- , acceptedLocales()
- , windowListing(LikeBack::NoListing)
- , showBar(false)
- , disabledCount(0)
- , fetchedEmail()
- , sendAction(0)
- , showBarAction(0)
-{
-}
-
-
-
-// Destructor
-LikeBackPrivate::~LikeBackPrivate()
-{
-  delete bar;
-  delete sendAction;
-  delete showBarAction;
-
-  aboutData = 0;
-}
-
 
 #endif // LIKEBACK_PRIVATE_H

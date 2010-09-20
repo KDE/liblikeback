@@ -33,7 +33,40 @@
 #include "likebackdialog.h"
 #include "likeback_p.h"
 
+// Constructor
+LikeBackPrivate::LikeBackPrivate()
+ : bar(0)
+ , aboutData(0)
+ , buttons(LikeBack::DefaultButtons)
+ , hostName()
+ , remotePath()
+ , hostPort(80)
+ , acceptedLocales()
+ , windowListing(LikeBack::NoListing)
+ , showBar(false)
+ , disabledCount(0)
+ , fetchedEmail()
+ , sendAction(0)
+ , showBarAction(0)
+{
+}
 
+// Destructor
+LikeBackPrivate::~LikeBackPrivate()
+{
+  delete bar;
+  delete sendAction;
+  delete showBarAction;
+
+  aboutData = 0;
+}
+
+// Display the Send Comments dialog
+void LikeBackPrivate::execCommentDialogFromHelp()
+{
+  Q_Q(LikeBack);
+  q->execCommentDialog( LikeBack::AllButtons, /*initialComment=*/"", /*windowPath=*/"HelpMenuAction" );
+}
 
 // Constructor
 LikeBack::LikeBack( Button buttons, bool showBarByDefault, KConfig *config, const KAboutData *aboutData )
@@ -196,16 +229,6 @@ void LikeBack::execCommentDialog( Button type, const QString &initialComment, co
 
   dialog->show();
 }
-
-
-
-// Display the Send Comments dialog
-void LikeBack::execCommentDialogFromHelp()
-{
-  execCommentDialog( AllButtons, /*initialComment=*/"", /*windowPath=*/"HelpMenuAction" );
-}
-
-
 
 // Retrieve which feedback buttons are active
 LikeBack::Button LikeBack::buttons()

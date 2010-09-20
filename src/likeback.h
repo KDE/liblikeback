@@ -297,21 +297,9 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
 
   private:
         LikeBackPrivate *d;
+        Q_PRIVATE_SLOT(d, void execCommentDialogFromHelp());
 
-        /**
-         * Get the user email address from KControl.
-         */
-        void fetchUserEmail();
-
-  private slots:
-        /**
-         * Slot triggered by the "Help -> Send a Comment to Developers" KAction.
-         * It popups the comment dialog, and set the window path to "HelpMenuAction",
-         * because current window path has no meaning in that case.
-         */
-        void execCommentDialogFromHelp();
-
-  public slots:
+  public Q_SLOTS:
 
   /**
    * Explicitely set if the floating button-bar should be shown or not.
