@@ -29,19 +29,19 @@
 
 class LikeBackDialog : public KDialog, private Ui::LikeBackDialog
 {
-  Q_OBJECT
-  public:
+    Q_OBJECT
+public:
     // Constructor
-                  LikeBackDialog( LikeBack::Button reason, const QString &initialComment, const QString &windowPath,
-                                  const QString &context, LikeBack *likeBack );
+    LikeBackDialog(LikeBack::Button reason, const QString &initialComment, const QString &windowPath,
+                   const QString &context, LikeBack *likeBack);
     // Destructor
-                ~LikeBackDialog();
+    ~LikeBackDialog();
 
-  private:
+private:
     // Construct the introductory text of the dialog
     QString introductionText();
 
-  private:
+private:
     // Additional referred window information
     QString       m_context;
     // The parent LikeBack instance
@@ -53,13 +53,13 @@ class LikeBackDialog : public KDialog, private Ui::LikeBackDialog
     // Identifier of the sent request
     int           m_requestNumber_;
 
-  private Q_SLOTS:
+private Q_SLOTS:
     // Check if the UI should allow the user to send the comment
     void verify();
     // Send the comment to the developers site (reimpl. from KDialog)
-    void slotButtonClicked( int button );
+    void slotButtonClicked(int button);
     // Display confirmation of the sending action
-    void requestFinished( int id, bool error );
+    void requestFinished(int id, bool error);
 };
 
 #endif

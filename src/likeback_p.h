@@ -43,29 +43,29 @@ public:
 
     LikeBack *q_ptr;
 
-  LikeBackBar             *bar;
-  KConfigGroup             config;
-  const KAboutData        *aboutData;
-  LikeBack::Button         buttons;
-  QString                  hostName;
-  QString                  remotePath;
-  quint16                  hostPort;
-  QStringList              acceptedLocales;
-  LikeBack::WindowListing  windowListing;
-  bool                     showBarByDefault;
-  bool                     showBar;
-  int                      disabledCount;
-  QString                  fetchedEmail;
-  KAction                 *sendAction;
-  KToggleAction           *showBarAction;
+    LikeBackBar             *bar;
+    KConfigGroup             config;
+    const KAboutData        *aboutData;
+    LikeBack::Button         buttons;
+    QString                  hostName;
+    QString                  remotePath;
+    quint16                  hostPort;
+    QStringList              acceptedLocales;
+    LikeBack::WindowListing  windowListing;
+    bool                     showBarByDefault;
+    bool                     showBar;
+    int                      disabledCount;
+    QString                  fetchedEmail;
+    KAction                 *sendAction;
+    KToggleAction           *showBarAction;
 
 public Q_SLOTS:
-  /**
-   * Slot triggered by the "Help -> Send a Comment to Developers" KAction.
-   * It popups the comment dialog, and set the window path to "HelpMenuAction",
-   * because current window path has no meaning in that case.
-   */
-  void execCommentDialogFromHelp();
+    /**
+     * Slot triggered by the "Help -> Send a Comment to Developers" KAction.
+     * It popups the comment dialog, and set the window path to "HelpMenuAction",
+     * because current window path has no meaning in that case.
+     */
+    void execCommentDialogFromHelp();
 };
 
 #endif // LIKEBACK_PRIVATE_H

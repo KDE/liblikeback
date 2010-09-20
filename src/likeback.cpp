@@ -36,76 +36,73 @@
 #include "likebackdialog.h"
 
 LikeBackPrivate::LikeBackPrivate(LikeBack *q)
- : q_ptr(q)
- , bar(0)
- , aboutData(0)
- , buttons(LikeBack::DefaultButtons)
- , hostName()
- , remotePath()
- , hostPort(80)
- , acceptedLocales()
- , windowListing(LikeBack::NoListing)
- , showBar(false)
- , disabledCount(0)
- , fetchedEmail()
- , sendAction(0)
- , showBarAction(0)
+        : q_ptr(q)
+        , bar(0)
+        , aboutData(0)
+        , buttons(LikeBack::DefaultButtons)
+        , hostName()
+        , remotePath()
+        , hostPort(80)
+        , acceptedLocales()
+        , windowListing(LikeBack::NoListing)
+        , showBar(false)
+        , disabledCount(0)
+        , fetchedEmail()
+        , sendAction(0)
+        , showBarAction(0)
 {
 }
 
 LikeBackPrivate::~LikeBackPrivate()
 {
-  delete bar;
-  delete sendAction;
-  delete showBarAction;
+    delete bar;
+    delete sendAction;
+    delete showBarAction;
 
-  aboutData = 0;
+    aboutData = 0;
 }
 
 // Display the Send Comments dialog
 void LikeBackPrivate::execCommentDialogFromHelp()
 {
-  Q_Q(LikeBack);
-  q->execCommentDialog( LikeBack::AllButtons, /*initialComment=*/"", /*windowPath=*/"HelpMenuAction" );
+    Q_Q(LikeBack);
+    q->execCommentDialog(LikeBack::AllButtons, /*initialComment=*/"", /*windowPath=*/"HelpMenuAction");
 }
 
 // --------------------------------- Public --------------------------------- //
 
 // Constructor
-LikeBack::LikeBack( Button buttons, bool showBarByDefault, KConfig *config, const KAboutData *aboutData )
- : QObject()
- , d(new LikeBackPrivate(this))
+LikeBack::LikeBack(Button buttons, bool showBarByDefault, KConfig *config, const KAboutData *aboutData)
+        : QObject()
+        , d(new LikeBackPrivate(this))
 {
-  // Use default KApplication config and aboutData if not provided:
-  if(!config)
-  {
-    config = KGlobal::config().data();
-  }
-  if(!aboutData)
-  {
-    aboutData = KGlobal::mainComponent().aboutData();
-  }
+    // Use default KApplication config and aboutData if not provided:
+    if (!config) {
+        config = KGlobal::config().data();
+    }
+    if (!aboutData) {
+        aboutData = KGlobal::mainComponent().aboutData();
+    }
 
-  // Initialize properties (1/2):
-  d->buttons          = buttons;
-  d->config           = config->group( "LikeBack" );
-  d->aboutData        = aboutData;
-  d->showBarByDefault = showBarByDefault;
+    // Initialize properties (1/2):
+    d->buttons          = buttons;
+    d->config           = config->group("LikeBack");
+    d->aboutData        = aboutData;
+    d->showBarByDefault = showBarByDefault;
 
-  // Initialize properties (2/2) [Needs aboutData to be set]:
-  d->showBar = userWantsToShowBar();
+    // Initialize properties (2/2) [Needs aboutData to be set]:
+    d->showBar = userWantsToShowBar();
 
-  // Initialize the button-bar:
-  d->bar = new LikeBackBar( this );
+    // Initialize the button-bar:
+    d->bar = new LikeBackBar(this);
 
-  // Show the information message if it is the first time, and if the button-bar is shown:
-  showInformationMessage();
+    // Show the information message if it is the first time, and if the button-bar is shown:
+    showInformationMessage();
 
-  // Show the bar if that's wanted by the developer or the user:
-  if( d->showBar )
-  {
-    d->bar->setBarVisible( true );
-  }
+    // Show the bar if that's wanted by the developer or the user:
+    if (d->showBar) {
+        d->bar->setBarVisible(true);
+    }
 }
 
 
@@ -113,7 +110,7 @@ LikeBack::LikeBack( Button buttons, bool showBarByDefault, KConfig *config, cons
 // Destructor
 LikeBack::~LikeBack()
 {
-  delete d;
+    delete d;
 }
 
 
@@ -121,7 +118,7 @@ LikeBack::~LikeBack()
 // Set the windows listing flag
 void LikeBack::setWindowNamesListing(WindowListing windowListing)
 {
-  d->windowListing = windowListing;
+    d->windowListing = windowListing;
 }
 
 
@@ -129,15 +126,15 @@ void LikeBack::setWindowNamesListing(WindowListing windowListing)
 // Return the windows listing flag
 LikeBack::WindowListing LikeBack::windowNamesListing()
 {
-  return d->windowListing;
+    return d->windowListing;
 }
 
 
 
 // Set which languages are accepted by the developers for the comments
-void LikeBack::setAcceptedLanguages( const QStringList &locales )
+void LikeBack::setAcceptedLanguages(const QStringList &locales)
 {
-  d->acceptedLocales          = locales;
+    d->acceptedLocales          = locales;
 }
 
 
@@ -145,7 +142,7 @@ void LikeBack::setAcceptedLanguages( const QStringList &locales )
 // Return the accepted languages for the comments
 QStringList LikeBack::acceptedLocales() const
 {
-  return d->acceptedLocales;
+    return d->acceptedLocales;
 }
 
 
@@ -153,9 +150,9 @@ QStringList LikeBack::acceptedLocales() const
 // Set the site address where to send feedback
 void LikeBack::setServer(const QString &hostName, const QString &remotePath, quint16 hostPort)
 {
-  d->hostName   = hostName;
-  d->remotePath = remotePath;
-  d->hostPort   = hostPort;
+    d->hostName   = hostName;
+    d->remotePath = remotePath;
+    d->hostPort   = hostPort;
 }
 
 
@@ -163,7 +160,7 @@ void LikeBack::setServer(const QString &hostName, const QString &remotePath, qui
 // Get the developers site hostname
 QString LikeBack::hostName() const
 {
-  return d->hostName;
+    return d->hostName;
 }
 
 
@@ -171,7 +168,7 @@ QString LikeBack::hostName() const
 // Get the path on the developers site
 QString LikeBack::remotePath() const
 {
-  return d->remotePath;
+    return d->remotePath;
 }
 
 
@@ -179,7 +176,7 @@ QString LikeBack::remotePath() const
 // Get the developers site port
 quint16 LikeBack::hostPort() const
 {
-  return d->hostPort;
+    return d->hostPort;
 }
 
 
@@ -187,8 +184,8 @@ quint16 LikeBack::hostPort() const
 // Disable the LikeBack Bar
 void LikeBack::disableBar()
 {
-  d->disabledCount++;
-  d->bar->setBarVisible( d->bar && d->disabledCount > 0 );
+    d->disabledCount++;
+    d->bar->setBarVisible(d->bar && d->disabledCount > 0);
 }
 
 
@@ -196,16 +193,15 @@ void LikeBack::disableBar()
 // Enable the LikeBack Bar
 void LikeBack::enableBar()
 {
-  d->disabledCount--;
+    d->disabledCount--;
 
 #ifdef DEBUG_LIKEBACK
-  if( d->disabledCount < 0 )
-  {
-    kError() << "Enabled more times than it was disabled. Please refer to the disableBar() documentation for more information and hints.";
-  }
+    if (d->disabledCount < 0) {
+        kError() << "Enabled more times than it was disabled. Please refer to the disableBar() documentation for more information and hints.";
+    }
 #endif
 
-  d->bar->setBarVisible( d->bar && d->disabledCount <= 0 );
+    d->bar->setBarVisible(d->bar && d->disabledCount <= 0);
 }
 
 
@@ -213,30 +209,29 @@ void LikeBack::enableBar()
 // Get whether the bar is enabled or not
 bool LikeBack::enabledBar()
 {
-  return d->disabledCount <= 0;
+    return d->disabledCount <= 0;
 }
 
 
 
 // Display the Send Comments dialog
-void LikeBack::execCommentDialog( Button type, const QString &initialComment, const QString &windowPath, const QString &context )
+void LikeBack::execCommentDialog(Button type, const QString &initialComment, const QString &windowPath, const QString &context)
 {
-  LikeBackDialog *dialog = new LikeBackDialog( type, initialComment, windowPath, context, this );
+    LikeBackDialog *dialog = new LikeBackDialog(type, initialComment, windowPath, context, this);
 
-  if( userWantsToShowBar() )
-  {
-    disableBar();
-    connect( dialog, SIGNAL( destroyed(QObject*) ),
-             this,   SLOT  ( enableBar()         ) );
-  }
+    if (userWantsToShowBar()) {
+        disableBar();
+        connect(dialog, SIGNAL(destroyed(QObject*)),
+                this,   SLOT(enableBar()));
+    }
 
-  dialog->show();
+    dialog->show();
 }
 
 // Retrieve which feedback buttons are active
 LikeBack::Button LikeBack::buttons() const
 {
-  return d->buttons;
+    return d->buttons;
 }
 
 
@@ -244,7 +239,7 @@ LikeBack::Button LikeBack::buttons() const
 // Get the KAboutData stored object
 const KAboutData* LikeBack::aboutData() const
 {
-  return d->aboutData;
+    return d->aboutData;
 }
 
 
@@ -252,32 +247,30 @@ const KAboutData* LikeBack::aboutData() const
 // Get the KDE config stored object
 KConfig *LikeBack::config() const
 {
-  return d->config.config();
+    return d->config.config();
 }
 
 
 
 // Create the menu actions
-void LikeBack::createActions( KActionCollection *parent )
+void LikeBack::createActions(KActionCollection *parent)
 {
-  if( d->sendAction == 0 )
-  {
-    d->sendAction = new KAction( KIcon("mail-message-new"), i18n("&Send a Comment to the Developers"), this );
-    connect( d->sendAction, SIGNAL(         triggered(bool) ),
-             this,          SLOT  ( execCommentDialog()     ) );
+    if (d->sendAction == 0) {
+        d->sendAction = new KAction(KIcon("mail-message-new"), i18n("&Send a Comment to the Developers"), this);
+        connect(d->sendAction, SIGNAL(triggered(bool)),
+                this,          SLOT(execCommentDialog()));
 
-    parent->addAction( "likeBackSendComment", d->sendAction );
-  }
+        parent->addAction("likeBackSendComment", d->sendAction);
+    }
 
-  if( d->showBarAction == 0 )
-  {
-    d->showBarAction = new KToggleAction( i18n("Show &Feedback Icons"), this );
-    d->showBarAction->setChecked( userWantsToShowBar() );
-    connect( d->showBarAction, SIGNAL(             triggered(bool) ),
-             this,             SLOT  ( setUserWantsToShowBar(bool) ) );
+    if (d->showBarAction == 0) {
+        d->showBarAction = new KToggleAction(i18n("Show &Feedback Icons"), this);
+        d->showBarAction->setChecked(userWantsToShowBar());
+        connect(d->showBarAction, SIGNAL(triggered(bool)),
+                this,             SLOT(setUserWantsToShowBar(bool)));
 
-    parent->addAction( "likeBackShowIcons", d->showBarAction );
-  }
+        parent->addAction("likeBackShowIcons", d->showBarAction);
+    }
 }
 
 
@@ -285,34 +278,34 @@ void LikeBack::createActions( KActionCollection *parent )
 // Return whether the user wants to enable the likeback bar or not
 bool LikeBack::userWantsToShowBar() const
 {
-  // You can choose to store the button bar status per version.
-  // On debug builds from SVN, where the version changes at almost every build,
-  // it's very annoying to have the bar reappearing every time.
+    // You can choose to store the button bar status per version.
+    // On debug builds from SVN, where the version changes at almost every build,
+    // it's very annoying to have the bar reappearing every time.
 //   return d->config.readEntry( "userWantToShowBarForVersion_" + d->aboutData->version(), d->showBarByDefault );
 
-  return d->config.readEntry( "userWantToShowBar", d->showBarByDefault );
+    return d->config.readEntry("userWantToShowBar", d->showBarByDefault);
 }
 
 
 
 // Set whether the user wants to enable the likeback bar or not
-void LikeBack::setUserWantsToShowBar( bool showBar )
+void LikeBack::setUserWantsToShowBar(bool showBar)
 {
-  if( showBar == d->showBar )
-    return;
+    if (showBar == d->showBar)
+        return;
 
-  d->showBar = showBar;
+    d->showBar = showBar;
 
-  // You can choose to store the button bar status per version.
-  // On debug builds from SVN, where the version changes at almost every build,
-  // it's very annoying to have the bar reappearing every time.
+    // You can choose to store the button bar status per version.
+    // On debug builds from SVN, where the version changes at almost every build,
+    // it's very annoying to have the bar reappearing every time.
 //   d->config.writeEntry( "userWantToShowBarForVersion_" + d->aboutData->version(), showBar );
 
-  d->config.writeEntry( "userWantToShowBar", showBar );
+    d->config.writeEntry("userWantToShowBar", showBar);
 
-  d->config.sync(); // Make sure the option is saved, even if the application crashes after that.
+    d->config.sync(); // Make sure the option is saved, even if the application crashes after that.
 
-  d->bar->setBarVisible( showBar );
+    d->bar->setBarVisible(showBar);
 }
 
 
@@ -320,127 +313,114 @@ void LikeBack::setUserWantsToShowBar( bool showBar )
 // Show a dialog box to introduce the user to LikeBack
 void LikeBack::showInformationMessage()
 {
-  // don't show the message if the bar isn't enabled.
-  // message doesn't make sense without the bar
-  if ( ! d->showBar ) return;
+    // don't show the message if the bar isn't enabled.
+    // message doesn't make sense without the bar
+    if (! d->showBar) return;
 
-  // Load and register the images needed by the message:
-  KIconLoader *loader = KIconLoader::global();
-  QString likeIconPath   ( loader->iconPath( "edit-like-likeback",    KIconLoader::Small ) );
-  QString dislikeIconPath( loader->iconPath( "edit-dislike-likeback", KIconLoader::Small ) );
-  QString bugIconPath    ( loader->iconPath( "tools-report-bug-likeback",     KIconLoader::Small ) );
-  QString featureIconPath( loader->iconPath( "tools-report-feature-likeback", KIconLoader::Small ) );
+    // Load and register the images needed by the message:
+    KIconLoader *loader = KIconLoader::global();
+    QString likeIconPath(loader->iconPath("edit-like-likeback",    KIconLoader::Small));
+    QString dislikeIconPath(loader->iconPath("edit-dislike-likeback", KIconLoader::Small));
+    QString bugIconPath(loader->iconPath("tools-report-bug-likeback",     KIconLoader::Small));
+    QString featureIconPath(loader->iconPath("tools-report-feature-likeback", KIconLoader::Small));
 
-  // Show a message reflecting the allowed types of comment:
-  Button buttons = d->buttons;
-  int nbButtons = ( buttons & Like    ? 1 : 0 ) +
-                  ( buttons & Dislike ? 1 : 0 ) +
-                  ( buttons & Bug     ? 1 : 0 ) +
-                  ( buttons & Feature ? 1 : 0 );
+    // Show a message reflecting the allowed types of comment:
+    Button buttons = d->buttons;
+    int nbButtons = (buttons & Like    ? 1 : 0) +
+                    (buttons & Dislike ? 1 : 0) +
+                    (buttons & Bug     ? 1 : 0) +
+                    (buttons & Feature ? 1 : 0);
 
-  // Construct the welcome phrase
-  QString welcomePhrase;
-  if( isDevelopmentVersion( d->aboutData->version() ) )
-  {
-    welcomePhrase = i18nc( "Welcome dialog text, header text for test apps",
-                           "Welcome to this testing version of %1.", d->aboutData->programName() );
-  }
-  else
-  {
-    welcomePhrase = i18nc( "Welcome dialog text, header text for released apps",
-                           "Welcome to %1.", d->aboutData->programName() );
-  }
+    // Construct the welcome phrase
+    QString welcomePhrase;
+    if (isDevelopmentVersion(d->aboutData->version())) {
+        welcomePhrase = i18nc("Welcome dialog text, header text for test apps",
+                              "Welcome to this testing version of %1.", d->aboutData->programName());
+    } else {
+        welcomePhrase = i18nc("Welcome dialog text, header text for released apps",
+                              "Welcome to %1.", d->aboutData->programName());
+    }
 
-  // Construct the like and dislike explanation
-  QString likeAndDislikePhrase;
-  if( ( buttons & LikeBack::Like ) && ( buttons & LikeBack::Dislike ) )
-  {
-    likeAndDislikePhrase = i18nc( "Welcome dialog text, explanation for both the like and dislike buttons",
-                                  "Each time you have a great or frustrating experience, "
-                                  "please click on the appropriate face below the window title-bar, "
-                                  "briefly describe what you like or dislike and click on 'Send'." );
-  }
-  else if( buttons & LikeBack::Like )
-  {
-    likeAndDislikePhrase = i18nc( "Welcome dialog text, explanation for the like button alone",
-                                  "Each time you have a great experience, "
-                                  "please click on the smiling face below the window title-bar, "
-                                  "briefly describe what you like and click on 'Send'." );
-  }
-  else
-  {
-    likeAndDislikePhrase = i18nc( "Welcome dialog text, explanation for the dislike button alone",
-                                  "Each time you have a frustrating experience, "
-                                  "please click on the frowning face below the window title-bar, "
-                                  "briefly describe what you dislike and click on 'Send'." );
-  }
+    // Construct the like and dislike explanation
+    QString likeAndDislikePhrase;
+    if ((buttons & LikeBack::Like) && (buttons & LikeBack::Dislike)) {
+        likeAndDislikePhrase = i18nc("Welcome dialog text, explanation for both the like and dislike buttons",
+                                     "Each time you have a great or frustrating experience, "
+                                     "please click on the appropriate face below the window title-bar, "
+                                     "briefly describe what you like or dislike and click on 'Send'.");
+    } else if (buttons & LikeBack::Like) {
+        likeAndDislikePhrase = i18nc("Welcome dialog text, explanation for the like button alone",
+                                     "Each time you have a great experience, "
+                                     "please click on the smiling face below the window title-bar, "
+                                     "briefly describe what you like and click on 'Send'.");
+    } else {
+        likeAndDislikePhrase = i18nc("Welcome dialog text, explanation for the dislike button alone",
+                                     "Each time you have a frustrating experience, "
+                                     "please click on the frowning face below the window title-bar, "
+                                     "briefly describe what you dislike and click on 'Send'.");
+    }
 
-  // Construct the bug report explanation
-  QString bugPhrase;
-  if( buttons & LikeBack::Bug )
-  {
-    bugPhrase = i18nc( "Welcome dialog text, explanation for the bug button",
-                       "If you experience an improper behavior in the application, just click on "
-                       "the broken-object icon in the top-right corner of the window, describe the "
-                       "behavior and click on 'Send'." );
-  }
+    // Construct the bug report explanation
+    QString bugPhrase;
+    if (buttons & LikeBack::Bug) {
+        bugPhrase = i18nc("Welcome dialog text, explanation for the bug button",
+                          "If you experience an improper behavior in the application, just click on "
+                          "the broken-object icon in the top-right corner of the window, describe the "
+                          "behavior and click on 'Send'.");
+    }
 
-  // Construct the usage examples
-  QString examplesBlocks;
-  if( buttons & LikeBack::Like )
-  {
-    examplesBlocks += "<img src=\"" + likeIconPath + "\"/> &nbsp;"
-                      "<span>" +
-                      i18nc( "Welcome dialog text, usage example",
-                             "<b>I like</b> the new artwork. Very refreshing." ) +
-                      "</span><br/>";
-  }
-  if( buttons & LikeBack::Dislike )
-  {
-    examplesBlocks += "<img src=\"" + dislikeIconPath + "\"/> &nbsp;"
-                      "<span>" +
-                      i18nc( "Welcome dialog text, usage example",
-                             "<b>I dislike</b> the welcome page of this assistant. Too time consuming." ) +
-                      "</span><br/>";
-  }
-  if( buttons & LikeBack::Bug )
-  {
-    examplesBlocks += "<img src=\"" + bugIconPath + "\"/> &nbsp;"
-                      "<span>" +
-                      i18nc( "Welcome dialog text, usage example",
-                             "<b>The application shows an improper behaviour</b> when clicking the Add button. Nothing happens." ) +
-                      "</span><br/>";
-  }
-  if( buttons & LikeBack::Feature )
-  {
-    examplesBlocks += "<img src=\"" + featureIconPath + "\"/> &nbsp;"
-                      "<span>" +
-                      i18nc( "Welcome dialog text, usage example",
-                             "<b>I desire a new feature</b> allowing me to send my work by email." ) +
-                      "</span>";
-  }
+    // Construct the usage examples
+    QString examplesBlocks;
+    if (buttons & LikeBack::Like) {
+        examplesBlocks += "<img src=\"" + likeIconPath + "\"/> &nbsp;"
+                          "<span>" +
+                          i18nc("Welcome dialog text, usage example",
+                                "<b>I like</b> the new artwork. Very refreshing.") +
+                          "</span><br/>";
+    }
+    if (buttons & LikeBack::Dislike) {
+        examplesBlocks += "<img src=\"" + dislikeIconPath + "\"/> &nbsp;"
+                          "<span>" +
+                          i18nc("Welcome dialog text, usage example",
+                                "<b>I dislike</b> the welcome page of this assistant. Too time consuming.") +
+                          "</span><br/>";
+    }
+    if (buttons & LikeBack::Bug) {
+        examplesBlocks += "<img src=\"" + bugIconPath + "\"/> &nbsp;"
+                          "<span>" +
+                          i18nc("Welcome dialog text, usage example",
+                                "<b>The application shows an improper behaviour</b> when clicking the Add button. Nothing happens.") +
+                          "</span><br/>";
+    }
+    if (buttons & LikeBack::Feature) {
+        examplesBlocks += "<img src=\"" + featureIconPath + "\"/> &nbsp;"
+                          "<span>" +
+                          i18nc("Welcome dialog text, usage example",
+                                "<b>I desire a new feature</b> allowing me to send my work by email.") +
+                          "</span>";
+    }
 
-  // Finally, merge all the strings together
-  QString dialogText( "<html><h3>%1</h3>"
-                      "<p>%2</p>"
-                      "<p>%3</p>"
-                      "<p>%4</p>"
-                      "<h3>%5:</h3>"
-                      "<p>%6</p></html>" );
-  dialogText = dialogText.arg( welcomePhrase )
-                         .arg( i18nc( "Welcome dialog text, us=the developers, it=the application",
-                                      "To help us improve it, your comments are important." ) )
-                         .arg( likeAndDislikePhrase )
-                         .arg( bugPhrase )
-                         .arg( i18ncp( "Welcome dialog text, header for the examples", "Example", "Examples", nbButtons ) )
-                         .arg( examplesBlocks );
+    // Finally, merge all the strings together
+    QString dialogText("<html><h3>%1</h3>"
+                       "<p>%2</p>"
+                       "<p>%3</p>"
+                       "<p>%4</p>"
+                       "<h3>%5:</h3>"
+                       "<p>%6</p></html>");
+    dialogText = dialogText.arg(welcomePhrase)
+                 .arg(i18nc("Welcome dialog text, us=the developers, it=the application",
+                            "To help us improve it, your comments are important."))
+                 .arg(likeAndDislikePhrase)
+                 .arg(bugPhrase)
+                 .arg(i18ncp("Welcome dialog text, header for the examples", "Example", "Examples", nbButtons))
+                 .arg(examplesBlocks);
 
-  // And show them
-  KMessageBox::information( 0,
-                            dialogText,
-                            i18nc( "Welcome dialog title", "Help Improve the Application" ),
-                            "LikeBack_starting_information",
-                            KMessageBox::Notify );
+    // And show them
+    KMessageBox::information(0,
+                             dialogText,
+                             i18nc("Welcome dialog title", "Help Improve the Application"),
+                             "LikeBack_starting_information",
+                             KMessageBox::Notify);
 }
 
 
@@ -448,25 +428,23 @@ void LikeBack::showInformationMessage()
 // Return the current window hierarchy
 QString LikeBack::activeWindowPath()
 {
-  // Compute the window hierarchy (from the oldest to the latest, each time prepending to the list):
-  QStringList windowNames;
-  QWidget *window = kapp->activeWindow();
-  while( window )
-  {
-    QString name( window->objectName() );
+    // Compute the window hierarchy (from the oldest to the latest, each time prepending to the list):
+    QStringList windowNames;
+    QWidget *window = kapp->activeWindow();
+    while (window) {
+        QString name(window->objectName());
 
-    // Append the class name to the window name if it is unnamed:
-    if( name == "unnamed" )
-    {
-      name += QString( ":" ) + window->metaObject()->className();
+        // Append the class name to the window name if it is unnamed:
+        if (name == "unnamed") {
+            name += QString(":") + window->metaObject()->className();
+        }
+        windowNames.prepend(name);
+
+        window = dynamic_cast<QWidget*>(window->parent());
     }
-    windowNames.prepend( name );
 
-    window = dynamic_cast<QWidget*>( window->parent() );
-  }
-
-  // Return the string of windows starting by the end (from the oldest to the latest):
-  return windowNames.join( " -> " );
+    // Return the string of windows starting by the end (from the oldest to the latest):
+    return windowNames.join(" -> ");
 }
 
 
@@ -474,7 +452,7 @@ QString LikeBack::activeWindowPath()
 // Return whether the email address was confirmed by the user
 bool LikeBack::emailAddressAlreadyProvided() const
 {
-  return d->config.readEntry( "emailAlreadyAsked", false );
+    return d->config.readEntry("emailAlreadyAsked", false);
 }
 
 
@@ -482,30 +460,30 @@ bool LikeBack::emailAddressAlreadyProvided() const
 // Return the currently saved email address, or the account's email address, if present
 QString LikeBack::emailAddress() const
 {
-  KEMailSettings emailSettings;
-  return d->config.readEntry( "emailAddress", emailSettings.getSetting( KEMailSettings::EmailAddress ) );
+    KEMailSettings emailSettings;
+    return d->config.readEntry("emailAddress", emailSettings.getSetting(KEMailSettings::EmailAddress));
 }
 
 
 
 // Change the saved email address
-void LikeBack::setEmailAddress( const QString &address, bool userProvided )
+void LikeBack::setEmailAddress(const QString &address, bool userProvided)
 {
-  d->config.writeEntry( "emailAddress", address );
-  d->config.writeEntry( "emailAlreadyAsked", ( userProvided || emailAddressAlreadyProvided() ) );
-  d->config.sync(); // Make sure the option is saved, even if the application crashes after that.
+    d->config.writeEntry("emailAddress", address);
+    d->config.writeEntry("emailAlreadyAsked", (userProvided || emailAddressAlreadyProvided()));
+    d->config.sync(); // Make sure the option is saved, even if the application crashes after that.
 }
 
 
 
 // FIXME: Should be moved to KAboutData? Cigogne will also need it.
-bool LikeBack::isDevelopmentVersion( const QString &version )
+bool LikeBack::isDevelopmentVersion(const QString &version)
 {
-  return version.indexOf( "alpha", 0, Qt::CaseInsensitive ) != -1 ||
-         version.indexOf( "beta",  0, Qt::CaseInsensitive ) != -1 ||
-         version.indexOf( "rc",    0, Qt::CaseInsensitive ) != -1 ||
-         version.indexOf( "svn",   0, Qt::CaseInsensitive ) != -1 ||
-         version.indexOf( "cvs",   0, Qt::CaseInsensitive ) != -1;
+    return version.indexOf("alpha", 0, Qt::CaseInsensitive) != -1 ||
+           version.indexOf("beta",  0, Qt::CaseInsensitive) != -1 ||
+           version.indexOf("rc",    0, Qt::CaseInsensitive) != -1 ||
+           version.indexOf("svn",   0, Qt::CaseInsensitive) != -1 ||
+           version.indexOf("cvs",   0, Qt::CaseInsensitive) != -1;
 }
 
 
@@ -513,7 +491,7 @@ bool LikeBack::isDevelopmentVersion( const QString &version )
 // Return whether the Like button is active
 bool LikeBack::isLikeActive() const
 {
-  return ( d->buttons & Like );
+    return (d->buttons & Like);
 }
 
 
@@ -521,7 +499,7 @@ bool LikeBack::isLikeActive() const
 // Return whether the Dislike button is active
 bool LikeBack::isDislikeActive() const
 {
-  return ( d->buttons & Dislike );
+    return (d->buttons & Dislike);
 }
 
 
@@ -529,7 +507,7 @@ bool LikeBack::isDislikeActive() const
 // Return whether the Bug button is active
 bool LikeBack::isBugActive() const
 {
-  return ( d->buttons & Bug );
+    return (d->buttons & Bug);
 }
 
 
@@ -537,7 +515,7 @@ bool LikeBack::isBugActive() const
 // Return whether the Feature button is active
 bool LikeBack::isFeatureActive() const
 {
-  return ( d->buttons & Feature );
+    return (d->buttons & Feature);
 }
 
 
