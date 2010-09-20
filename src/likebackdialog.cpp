@@ -161,7 +161,7 @@ QString LikeBackDialog::introductionText()
     {
       languagesMessage = i18nc( "Feedback dialog text, message with list of accepted languages for the comments",
                                 "Please, write it in <b>%1 or %2</b> (you may want to use an <a href=\"%3\">online translation tool</a> for this).<br/>",
-                                QStringList( acceptedLocales.mid( 0, acceptedLocales.count() - 1 ) ).join( ", " ),
+                                QStringList(acceptedLocales.mid(0, -2)).join(", "),
                                 acceptedLocales.last(),
                                 translationTool );
     }
