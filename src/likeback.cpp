@@ -129,7 +129,7 @@ LikeBack::WindowListing LikeBack::windowNamesListing()
 // Set which languages are accepted by the developers for the comments
 void LikeBack::setAcceptedLanguages(const QStringList &locales)
 {
-    d->acceptedLocales          = locales;
+    d->acceptedLocales = locales;
 }
 
 // Return the accepted languages for the comments
@@ -197,7 +197,7 @@ void LikeBack::execCommentDialog(Button type, const QString &initialComment, con
     if (userWantsToShowBar()) {
         disableBar();
         connect(dialog, SIGNAL(destroyed(QObject*)),
-                this,   SLOT(enableBar()));
+                this, SLOT(enableBar()));
     }
 
     dialog->show();
