@@ -22,8 +22,11 @@
 #include <QtGui/QResizeEvent>
 
 #include <KApplication>
+#include <KDebug>
 
 #include "likeback.h"
+
+extern int likeBackDebugArea();
 
 // Constructor
 LikeBackBar::LikeBackBar(LikeBack *likeBack)
@@ -50,9 +53,7 @@ LikeBackBar::LikeBackBar(LikeBack *likeBack)
     m_bugButton    ->setShown(buttons & LikeBack::Bug);
     m_featureButton->setShown(buttons & LikeBack::Feature);
 
-#ifdef DEBUG_LIKEBACK
-    kDebug() << "CREATED.";
-#endif
+    kDebug(likeBackDebugArea()) << "CREATED.";
 }
 
 
@@ -60,9 +61,7 @@ LikeBackBar::LikeBackBar(LikeBack *likeBack)
 // Destructor
 LikeBackBar::~LikeBackBar()
 {
-#ifdef DEBUG_LIKEBACK
-    kDebug() << "DESTROYED.";
-#endif
+    kDebug(likeBackDebugArea()) << "DESTROYED.";
 }
 
 
@@ -81,15 +80,11 @@ void LikeBackBar::changeWindow(QWidget *oldWidget, QWidget *newWidget)
     QWidget *oldWindow = (oldWidget ? oldWidget->window() : 0);
     QWidget *newWindow = (newWidget ? newWidget->window() : 0);
 
-#ifdef DEBUG_LIKEBACK
-    kDebug() << "Focus change:" << oldWindow << "->" << newWindow;
-#endif
+    kDebug(likeBackDebugArea()) << "Focus change:" << oldWindow << "->" << newWindow;
 
     if (oldWindow == newWindow
             || (oldWindow == 0 && newWindow == 0)) {
-#ifdef DEBUG_LIKEBACK
-        kDebug() << "Invalid/unchanged windows.";
-#endif
+        kDebug(likeBackDebugArea()) << "Invalid/unchanged windows.";
         return;
     }
 
@@ -97,9 +92,7 @@ void LikeBackBar::changeWindow(QWidget *oldWidget, QWidget *newWidget)
     if (oldWindow != 0
             && (oldWindow->windowType() == Qt::Window
                 ||   oldWindow->windowType() == Qt::Dialog)) {
-#ifdef DEBUG_LIKEBACK
-        kDebug() << "Removing from old window:" << oldWindow;
-#endif
+        kDebug(likeBackDebugArea()) << "Removing from old window:" << oldWindow;
         oldWindow->removeEventFilter(this);
         // Reparenting allows the bar to not be destroyed if the window which
         // has lost focus is being destroyed
@@ -113,9 +106,7 @@ void LikeBackBar::changeWindow(QWidget *oldWidget, QWidget *newWidget)
             &&   newWindow->objectName() != "LikeBackFeedBack"
             && (newWindow->windowType() == Qt::Window
                 ||   newWindow->windowType() == Qt::Dialog)) {
-#ifdef DEBUG_LIKEBACK
-        kDebug() << "Adding to new window:" << newWindow;
-#endif
+        kDebug(likeBackDebugArea()) << "Adding to new window:" << newWindow;
         setParent(newWindow);
         newWindow->installEventFilter(this);
         eventFilter(newWindow, new QResizeEvent(newWindow->size(), QSize()));
@@ -137,9 +128,7 @@ void LikeBackBar::dislikeClicked()
 bool LikeBackBar::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj != parent()) {
-#ifdef DEBUG_LIKEBACK
-        kDebug() << "Incorrect event source";
-#endif
+        kDebug(likeBackDebugArea()) << "Incorrect event source";
         return false;
     }
 
@@ -154,9 +143,7 @@ bool LikeBackBar::eventFilter(QObject *obj, QEvent *event)
 
     QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
 
-#ifdef DEBUG_LIKEBACK
-    kDebug() << "Resize event:" << resizeEvent->oldSize() << "->" << resizeEvent->size() << "my size:" << size();
-#endif
+    kDebug(likeBackDebugArea()) << "Resize event:" << resizeEvent->oldSize() << "->" << resizeEvent->size() << "my size:" << size();
 
     // Move the feedback bar to the top right corner of the window
     move(resizeEvent->size().width() - width(), 0);
@@ -185,9 +172,7 @@ void LikeBackBar::likeClicked()
 void LikeBackBar::setBarVisible(bool visible)
 {
     if (visible && ! isVisible()) {
-#ifdef DEBUG_LIKEBACK
-        kDebug() << "Setting visible, connected?" << connected_;
-#endif
+        kDebug(likeBackDebugArea()) << "Setting visible, connected?" << connected_;
 
         // Avoid duplicated connections
         if (! connected_) {
@@ -198,9 +183,7 @@ void LikeBackBar::setBarVisible(bool visible)
 
         changeWindow(0, kapp->activeWindow());
     } else if (! visible && isVisible()) {
-#ifdef DEBUG_LIKEBACK
-        kDebug() << "Setting hidden, connected?" << connected_;
-#endif
+        kDebug(likeBackDebugArea()) << "Setting hidden, connected?" << connected_;
         hide();
 
         if (connected_) {
@@ -214,11 +197,9 @@ void LikeBackBar::setBarVisible(bool visible)
             setParent(0);
         }
     }
-#ifdef DEBUG_LIKEBACK
     else {
-        kDebug() << "Not changing status, connected?" << connected_;
+        kDebug(likeBackDebugArea()) << "Not changing status, connected?" << connected_;
     }
-#endif
 }
 
 #include "likebackbar.moc"

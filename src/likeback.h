@@ -24,9 +24,6 @@
 
 #include "likebackexport.h"
 
-// Uncomment to enable debug output
-// #define DEBUG_LIKEBACK
-
 class KAboutData;
 class KAction;
 class KConfig;

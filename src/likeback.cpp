@@ -28,6 +28,7 @@
 #include <KAction>
 #include <KActionCollection>
 #include <KApplication>
+#include <KDebug>
 #include <KComponentData>
 #include <KConfigGroup>
 #include <KEMailSettings>
@@ -37,6 +38,12 @@
 
 #include "likebackbar.h"
 #include "likebackdialog.h"
+
+int likeBackDebugArea()
+{
+    static int s_area = KDebug::registerArea("likeback (likeback)");
+    return s_area;
+}
 
 LikeBackPrivate::LikeBackPrivate(LikeBack *q)
         : q_ptr(q)
@@ -169,11 +176,9 @@ void LikeBack::enableBar()
 {
     d->disabledCount--;
 
-#ifdef DEBUG_LIKEBACK
     if (d->disabledCount < 0) {
-        kError() << "Enabled more times than it was disabled. Please refer to the disableBar() documentation for more information and hints.";
+        kError(likeBackDebugArea()) << "Enabled more times than it was disabled. Please refer to the disableBar() documentation for more information and hints.";
     }
-#endif
 
     d->bar->setBarVisible(d->bar && d->disabledCount <= 0);
 }

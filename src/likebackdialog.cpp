@@ -31,7 +31,7 @@
 
 #include "likeback.h"
 
-
+extern int likeBackDebugArea();
 
 // Constructor
 LikeBackDialog::LikeBackDialog(LikeBack::Button reason, const QString &initialComment,
@@ -246,10 +246,8 @@ void LikeBackDialog::slotButtonClicked(int buttonId)
                  "email="    + QUrl::toPercentEncoding(emailAddress));
 
 
-#ifdef DEBUG_LIKEBACK
-    kDebug() << "http://" << m_likeBack->hostName() << ":" << m_likeBack->hostPort() << m_likeBack->remotePath();
-    kDebug() << data;
-#endif
+    kDebug(likeBackDebugArea()) << "http://" << m_likeBack->hostName() << ":" << m_likeBack->hostPort() << m_likeBack->remotePath();
+    kDebug(likeBackDebugArea()) << data;
 
     // Create the HTTP sending object and the actual request
     QHttp *http = new QHttp(m_likeBack->hostName(), m_likeBack->hostPort());
@@ -272,15 +270,11 @@ void LikeBackDialog::requestFinished(int id, bool error)
 {
     // Only analyze the request we've sent
     if (id != m_requestNumber_) {
-#ifdef DEBUG_LIKEBACK
-        kDebug() << "Ignoring request" << id;
-#endif
+        kDebug(likeBackDebugArea()) << "Ignoring request" << id;
         return;
     }
 
-#ifdef DEBUG_LIKEBACK
-    kDebug() << "Request has" << (error ? "failed" : "succeeded");
-#endif
+    kDebug(likeBackDebugArea()) << "Request has" << (error ? "failed" : "succeeded");
 
     m_likeBack->disableBar();
 
