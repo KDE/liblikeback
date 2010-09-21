@@ -403,7 +403,7 @@ QString LikeBack::activeWindowPath()
         }
         windowNames.prepend(name);
 
-        window = dynamic_cast<QWidget*>(window->parent());
+        window = qobject_cast<QWidget*>(window->parent());
     }
 
     // Return the string of windows starting by the end (from the oldest to the latest):
