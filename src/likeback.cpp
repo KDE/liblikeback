@@ -5,6 +5,7 @@
     imported to LB svn   : 3 june, 2009
     copyright            : © 2006 by Sebastien Laout
                            © 2008-2009 by Valerio Pilo, Sjors Gielen
+                           © 2010 Teo Mrnjavac <teo.mrnjavac@gmail.com>
                            © 2010 Harald Sitter <apachelogger@ubuntu.com>
     email                : sjors@kmess.org
  ***************************************************************************/
@@ -390,6 +391,8 @@ QString LikeBack::activeWindowPath()
         // Append the class name to the window name if it is unnamed:
         if (name == "unnamed") {
             name += QString(":") + window->metaObject()->className();
+        } else if (name.isEmpty()) {
+            name = QString("unnamed:") + window->metaObject()->className();
         }
         windowNames.prepend(name);
 
