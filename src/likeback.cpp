@@ -22,6 +22,8 @@
 #include "likeback.h"
 #include "likeback_p.h"
 
+#include <QtCore/QStringBuilder>
+
 #include <KAboutData>
 #include <KAction>
 #include <KActionCollection>
@@ -328,31 +330,31 @@ void LikeBack::showInformationMessage()
     // Construct the usage examples
     QString examplesBlocks;
     if (buttons & LikeBack::Like) {
-        examplesBlocks += "<img src=\"" + likeIconPath + "\"/> &nbsp;"
-                          "<span>" +
+        examplesBlocks += "<img src=\"" % likeIconPath % "\"/> &nbsp;"
+                          "<span>" %
                           i18nc("Welcome dialog text, usage example",
-                                "<b>I like</b> the new artwork. Very refreshing.") +
+                                "<b>I like</b> the new artwork. Very refreshing.") %
                           "</span><br/>";
     }
     if (buttons & LikeBack::Dislike) {
-        examplesBlocks += "<img src=\"" + dislikeIconPath + "\"/> &nbsp;"
-                          "<span>" +
+        examplesBlocks += "<img src=\"" % dislikeIconPath % "\"/> &nbsp;"
+                          "<span>" %
                           i18nc("Welcome dialog text, usage example",
-                                "<b>I dislike</b> the welcome page of this assistant. Too time consuming.") +
+                                "<b>I dislike</b> the welcome page of this assistant. Too time consuming.") %
                           "</span><br/>";
     }
     if (buttons & LikeBack::Bug) {
-        examplesBlocks += "<img src=\"" + bugIconPath + "\"/> &nbsp;"
-                          "<span>" +
+        examplesBlocks += "<img src=\"" % bugIconPath % "\"/> &nbsp;"
+                          "<span>" %
                           i18nc("Welcome dialog text, usage example",
-                                "<b>The application shows an improper behaviour</b> when clicking the Add button. Nothing happens.") +
+                                "<b>The application shows an improper behaviour</b> when clicking the Add button. Nothing happens.") %
                           "</span><br/>";
     }
     if (buttons & LikeBack::Feature) {
-        examplesBlocks += "<img src=\"" + featureIconPath + "\"/> &nbsp;"
-                          "<span>" +
+        examplesBlocks += "<img src=\"" % featureIconPath % "\"/> &nbsp;"
+                          "<span>" %
                           i18nc("Welcome dialog text, usage example",
-                                "<b>I desire a new feature</b> allowing me to send my work by email.") +
+                                "<b>I desire a new feature</b> allowing me to send my work by email.") %
                           "</span>";
     }
 
@@ -390,9 +392,9 @@ QString LikeBack::activeWindowPath()
 
         // Append the class name to the window name if it is unnamed:
         if (name == "unnamed") {
-            name += QString(":") + window->metaObject()->className();
+            name += QString(":") % window->metaObject()->className();
         } else if (name.isEmpty()) {
-            name = QString("unnamed:") + window->metaObject()->className();
+            name = QString("unnamed:") % window->metaObject()->className();
         }
         windowNames.prepend(name);
 
