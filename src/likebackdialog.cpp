@@ -6,6 +6,7 @@
     copyright            : © 2006 by Sebastien Laout
                            © 2008-2009 by Valerio Pilo, Sjors Gielen
                            © 2010 Teo Mrnjavac <teo.mrnjavac@gmail.com>
+                           © 2010 Thiago Macieira <thiago@kde.org>
     email                : sjors@kmess.org
  ***************************************************************************/
 
@@ -20,15 +21,13 @@
 
 #include "likebackdialog.h"
 
-#include <QtNetwork/QHttp>
-#include <QtNetwork/QHttpRequestHeader>
-
 #include <KAboutData>
 #include <KApplication>
 #include <KConfig>
 #include <KDebug>
 #include <KMessageBox>
 #include <KPushButton>
+#include <KIO/Job>
 
 #include "likeback.h"
 
@@ -253,35 +252,28 @@ void LikeBackDialog::slotButtonClicked(int buttonId)
     kDebug(likeBackDebugArea()) << data;
 
     // Create the HTTP sending object and the actual request
-    QHttp *http = new QHttp(m_likeBack->hostName(), m_likeBack->hostPort());
-    connect(http, SIGNAL(requestFinished(int, bool)),
-            this, SLOT(requestFinished(int, bool)));
-
-    QHttpRequestHeader header("POST", m_likeBack->remotePath());
-    header.setValue("Host", m_likeBack->hostName());
-    header.setValue("Content-Type", "application/x-www-form-urlencoded");
-
-    // Then send it at the developer site
-    http->setHost(m_likeBack->hostName());
-    m_requestNumber_ = http->request(header, data.toUtf8());
+    KUrl url;
+    url.setHost(m_likeBack->hostName());
+    url.setPort(m_likeBack->hostPort());
+    url.setPath(m_likeBack->remotePath());
+    KIO::StoredTransferJob *job = KIO::storedHttpPost(data.toUtf8(), url);
+    connect(job, SIGNAL(finished(KJob*)),
+            this, SLOT(finished(KJob*)) );
+    job->addMetaData("content-type", "application/x-www-form-urlencoded");
 }
 
 
 
 // Display confirmation of the sending action
-void LikeBackDialog::requestFinished(int id, bool error)
+void LikeBackDialog::finished(KJob *j)
 {
-    // Only analyze the request we've sent
-    if (id != m_requestNumber_) {
-        kDebug(likeBackDebugArea()) << "Ignoring request" << id;
-        return;
-    }
+    KIO::StoredTransferJob *job = static_cast<KIO::StoredTransferJob*>(j);
 
-    kDebug(likeBackDebugArea()) << "Request has" << (error ? "failed" : "succeeded");
+    kDebug(likeBackDebugArea()) << "Request has" << (job->error()?"failed":"succeeded");
 
     m_likeBack->disableBar();
 
-    if (! error) {
+    if(job->error() == 0) {
         KMessageBox::information(this,
                                  i18nc("Dialog box text",
                                        "<p>Your comment has been sent successfully. "

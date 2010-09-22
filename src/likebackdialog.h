@@ -27,6 +27,8 @@
 
 #include "likeback.h"
 
+class KJob;
+
 class LikeBackDialog : public KDialog, private Ui::LikeBackDialog
 {
     Q_OBJECT
@@ -59,7 +61,7 @@ private Q_SLOTS:
     // Send the comment to the developers site (reimpl. from KDialog)
     void slotButtonClicked(int button);
     // Display confirmation of the sending action
-    void requestFinished(int id, bool error);
+    void finished(KJob *job);
 };
 
 #endif
