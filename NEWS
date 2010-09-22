@@ -1,3 +1,16 @@
+Version 1.4
+==============
+
+  - Include CMake support
+  - Turn into proper library
+  - Install only likeback.h
+      - Install CamelCase header
+  - Strip non-frontend parts
+  - Add icons from Amarok's likeback copy
+  - Merge various changes from Amarok's likeback copy
+      - Most importantly switch from deprecated QHttp to KJob
+
++++++++++++++++++++++++++ liblikeback made independent +++++++++++++++++++++++++
 
 Changes between LikeBack 1.3 and 1.2:
 --------------------------------------
@@ -31,8 +44,6 @@ Changes between LikeBack 1.2 and 1.1:
 - Streamlined Smarty initialization and added functions and modifiers for the templates to use.
 - When a developer adds a remark, not only the user optionally gets an e-mail of that, but also all other developers interested in that comment.
 - Many code and layout cleanups and bugfixes, including PHP notices, SQL injections, double escapes and XHTML errors.
-
-
 
 Changes between LikeBack 1.1 and 1.0:
 --------------------------------------
