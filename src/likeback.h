@@ -3,8 +3,9 @@
                              -------------------
     begin                : unknown
     imported to LB svn   : 3 june, 2009
-    copyright            : (C) 2006 by Sebastien Laout
-                           (C) 2008-2009 by Valerio Pilo, Sjors Gielen
+    copyright            : © 2006 by Sebastien Laout
+                           © 2008-2009 by Valerio Pilo, Sjors Gielen
+                           © 2010 Harald Sitter <apachelogger@ubuntu.com>
     email                : sjors@kmess.org
  ***************************************************************************/
 
@@ -83,31 +84,38 @@ class LIKEBACK_KDE_EXPORT LikeBack : public QObject
     Q_OBJECT
 public:
     /**
-     * Ids of every LikeBack buttons the button-bar can have.
-     * The four first values are each individual buttons you can enable or not.
-     * The next ones are combinations: all buttons at once, and the default set of buttons (Like, Dislike).
-     * Those values are used in the constructor, to set the allowed type of comments, and when triggering the comment dialog, to set the default checked type.
-     * @see The LikeBack constructor and execCommentDialog().
+     * Available button codes for the button bar.
+     *
+     * @see LikeBack()
+     * @see execCommentDialog()
      */
     enum ButtonCode {
-        Like           = 0x01,                           /// The user select that option to report a positive experience he got with the application.
-        Dislike        = 0x02,                           /// The user select that option to report a frustrating experience he got with the application.
-        Bug            = 0x04,                           /// The user select that option to report a bug in the application.
-        Feature        = 0x10,                           /// The user select that option to ask for a new feature he desire.
-        /// If not enabled, the user is explicitly informed she cannot ask for new features.
-        AllButtons     = Like | Dislike | Bug | Feature, /// Usable in the constructor to enable every possible buttons.
-        DefaultButtons = Like | Dislike                  /// Usable in the constructor to enable only the recommended default set of buttons.
+        Like    = 0x01, /**< Button to report positive experience */
+        Dislike = 0x02, /**< Button to report negative experience */
+        Bug     = 0x04, /**< Button to report a bug */
+        Feature = 0x10, /**< Button to request a feature */
+
+        AllButtons     = Like | Dislike | Bug | Feature, /**< Combining all buttons */
+        DefaultButtons = Like | Dislike                  /**< Default selection of buttons */
     };
     Q_DECLARE_FLAGS(ButtonCodes, ButtonCode);
 
     /**
-     * Flags letting LikeBack print out name and path of each window you show during execution, for debugging purpose.
-     * @see The method setWindowNamesListing() explains how to use those values.
+     * Codes letting LikeBack print out name and path of each window you show
+     * at runtime, for debugging purpose.
+     *
+     * @see setWindowNamesListing()
      */
     enum WindowListing {
-        NoListing = 0,          /// Do not print out any window name. For release time.
-        WarnUnnamedWindows = 1, /// Each time the user option a window, print out a message if the window is unnamed. For development needs, to check windows.
-        AllWindows = 2          /// Print out the window hierarchy of each opened windows during execution. For development needs, to check every windows have an understandable name.
+        NoListing          = 0, /**< Do not print out any window name.
+                                     For releases. */
+        WarnUnnamedWindows = 1, /**< Each time the user opens a window, print
+                                     out a message if the window is unnamed.
+                                     For development needs, to check windows. */
+        AllWindows         = 2  /**< Print out the window hierarchy of each
+                                     opened window during execution.
+                                     For development needs, to check every
+                                     window has an understandable name. */
     };
 
     /**
