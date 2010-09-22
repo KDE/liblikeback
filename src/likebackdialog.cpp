@@ -7,6 +7,7 @@
                            © 2008-2009 by Valerio Pilo, Sjors Gielen
                            © 2010 Teo Mrnjavac <teo@kde.org>
                            © 2010 Thiago Macieira <thiago@kde.org>
+                           © 2010 Harald Sitter <apachelogger@ubuntu.com>
     email                : sjors@kmess.org
  ***************************************************************************/
 
@@ -253,6 +254,7 @@ void LikeBackDialog::slotButtonClicked(int buttonId)
 
     // Create the HTTP sending object and the actual request
     KUrl url;
+    url.setProtocol("http");
     url.setHost(m_likeBack->hostName());
     url.setPort(m_likeBack->hostPort());
     url.setPath(m_likeBack->remotePath());
@@ -294,6 +296,7 @@ void LikeBackDialog::finished(KJob *j)
                              "<p>Please, try again later.</p>"),
                        i18nc("Dialog box title", "Comment Sending Error"));
 
+    kError(likeBackDebugArea()) << job->error() << ": "<< job->errorText()<<job->errorString();
     m_likeBack->enableBar();
 
     // Re-enable the UI
