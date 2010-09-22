@@ -3,8 +3,9 @@
                              -------------------
     begin                : unknown
     imported to LB svn   : 3 june, 2009
-    copyright            : (C) 2006 by Sebastien Laout
-                           (C) 2008-2009 by Valerio Pilo, Sjors Gielen
+    copyright            : © 2006 by Sebastien Laout
+                           © 2008-2009 by Valerio Pilo, Sjors Gielen
+                           © 2010 Teo Mrnjavac <teo.mrnjavac@gmail.com>
     email                : sjors@kmess.org
  ***************************************************************************/
 
@@ -54,6 +55,8 @@ LikeBackDialog::LikeBackDialog(LikeBack::Button reason, const QString &initialCo
     QWidget *mainWidget = new QWidget(this);
     setupUi(mainWidget);
     setMainWidget(mainWidget);
+    mainWidget->setMinimumSize( 400, 400 );
+    mainWidget->setSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding );
 
     // Group the buttons together to retrieve the checked one quickly
     m_typeGroup_ = new QButtonGroup(this);
