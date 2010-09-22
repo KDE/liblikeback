@@ -34,7 +34,7 @@ class LikeBackDialog : public KDialog, private Ui::LikeBackDialog
     Q_OBJECT
 public:
     // Constructor
-    LikeBackDialog(LikeBack::Button reason, const QString &initialComment, const QString &windowPath,
+    LikeBackDialog(LikeBack::ButtonCodes reason, const QString &initialComment, const QString &windowPath,
                    const QString &context, LikeBack *likeBack);
     // Destructor
     ~LikeBackDialog();

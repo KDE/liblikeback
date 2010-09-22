@@ -82,7 +82,7 @@ void LikeBackPrivate::execCommentDialogFromHelp()
 // --------------------------------- Public --------------------------------- //
 
 // Constructor
-LikeBack::LikeBack(Button buttons, bool showBarByDefault, KConfig *config, const KAboutData *aboutData)
+LikeBack::LikeBack(ButtonCodes buttons, bool showBarByDefault, KConfig *config, const KAboutData *aboutData)
         : QObject()
         , d(new LikeBackPrivate(this))
 {
@@ -190,7 +190,7 @@ bool LikeBack::enabledBar()
 }
 
 // Display the Send Comments dialog
-void LikeBack::execCommentDialog(Button type, const QString &initialComment, const QString &windowPath, const QString &context)
+void LikeBack::execCommentDialog(ButtonCodes type, const QString &initialComment, const QString &windowPath, const QString &context)
 {
     LikeBackDialog *dialog = new LikeBackDialog(type, initialComment, windowPath, context, this);
 
@@ -204,7 +204,7 @@ void LikeBack::execCommentDialog(Button type, const QString &initialComment, con
 }
 
 // Retrieve which feedback buttons are active
-LikeBack::Button LikeBack::buttons() const
+LikeBack::ButtonCodes LikeBack::buttons() const
 {
     return d->buttons;
 }
@@ -288,7 +288,7 @@ void LikeBack::showInformationMessage()
     QString featureIconPath(loader->iconPath("tools-report-feature-likeback", KIconLoader::Small));
 
     // Show a message reflecting the allowed types of comment:
-    Button buttons = d->buttons;
+    ButtonCodes buttons = d->buttons;
     int nbButtons = (buttons & Like    ? 1 : 0) +
                     (buttons & Dislike ? 1 : 0) +
                     (buttons & Bug     ? 1 : 0) +

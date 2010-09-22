@@ -47,7 +47,7 @@ LikeBackBar::LikeBackBar(LikeBack *likeBack)
     m_featureButton->setIcon(KIcon("tools-report-feature-likeback"));
 
     // Show buttons for the enabled types of feedback only
-    LikeBack::Button buttons = likeBack->buttons();
+    LikeBack::ButtonCodes buttons = likeBack->buttons();
     m_likeButton   ->setShown(buttons & LikeBack::Like);
     m_dislikeButton->setShown(buttons & LikeBack::Dislike);
     m_bugButton    ->setShown(buttons & LikeBack::Bug);

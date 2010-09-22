@@ -89,7 +89,7 @@ public:
      * Those values are used in the constructor, to set the allowed type of comments, and when triggering the comment dialog, to set the default checked type.
      * @see The LikeBack constructor and execCommentDialog().
      */
-    enum Button {
+    enum ButtonCode {
         Like           = 0x01,                           /// The user select that option to report a positive experience he got with the application.
         Dislike        = 0x02,                           /// The user select that option to report a frustrating experience he got with the application.
         Bug            = 0x04,                           /// The user select that option to report a bug in the application.
@@ -98,6 +98,7 @@ public:
         AllButtons     = Like | Dislike | Bug | Feature, /// Usable in the constructor to enable every possible buttons.
         DefaultButtons = Like | Dislike                  /// Usable in the constructor to enable only the recommended default set of buttons.
     };
+    Q_DECLARE_FLAGS(ButtonCodes, ButtonCode);
 
     /**
      * Flags letting LikeBack print out name and path of each window you show during execution, for debugging purpose.
@@ -142,7 +143,7 @@ public:
      *                  and to send with the comment, so you can filter per version and know if a
      *                  comment refers the latest version of the application or not.
      */
-    explicit LikeBack(Button buttons = DefaultButtons,
+    explicit LikeBack(ButtonCodes buttons = DefaultButtons,
                       bool showBarByDefault = false,
                       KConfig *config = 0,
                       const KAboutData *aboutData = 0);
@@ -274,7 +275,7 @@ public:
     /**
      * @returns The combination of buttons that are shown in the comment dialog and the button-bar.
      */
-    Button buttons() const;
+    ButtonCodes buttons() const;
 
     /**
      * @returns true if the button-bar is currently enabled. Ie, if it has been re-enabled as many times as it has been disabled.
@@ -395,7 +396,7 @@ public Q_SLOTS:
      * @param context Not used for the moment. Will allow more fine-grained
      *                application status report.
      */
-    void execCommentDialog(Button type = AllButtons, const QString &initialComment = "",
+    void execCommentDialog(ButtonCodes type = AllButtons, const QString &initialComment = "",
                            const QString &windowPath = "", const QString &context = "");
 
     /**
@@ -409,5 +410,7 @@ private:
     LikeBackPrivate *d;
     Q_PRIVATE_SLOT(d, void execCommentDialogFromHelp());
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(LikeBack::ButtonCodes);
 
 #endif // LIKEBACK_H

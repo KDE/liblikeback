@@ -46,7 +46,7 @@ public:
     LikeBackBar             *bar;
     KConfigGroup             config;
     const KAboutData        *aboutData;
-    LikeBack::Button         buttons;
+    LikeBack::ButtonCodes    buttons;
     QString                  hostName;
     QString                  remotePath;
     quint16                  hostPort;

@@ -35,7 +35,7 @@
 extern int likeBackDebugArea();
 
 // Constructor
-LikeBackDialog::LikeBackDialog(LikeBack::Button reason, const QString &initialComment,
+LikeBackDialog::LikeBackDialog(LikeBack::ButtonCodes reason, const QString &initialComment,
                                const QString &windowPath, const QString &context, LikeBack *likeBack)
         : KDialog(kapp->activeWindow())
         , Ui::LikeBackDialog()
@@ -66,7 +66,7 @@ LikeBackDialog::LikeBackDialog(LikeBack::Button reason, const QString &initialCo
     m_typeGroup_->addButton(featureRadio_, LikeBack::Feature);
 
     // Hide unneeded buttons
-    LikeBack::Button buttons = m_likeBack->buttons();
+    LikeBack::ButtonCodes buttons = m_likeBack->buttons();
     likeRadio_   ->setVisible(buttons & LikeBack::Like);
     dislikeRadio_->setVisible(buttons & LikeBack::Dislike);
     bugRadio_    ->setVisible(buttons & LikeBack::Bug);
