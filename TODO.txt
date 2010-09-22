@@ -1,0 +1,14 @@
++++ General +++
+
+ - Regarding Amarok 1f6b9e864bae6dde386398b064d10eea3ffe3873:
+   We need a generic interface to set a list (or vector?) of objectNames for which no LikeBackBar is
+   to be shown. This is in Amarok archvied by manually blacklisting names in
+   LikeBackBar::changeWindow(), instead a foreach on some defined list (or vector?) should be
+   performed.
+
++++ Pending Amarok Imports +++
+ - 8c15fc58bd5c0825dc2573281d90baca99abae6c
+    Debug++ in LikeBack
+ - 3249e3799dcaed95a1677417d8989b6956689683
+    Enabled bug reporting with LikeBack button + usual KDE KBugReport dialog. Replaced "improper behavior" icon with the usual KDE bug icon. Special bonus content: Fixed "Click here" in LikeBack to something more sane.
+
