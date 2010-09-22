@@ -50,7 +50,7 @@
     <widget class="QTextEdit" name="m_comment">
      <property name="minimumSize">
       <size>
-       <width>150</width>
+       <width>300</width>
        <height>100</height>
       </size>
      </property>
