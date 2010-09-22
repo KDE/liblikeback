@@ -55,8 +55,8 @@ LikeBackDialog::LikeBackDialog(LikeBack::ButtonCodes reason, const QString &init
     QWidget *mainWidget = new QWidget(this);
     setupUi(mainWidget);
     setMainWidget(mainWidget);
-    mainWidget->setMinimumSize( 400, 400 );
-    mainWidget->setSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding );
+    mainWidget->setMinimumSize(400, 400);
+    mainWidget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     // Group the buttons together to retrieve the checked one quickly
     m_typeGroup_ = new QButtonGroup(this);
