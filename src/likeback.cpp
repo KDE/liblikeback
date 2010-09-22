@@ -5,7 +5,7 @@
     imported to LB svn   : 3 june, 2009
     copyright            : © 2006 by Sebastien Laout
                            © 2008-2009 by Valerio Pilo, Sjors Gielen
-                           © 2010 Teo Mrnjavac <teo.mrnjavac@gmail.com>
+                           © 2010 Teo Mrnjavac <teo@kde.org>
                            © 2010 Harald Sitter <apachelogger@ubuntu.com>
     email                : sjors@kmess.org
  ***************************************************************************/
