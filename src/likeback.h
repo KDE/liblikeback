@@ -157,7 +157,8 @@ public:
     explicit LikeBack(ButtonCodes buttons = DefaultButtons,
                       bool showBarByDefault = false,
                       KConfig *config = 0,
-                      const KAboutData *aboutData = 0);
+                      const KAboutData *aboutData = 0,
+                      QObject *parent = 0);
 
     /**
      * Destructor.

@@ -83,8 +83,8 @@ void LikeBackPrivate::execCommentDialogFromHelp()
 // --------------------------------- Public --------------------------------- //
 
 LikeBack::LikeBack(ButtonCodes buttons, bool showBarByDefault, KConfig *config,
-                   const KAboutData *aboutData)
-        : QObject()
+                   const KAboutData *aboutData, QObject *parent)
+        : QObject(parent)
         , d_ptr(new LikeBackPrivate(this))
 {
     Q_D(LikeBack);
@@ -96,8 +96,8 @@ LikeBack::LikeBack(ButtonCodes buttons, bool showBarByDefault, KConfig *config,
         aboutData = KGlobal::mainComponent().aboutData();
     }
 
-    d->buttons  = buttons;
-    d->config  = config->group("LikeBack");
+    d->buttons = buttons;
+    d->config = config->group("LikeBack");
     d->aboutData = aboutData;
     d->showBarByDefault = showBarByDefault;
     d->showBar = userWantsToShowBar();
