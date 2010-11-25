@@ -28,13 +28,30 @@
 
 extern int likeBackDebugArea();
 
-// Constructor
+class LikeBackBarPrivate
+{
+public:
+    LikeBackBarPrivate() :
+        connected(false)
+    {}
+    ~LikeBackBarPrivate() {}
+
+    // Whether we're connected to the window focus signal or not
+    bool connected;
+    // The parent LikeBack instance
+    LikeBack *likeBack;
+};
+
+// --------------------------------- Public --------------------------------- //
+
 LikeBackBar::LikeBackBar(LikeBack *likeBack)
         : QWidget(0)
         , Ui::LikeBackBar()
-        , connected_(false)
-        , m_likeBack(likeBack)
+        , d_ptr(new LikeBackBarPrivate)
 {
+    Q_D(LikeBackBar);
+    d->likeBack = likeBack;
+
     // Set up the user interface
     setupUi(this);
     resize(sizeHint());
@@ -56,21 +73,17 @@ LikeBackBar::LikeBackBar(LikeBack *likeBack)
     kDebug(likeBackDebugArea()) << "CREATED.";
 }
 
-// Destructor
 LikeBackBar::~LikeBackBar()
 {
     kDebug(likeBackDebugArea()) << "DESTROYED.";
 }
 
-
-
 // The Bug button has been clicked
 void LikeBackBar::bugClicked()
 {
-    m_likeBack->execCommentDialog(LikeBack::Bug);
+    Q_D(const LikeBackBar);
+    d->likeBack->execCommentDialog(LikeBack::Bug);
 }
-
-
 
 // Move the bar to the new active window
 void LikeBackBar::changeWindow(QWidget *oldWidget, QWidget *newWidget)
@@ -112,15 +125,12 @@ void LikeBackBar::changeWindow(QWidget *oldWidget, QWidget *newWidget)
     }
 }
 
-
-
 // The Dislike button has been clicked
 void LikeBackBar::dislikeClicked()
 {
-    m_likeBack->execCommentDialog(LikeBack::Dislike);
+    Q_D(const LikeBackBar);
+    d->likeBack->execCommentDialog(LikeBack::Dislike);
 }
-
-
 
 // Place the bar on the correct corner of the window
 bool LikeBackBar::eventFilter(QObject *obj, QEvent *event)
@@ -148,55 +158,51 @@ bool LikeBackBar::eventFilter(QObject *obj, QEvent *event)
     return false;
 }
 
-
-
 // The Feature button has been clicked
 void LikeBackBar::featureClicked()
 {
-    m_likeBack->execCommentDialog(LikeBack::Feature);
+    Q_D(const LikeBackBar);
+    d->likeBack->execCommentDialog(LikeBack::Feature);
 }
-
-
 
 // The Like button has been clicked
 void LikeBackBar::likeClicked()
 {
-    m_likeBack->execCommentDialog(LikeBack::Like);
+    Q_D(const LikeBackBar);
+    d->likeBack->execCommentDialog(LikeBack::Like);
 }
 
-
-
 // Show or hide the bar
-void LikeBackBar::setBarVisible(bool visible)
+void LikeBackBar::setVisible(bool visible)
 {
-    if (visible && ! isVisible()) {
-        kDebug(likeBackDebugArea()) << "Setting visible, connected?" << connected_;
+    Q_D(LikeBackBar);
+    if (visible && !isVisible()) {
+        kDebug(likeBackDebugArea()) << "Setting visible, connected?" << d->connected;
 
         // Avoid duplicated connections
-        if (! connected_) {
+        if (!d->connected) {
             connect(kapp, SIGNAL(focusChanged(QWidget*, QWidget*)),
                     this, SLOT(changeWindow(QWidget*, QWidget*)));
-            connected_ = true;
+            d->connected = true;
         }
 
         changeWindow(0, kapp->activeWindow());
-    } else if (! visible && isVisible()) {
-        kDebug(likeBackDebugArea()) << "Setting hidden, connected?" << connected_;
+    } else if (!visible && isVisible()) {
+        kDebug(likeBackDebugArea()) << "Setting hidden, connected?" << d->connected;
         hide();
 
-        if (connected_) {
+        if (d->connected) {
             disconnect(kapp, SIGNAL(focusChanged(QWidget*, QWidget*)),
                        this, SLOT(changeWindow(QWidget*, QWidget*)));
-            connected_ = false;
+            d->connected = false;
         }
 
         if (parent()) {
             parent()->removeEventFilter(this);
             setParent(0);
         }
-    }
-    else {
-        kDebug(likeBackDebugArea()) << "Not changing status, connected?" << connected_;
+    } else {
+        kDebug(likeBackDebugArea()) << "Not changing status, connected?" << d->connected;
     }
 }
 

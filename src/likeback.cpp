@@ -106,7 +106,7 @@ LikeBack::LikeBack(ButtonCodes buttons, bool showBarByDefault, KConfig *config,
     showInformationMessage();
 
     if (d->showBar) {
-        d->bar->setBarVisible(true);
+        d->bar->setVisible(true);
     }
 }
 
@@ -170,7 +170,7 @@ void LikeBack::disableBar()
 {
     Q_D(LikeBack);
     d->disabledCount++;
-    d->bar->setBarVisible(d->bar && d->disabledCount > 0);
+    d->bar->setVisible(d->bar && d->disabledCount > 0);
 }
 
 void LikeBack::enableBar()
@@ -182,7 +182,7 @@ void LikeBack::enableBar()
         kError(likeBackDebugArea()) << "Enabled more times than it was disabled. Please refer to the disableBar() documentation for more information and hints.";
     }
 
-    d->bar->setBarVisible(d->bar && d->disabledCount <= 0);
+    d->bar->setVisible(d->bar && d->disabledCount <= 0);
 }
 
 bool LikeBack::enabledBar()
@@ -272,7 +272,7 @@ void LikeBack::setUserWantsToShowBar(bool showBar)
 
     d->config.sync(); // Make sure the option is saved, even if the application crashes after that.
 
-    d->bar->setBarVisible(showBar);
+    d->bar->setVisible(showBar);
 }
 
 // Show a dialog box to introduce the user to LikeBack
@@ -281,7 +281,8 @@ void LikeBack::showInformationMessage()
     Q_D(LikeBack);
     // don't show the message if the bar isn't enabled.
     // message doesn't make sense without the bar
-    if (!d->showBar) return;
+    if (!d->showBar)
+        return;
 
     // Load and register the images needed by the message:
     KIconLoader *loader = KIconLoader::global();

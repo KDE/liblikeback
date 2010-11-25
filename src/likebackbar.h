@@ -25,38 +25,40 @@
 
 #include "likeback.h"
 
+class LikeBackBarPrivate;
+
 class LikeBackBar : public QWidget, private Ui::LikeBackBar
 {
     Q_OBJECT
 
 public:
-    // Constructor
+    /**
+     * Constructor.
+     *
+     * @param likeBack LikeBack interface
+     */
     LikeBackBar(LikeBack *likeBack);
-    // Destructor
+
+    /**
+     * Destructor.
+     */
     ~LikeBackBar();
-    // Show or hide the bar
-    void     setBarVisible(bool visible);
+
+    virtual void setVisible(bool visible);
 
 private Q_SLOTS:
-    // The Bug button has been clicked
-    void     bugClicked();
-    // Move the bar to the new active window
     void     changeWindow(QWidget *oldWidget, QWidget *newWidget);
-    // The Dislike button has been clicked
-    void     dislikeClicked();
-    // Place the bar on the correct corner of the window
     bool     eventFilter(QObject *obj, QEvent *event);
-    // The Feature button has been clicked
+
+    void     bugClicked();
+    void     dislikeClicked();
     void     featureClicked();
-    // The Like button has been clicked
     void     likeClicked();
 
 private:
-    // Whether we're connected to the window focus signal or not
-    bool     connected_;
-    // The parent LikeBack instance
-    LikeBack *m_likeBack;
-
+    LikeBackBarPrivate *const d_ptr;
+    Q_DISABLE_COPY(LikeBackBar);
+    Q_DECLARE_PRIVATE(LikeBackBar);
 };
 
 #endif
