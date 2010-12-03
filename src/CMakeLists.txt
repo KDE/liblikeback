@@ -4,7 +4,7 @@ set(likeback_SRCS
     likebackbar.cpp
 )
 
-kde4_add_ui_files(likeback_SRCS likebackdialog.ui likebackbar.ui)
+kde4_add_ui_files(likeback_SRCS likebackdialog.ui)
 
 kde4_add_library(likeback SHARED ${likeback_SRCS})
 

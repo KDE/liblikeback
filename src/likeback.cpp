@@ -106,7 +106,7 @@ LikeBack::LikeBack(ButtonCodes buttons, bool showBarByDefault, KConfig *config,
     showInformationMessage();
 
     if (d->showBar) {
-        d->bar->setVisible(true);
+        d->bar->setActive(true);
     }
 }
 
@@ -170,7 +170,7 @@ void LikeBack::disableBar()
 {
     Q_D(LikeBack);
     d->disabledCount++;
-    d->bar->setVisible(d->bar && d->disabledCount > 0);
+    d->bar->setActive(d->bar && d->disabledCount > 0);
 }
 
 void LikeBack::enableBar()
@@ -182,7 +182,7 @@ void LikeBack::enableBar()
         kError(likeBackDebugArea()) << "Enabled more times than it was disabled. Please refer to the disableBar() documentation for more information and hints.";
     }
 
-    d->bar->setVisible(d->bar && d->disabledCount <= 0);
+    d->bar->setActive(d->bar && d->disabledCount <= 0);
 }
 
 bool LikeBack::enabledBar()
@@ -258,8 +258,9 @@ bool LikeBack::userWantsToShowBar() const
 void LikeBack::setUserWantsToShowBar(bool showBar)
 {
     Q_D(LikeBack);
-    if (showBar == d->showBar)
+    if (showBar == d->showBar) {
         return;
+    }
 
     d->showBar = showBar;
 
@@ -272,7 +273,7 @@ void LikeBack::setUserWantsToShowBar(bool showBar)
 
     d->config.sync(); // Make sure the option is saved, even if the application crashes after that.
 
-    d->bar->setVisible(showBar);
+    d->bar->setActive(showBar);
 }
 
 // Show a dialog box to introduce the user to LikeBack

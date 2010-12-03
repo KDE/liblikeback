@@ -19,10 +19,13 @@
 
 #include "likebackbar.h"
 
-#include <QtGui/QResizeEvent>
-
 #include <KApplication>
 #include <KDebug>
+#include <KIcon>
+
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QResizeEvent>
+#include <QtGui/QToolButton>
 
 #include "likeback.h"
 
@@ -32,43 +35,73 @@ class LikeBackBarPrivate
 {
 public:
     LikeBackBarPrivate() :
-        connected(false)
+        active(false),
+        connected(false),
+        likeButton(0),
+        dislikeButton(0),
+        bugButton(0),
+        featureButton(0)
     {}
     ~LikeBackBarPrivate() {}
 
-    // Whether we're connected to the window focus signal or not
+    // Whether the bar is active
+    bool active;
+    // Whether the bar is connected to the window focus signal
     bool connected;
     // The parent LikeBack instance
     LikeBack *likeBack;
+
+    QToolButton *likeButton;
+    QToolButton *dislikeButton;
+    QToolButton *bugButton;
+    QToolButton *featureButton;
 };
 
 // --------------------------------- Public --------------------------------- //
 
-LikeBackBar::LikeBackBar(LikeBack *likeBack)
-        : QWidget(0)
-        , Ui::LikeBackBar()
-        , d_ptr(new LikeBackBarPrivate)
+LikeBackBar::LikeBackBar(LikeBack *likeBack) :
+    QWidget(0),
+    d_ptr(new LikeBackBarPrivate)
 {
     Q_D(LikeBackBar);
     d->likeBack = likeBack;
 
-    // Set up the user interface
-    setupUi(this);
+    QHBoxLayout *layout = new QHBoxLayout(this);
+    setLayout(layout);
+
+    d->likeButton = new QToolButton(this);
+    d->likeButton->setAutoRaise(true);
+    layout->addWidget(d->likeButton);
+    connect(d->likeButton, SIGNAL(clicked()), this, SLOT(likeClicked()));
+
+    d->dislikeButton = new QToolButton(this);
+    d->dislikeButton->setAutoRaise(true);
+    layout->addWidget(d->dislikeButton);
+    connect(d->dislikeButton, SIGNAL(clicked()), this, SLOT(dislikeClicked()));
+
+    d->bugButton = new QToolButton(this);
+    d->bugButton->setAutoRaise(true);
+    layout->addWidget(d->bugButton);
+    connect(d->bugButton, SIGNAL(clicked()), this, SLOT(bugClicked()));
+
+    d->featureButton = new QToolButton(this);
+    d->featureButton->setAutoRaise(true);
+    layout->addWidget(d->featureButton);
+    connect(d->featureButton, SIGNAL(clicked()), this, SLOT(featureClicked()));
+
     resize(sizeHint());
     setObjectName("LikeBackBar");
 
-    // Set the button icons
-    m_likeButton->setIcon(KIcon("edit-like-likeback"));
-    m_dislikeButton->setIcon(KIcon("edit-dislike-likeback"));
-    m_bugButton->setIcon(KIcon("tools-report-bug-likeback"));
-    m_featureButton->setIcon(KIcon("tools-report-feature-likeback"));
+    d->likeButton->setIcon(KIcon("edit-like-likeback"));
+    d->dislikeButton->setIcon(KIcon("edit-dislike-likeback"));
+    d->bugButton->setIcon(KIcon("tools-report-bug-likeback"));
+    d->featureButton->setIcon(KIcon("tools-report-feature-likeback"));
 
-    // Show buttons for the enabled types of feedback only
     LikeBack::ButtonCodes buttons = likeBack->buttons();
-    m_likeButton->setShown(buttons & LikeBack::Like);
-    m_dislikeButton->setShown(buttons & LikeBack::Dislike);
-    m_bugButton->setShown(buttons & LikeBack::Bug);
-    m_featureButton->setShown(buttons & LikeBack::Feature);
+    d->likeButton->setShown(buttons & LikeBack::Like);
+    d->dislikeButton->setShown(buttons & LikeBack::Dislike);
+    d->bugButton->setShown(buttons & LikeBack::Bug);
+    d->featureButton->setShown(buttons & LikeBack::Feature);
 
     kDebug(likeBackDebugArea()) << "CREATED.";
 }
@@ -76,6 +109,39 @@ LikeBackBar::LikeBackBar(LikeBack *likeBack)
 LikeBackBar::~LikeBackBar()
 {
     kDebug(likeBackDebugArea()) << "DESTROYED.";
+}
+
+void LikeBackBar::setActive(bool active)
+{
+    Q_D(LikeBackBar);
+    if (active && !isVisible()) {
+        kDebug(likeBackDebugArea()) << "Setting visible, connected?" << d->connected;
+
+        // Avoid duplicated connections
+        if (!d->connected) {
+            connect(kapp, SIGNAL(focusChanged(QWidget*, QWidget*)),
+                    this, SLOT(changeWindow(QWidget*, QWidget*)));
+            d->connected = true;
+        }
+
+        changeWindow(0, kapp->activeWindow());
+    } else if (!active && isVisible()) {
+        kDebug(likeBackDebugArea()) << "Setting hidden, connected?" << d->connected;
+        hide();
+
+        if (d->connected) {
+            disconnect(kapp, SIGNAL(focusChanged(QWidget*, QWidget*)),
+                       this, SLOT(changeWindow(QWidget*, QWidget*)));
+            d->connected = false;
+        }
+
+        if (parent()) {
+            parent()->removeEventFilter(this);
+            setParent(0);
+        }
+    } else {
+        kDebug(likeBackDebugArea()) << "Not changing status, connected?" << d->connected;
+    }
 }
 
 // The Bug button has been clicked
@@ -170,39 +236,6 @@ void LikeBackBar::likeClicked()
 {
     Q_D(const LikeBackBar);
     d->likeBack->execCommentDialog(LikeBack::Like);
-}
-
-void LikeBackBar::setVisible(bool visible)
-{
-    Q_D(LikeBackBar);
-    if (!isVisible()) {
-        kDebug(likeBackDebugArea()) << "Setting visible, connected?" << d->connected;
-
-        // Avoid duplicated connections
-        if (!d->connected) {
-            connect(kapp, SIGNAL(focusChanged(QWidget*, QWidget*)),
-                    this, SLOT(changeWindow(QWidget*, QWidget*)));
-            d->connected = true;
-        }
-
-        changeWindow(0, kapp->activeWindow());
-    } else if (isVisible()) {
-        kDebug(likeBackDebugArea()) << "Setting hidden, connected?" << d->connected;
-        hide();
-
-        if (d->connected) {
-            disconnect(kapp, SIGNAL(focusChanged(QWidget*, QWidget*)),
-                       this, SLOT(changeWindow(QWidget*, QWidget*)));
-            d->connected = false;
-        }
-
-        if (parent()) {
-            parent()->removeEventFilter(this);
-            setParent(0);
-        }
-    } else {
-        kDebug(likeBackDebugArea()) << "Not changing status, connected?" << d->connected;
-    }
 }
 
 #include "likebackbar.moc"

@@ -25,13 +25,12 @@
 #define LIKEBACKBAR_H
 
 #include <QtGui/QWidget>
-#include "ui_likebackbar.h"
 
 #include "likeback.h"
 
 class LikeBackBarPrivate;
 
-class LikeBackBar : public QWidget, private Ui::LikeBackBar
+class LikeBackBar : public QWidget
 {
     Q_OBJECT
 
@@ -48,8 +47,14 @@ public:
      */
     ~LikeBackBar();
 
-    // Overload
-    virtual void setVisible(bool visible);
+    /**
+     * Changes activity of bar.
+     * An inactive bar gets hidden and does not listen for focus changes,
+     * an active one listens for focus changes, but is not necessarily visible.
+     *
+     * @param active true if bar is active, false if bar is inactive
+     */
+    void setActive(bool active);
 
 private Q_SLOTS:
     // Overload
