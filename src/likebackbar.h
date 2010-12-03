@@ -48,15 +48,40 @@ public:
      */
     ~LikeBackBar();
 
+    // Overload
     virtual void setVisible(bool visible);
 
 private Q_SLOTS:
-    void changeWindow(QWidget *oldWidget, QWidget *newWidget);
+    // Overload
     bool eventFilter(QObject *obj, QEvent *event);
 
+    /**
+     * Called when the parenting application's window focus changes, moving the
+     * bar from one window to another.
+     *
+     * @param oldWidget Widget that previously was focused window
+     * @param newWidget Widget that is becoming new focused window
+     */
+    void changeWindow(QWidget *oldWidget, QWidget *newWidget);
+
+    /**
+     * Called when the user clicks the "bug" button to report a bug.
+     */
     void bugClicked();
+
+    /**
+     * Called when the user clicks the "dislike" button to express dislike.
+     */
     void dislikeClicked();
+
+    /**
+     * Called when the user clicks the "feature" button to request a feature.
+     */
     void featureClicked();
+
+    /**
+     * Called when the user clicks the "like" button to express liking something.
+     */
     void likeClicked();
 
 private:

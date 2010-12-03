@@ -172,7 +172,6 @@ void LikeBackBar::likeClicked()
     d->likeBack->execCommentDialog(LikeBack::Like);
 }
 
-// Show or hide the bar
 void LikeBackBar::setVisible(bool visible)
 {
     Q_D(LikeBackBar);
