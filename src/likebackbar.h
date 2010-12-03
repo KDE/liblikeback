@@ -26,8 +26,7 @@
 
 #include <QtGui/QWidget>
 
-#include "likeback.h"
-
+class LikeBack;
 class LikeBackBarPrivate;
 
 class LikeBackBar : public QWidget
