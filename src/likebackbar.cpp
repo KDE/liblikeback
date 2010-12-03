@@ -176,7 +176,7 @@ void LikeBackBar::likeClicked()
 void LikeBackBar::setVisible(bool visible)
 {
     Q_D(LikeBackBar);
-    if (visible && !isVisible()) {
+    if (!isVisible()) {
         kDebug(likeBackDebugArea()) << "Setting visible, connected?" << d->connected;
 
         // Avoid duplicated connections
@@ -187,7 +187,7 @@ void LikeBackBar::setVisible(bool visible)
         }
 
         changeWindow(0, kapp->activeWindow());
-    } else if (!visible && isVisible()) {
+    } else if (isVisible()) {
         kDebug(likeBackDebugArea()) << "Setting hidden, connected?" << d->connected;
         hide();
 
