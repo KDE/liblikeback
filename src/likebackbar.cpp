@@ -35,7 +35,6 @@ class LikeBackBarPrivate
 {
 public:
     LikeBackBarPrivate() :
-        active(false),
         connected(false),
         likeButton(0),
         dislikeButton(0),
@@ -44,8 +43,6 @@ public:
     {}
     ~LikeBackBarPrivate() {}
 
-    // Whether the bar is active
-    bool active;
     // Whether the bar is connected to the window focus signal
     bool connected;
     // The parent LikeBack instance
