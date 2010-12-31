@@ -136,14 +136,12 @@ void LikeBackBar::setActive(bool active)
     }
 }
 
-// The Bug button has been clicked
 void LikeBackBar::bugClicked()
 {
     Q_D(const LikeBackBar);
     d->likeBack->execCommentDialog(LikeBack::Bug);
 }
 
-// Move the bar to the new active window
 void LikeBackBar::changeWindow(QWidget *oldWidget, QWidget *newWidget)
 {
     QWidget *oldWindow = (oldWidget ? oldWidget->window() : 0);
@@ -183,14 +181,12 @@ void LikeBackBar::changeWindow(QWidget *oldWidget, QWidget *newWidget)
     }
 }
 
-// The Dislike button has been clicked
 void LikeBackBar::dislikeClicked()
 {
     Q_D(const LikeBackBar);
     d->likeBack->execCommentDialog(LikeBack::Dislike);
 }
 
-// Place the bar on the correct corner of the window
 bool LikeBackBar::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj != parent()) {
@@ -216,14 +212,12 @@ bool LikeBackBar::eventFilter(QObject *obj, QEvent *event)
     return false;
 }
 
-// The Feature button has been clicked
 void LikeBackBar::featureClicked()
 {
     Q_D(const LikeBackBar);
     d->likeBack->execCommentDialog(LikeBack::Feature);
 }
 
-// The Like button has been clicked
 void LikeBackBar::likeClicked()
 {
     Q_D(const LikeBackBar);
