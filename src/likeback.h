@@ -1,8 +1,8 @@
 /*
     Copyright © 2006 Sebastien Laout
-    Copyright © 2008-2009 Valerio Pilo
-    Copyright © 2008-2009 Sjors Gielen
-    Copyright © 2010 Harald Sitter <apachelogger@ubuntu.com>
+    Copyright © 2008-2009 Valerio Pilo <valerio@kmess.org>
+    Copyright © 2008-2009 Sjors Gielen <dazjorz@kmess.org>
+    Copyright © 2010 Harald Sitter <sitter@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License as
