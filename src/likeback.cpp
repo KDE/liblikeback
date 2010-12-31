@@ -328,7 +328,6 @@ void LikeBack::showInformationMessage()
                                      "briefly describe what you dislike and click on 'Send'.");
     }
 
-    // Construct the bug report explanation
     QString bugPhrase;
     if (buttons & LikeBack::Bug) {
         bugPhrase = i18nc("Welcome dialog text, explanation for the bug button",
@@ -337,7 +336,6 @@ void LikeBack::showInformationMessage()
                           "behavior and click on 'Send'.");
     }
 
-    // Construct the usage examples
     QString examplesBlocks;
     if (buttons & LikeBack::Like) {
         examplesBlocks += "<img src=\"" % likeIconPath % "\"/> &nbsp;"
@@ -368,7 +366,6 @@ void LikeBack::showInformationMessage()
                           "</span>";
     }
 
-    // Finally, merge all the strings together
     QString dialogText("<html><h3>%1</h3>"
                        "<p>%2</p>"
                        "<p>%3</p>"

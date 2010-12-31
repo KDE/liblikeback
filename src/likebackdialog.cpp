@@ -37,7 +37,6 @@
 
 extern int likeBackDebugArea();
 
-// Constructor
 LikeBackDialog::LikeBackDialog(LikeBack::ButtonCodes reason, const QString &initialComment,
                                const QString &windowPath, const QString &context, LikeBack *likeBack)
         : KDialog(kapp->activeWindow())
@@ -46,7 +45,6 @@ LikeBackDialog::LikeBackDialog(LikeBack::ButtonCodes reason, const QString &init
         , m_likeBack(likeBack)
         , m_windowPath(windowPath)
 {
-    // KDialog Options
     setCaption(i18n("Send a Comment to the Developers"));
     setButtons(Ok | Cancel);
     setDefaultButton(Ok);
@@ -61,28 +59,25 @@ LikeBackDialog::LikeBackDialog(LikeBack::ButtonCodes reason, const QString &init
     mainWidget->setMinimumSize(400, 400);
     mainWidget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    // Group the buttons together to retrieve the checked one quickly
     m_typeGroup_ = new QButtonGroup(this);
     m_typeGroup_->addButton(likeRadio_,    LikeBack::Like);
     m_typeGroup_->addButton(dislikeRadio_, LikeBack::Dislike);
     m_typeGroup_->addButton(bugRadio_,     LikeBack::Bug);
     m_typeGroup_->addButton(featureRadio_, LikeBack::Feature);
 
-    // Hide unneeded buttons
     LikeBack::ButtonCodes buttons = m_likeBack->buttons();
     likeRadio_   ->setVisible(buttons & LikeBack::Like);
     dislikeRadio_->setVisible(buttons & LikeBack::Dislike);
     bugRadio_    ->setVisible(buttons & LikeBack::Bug);
     featureRadio_->setVisible(buttons & LikeBack::Feature);
 
-    // If no specific "reason" is provided, choose the first one:
     if (reason == LikeBack::AllButtons || reason == LikeBack::DefaultButtons) {
         if (buttons & LikeBack::Dislike) reason = LikeBack::Dislike;
         else if (buttons & LikeBack::Bug) reason = LikeBack::Bug;
         else if (buttons & LikeBack::Feature) reason = LikeBack::Feature;
         else                                   reason = LikeBack::Like;
     }
-    // Choose which button to check
+
     switch (reason) {
     case LikeBack::Like:    likeRadio_   ->setChecked(true); break;
     case LikeBack::Dislike: dislikeRadio_->setChecked(true); break;
@@ -91,50 +86,37 @@ LikeBackDialog::LikeBackDialog(LikeBack::ButtonCodes reason, const QString &init
     default: break; // Will never arrive here
     }
 
-    // Disable the Ok button if no comment is present
     connect(m_comment, SIGNAL(textChanged()),
             this,      SLOT(verify()));
 
-    // If no window path is provided, get the current active window path:
     if (m_windowPath.isEmpty()) {
         m_windowPath = LikeBack::activeWindowPath();
     }
 
-    // Specify the initial comment
     m_comment->setPlainText(initialComment);
     m_comment->setFocus();
 
-    // Provide the initial status for email address widgets if available
     emailAddressEdit_->setText(m_likeBack->emailAddress());
     specifyEmailCheckBox_->setChecked(true);
 
-    // The introduction message is long and will require a new minimum dialog size
     m_informationLabel->setText(introductionText());
     setMinimumSize(minimumSizeHint());
 
-    // Initially verify the widgets status
     verify();
 }
 
-
-
-// Destructor
 LikeBackDialog::~LikeBackDialog()
 {
     KConfigGroup group = KGlobal::config()->group("LikeBackDialog");
     saveDialogSize(group);
 }
 
-
-
-// Construct the introductory text of the dialog
 QString LikeBackDialog::introductionText()
 {
     QStringList acceptedLocales;
     KLocale *kLocale = KGlobal::locale();
     QStringList acceptedLocaleCodes = m_likeBack->acceptedLocales();
 
-    // Define a list of languages which the application developers are able to understand
     if (! acceptedLocaleCodes.isEmpty()) {
         foreach(const QString &locale, acceptedLocaleCodes) {
             acceptedLocales << kLocale->languageCodeToName(locale);
@@ -143,7 +125,6 @@ QString LikeBackDialog::introductionText()
         acceptedLocales << kLocale->languageCodeToName("en");
     }
 
-    // Put the locales list together in a readable string
     QString languagesMessage;
     if (! acceptedLocales.isEmpty()) {
         // TODO: Replace the URL with a localized one:
@@ -163,7 +144,6 @@ QString LikeBackDialog::introductionText()
         }
     }
 
-    // If both "I Like" and "I Dislike" buttons are shown and one is clicked:
     QString balancingMessage;
     if (m_likeBack->isLikeActive() && m_likeBack->isDislikeActive()
             && (m_typeGroup_->checkedId() == LikeBack::Like || m_typeGroup_->checkedId() == LikeBack::Dislike)) {
@@ -172,14 +152,12 @@ QString LikeBackDialog::introductionText()
                                  "try to send the same amount of positive and negative comments.<br/>");
     }
 
-    // If feature requests are not allowed:
     QString noFeatureRequestsMessage;
     if (! m_likeBack->isFeatureActive()) {
         noFeatureRequestsMessage = i18nc("Feedback dialog text, text to disallow feature requests",
                                          "Please, do not ask for new features: this kind of request will be ignored.<br/>");
     }
 
-    // Blend all previous messages together
     return i18nc("Feedback dialog text, %1=Application name,%2=message with list of accepted languages for the comment,"
                  "%3=optional text to remind to balance the likes and dislikes,%4=optional text to disallow feature requests.",
                  "<p>You can provide the developers a brief description of your opinions about %1.<br/>"
@@ -191,9 +169,6 @@ QString LikeBackDialog::introductionText()
                  noFeatureRequestsMessage);
 }
 
-
-
-// Check if the UI should allow the user to send the comment
 void LikeBackDialog::verify()
 {
     bool hasComment = (! m_comment->document()->isEmpty());
@@ -202,12 +177,8 @@ void LikeBackDialog::verify()
     button(Ok)->setEnabled(hasComment && hasType);
 }
 
-
-
-// Send the comment to the developers site (reimplemented from KDialog)
 void LikeBackDialog::slotButtonClicked(int buttonId)
 {
-    // If the user has not pressed Ok, do nothing
     if (buttonId != Ok) {
         KDialog::slotButtonClicked(buttonId);
         return;
@@ -216,7 +187,6 @@ void LikeBackDialog::slotButtonClicked(int buttonId)
     QString type;
     QString emailAddress;
 
-    // Only send the email if the user wants it to be sent
     if (specifyEmailCheckBox_->isChecked()) {
         emailAddress = emailAddressEdit_->text();
 
@@ -229,11 +199,9 @@ void LikeBackDialog::slotButtonClicked(int buttonId)
         m_likeBack->setEmailAddress(emailAddress, true);
     }
 
-    // Disable the UI while we're sending the request
     m_comment->setEnabled(false);
     button(Ok)->setEnabled(false);
 
-    // Choose the type of feedback
     switch (m_typeGroup_->checkedId()) {
     case LikeBack::Like:    type = "Like";    break;
     case LikeBack::Dislike: type = "Dislike"; break;
@@ -241,7 +209,6 @@ void LikeBackDialog::slotButtonClicked(int buttonId)
     case LikeBack::Feature: type = "Feature"; break;
     }
 
-    // Compile the feedback data
     QString data("protocol=" + QUrl::toPercentEncoding("1.0")                              + '&' +
                  "type="     + QUrl::toPercentEncoding(type)                               + '&' +
                  "version="  + QUrl::toPercentEncoding(m_likeBack->aboutData()->version()) + '&' +
@@ -250,7 +217,6 @@ void LikeBackDialog::slotButtonClicked(int buttonId)
                  "context="  + QUrl::toPercentEncoding(m_context)                          + '&' +
                  "comment="  + QUrl::toPercentEncoding(m_comment->toPlainText())           + '&' +
                  "email="    + QUrl::toPercentEncoding(emailAddress));
-
 
     kDebug(likeBackDebugArea()) << "http://" << m_likeBack->hostName() << ":" << m_likeBack->hostPort() << m_likeBack->remotePath();
     kDebug(likeBackDebugArea()) << data;
@@ -267,9 +233,6 @@ void LikeBackDialog::slotButtonClicked(int buttonId)
     job->addMetaData("content-type", "Content-Type: application/x-www-form-urlencoded");
 }
 
-
-
-// Display confirmation of the sending action
 void LikeBackDialog::finished(KJob *j)
 {
     KIO::StoredTransferJob *job = static_cast<KIO::StoredTransferJob*>(j);
@@ -278,8 +241,7 @@ void LikeBackDialog::finished(KJob *j)
 
     m_likeBack->disableBar();
 
-    if(job->error() == 0) {
-
+    if (job->error() == 0) {
         KMessageBox::information(this,
                                  i18nc("Dialog box text",
                                        "<p>Your comment has been sent successfully.</p>"
@@ -302,7 +264,6 @@ void LikeBackDialog::finished(KJob *j)
     kError(likeBackDebugArea()) << job->error() << ": "<< job->errorText()<<job->errorString();
     m_likeBack->enableBar();
 
-    // Re-enable the UI
     m_comment->setEnabled(true);
     verify();
 }
