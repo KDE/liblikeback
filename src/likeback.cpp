@@ -88,6 +88,7 @@ LikeBack::LikeBack(ButtonCodes buttons, bool showBarByDefault, KConfig *config,
         , d_ptr(new LikeBackPrivate(this))
 {
     Q_D(LikeBack);
+    KGlobal::locale()->insertCatalog("liblikeback");
     // Use default KApplication config and aboutData if not provided:
     if (!config) {
         config = KGlobal::config().data();
